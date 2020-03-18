@@ -1,0 +1,43 @@
+<!--
+  index.html
+
+  Serves as the entry point where Main.ts can inject HTML
+
+  Author: Ellery De Jesus
+  Author: Chris Wolf
+  Version: 2.0.0 (November 3, 2019)
+-->
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Agility</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'demonstration/images/favicon.png' %}" type="image/x-icon"/>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Lobster+Two&display=swap" rel="stylesheet">
+
+  <!-- Trash Can Icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <!-- StyleSheet -->
+  <link href="{% static 'demonstration/styles/styles.css' %}" rel="stylesheet">
+
+  <!-- InteractJS -->
+  <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
+
+  <!-- JavaScript -->
+  <script src="{% static 'demonstration/client/build/main/main_transpiled.js' %}"></script>
+</head>
+<body>
+  <!-- Where main will inject all of our HTML -->
+  <div id="main">
+  </div>
+</body>
+</html>

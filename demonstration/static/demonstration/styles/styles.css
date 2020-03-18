@@ -1,0 +1,143 @@
+/***********
+ * GLOBALS *
+ ***********/
+body {
+    background: #414A4C;
+    color: white;
+}
+
+/*******
+ * IDS *
+ *******/
+#toolbar {
+    background-color: #592C88;
+    color: white;
+    width: 97%;
+    margin-left: -20px;
+    margin-top: -90px;
+    padding-left: 5%;
+    padding-top: 4%;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+#save-load-buttons {
+    float: left;
+}
+
+#header {
+    color: white;
+    margin-left: 34%;
+}
+
+#toolbar-text {
+    float: right;
+    margin-right: 50%;
+    text-decoration: underline;
+}
+
+#boardMenuTitle {
+    text-align: center;
+    color: black;
+    font-weight: bold;
+    text-decoration: underline;
+    font-size: 24px;
+}
+
+#appBody {
+    display: inline;
+}
+
+#currentBoard {
+    display: inline-block;
+    width: 75%;
+    /* margin-left: 45vh; */
+}
+
+#boardButtons {
+    display: inline-block;
+    width: 20%;
+    border: 5px solid black;
+    background-color: gray;
+    border-radius: 5px;
+    min-height: 100vh;
+    /*margin-top: -5%;*/
+    /* position: fixed; */
+}
+
+ /***********
+  * CLASSES *
+  ***********/
+.task-card {
+    font-family: arial, serif;
+    background-color: #AAAAAA;
+    width: 80%;
+    min-height: 15vh;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    text-align: left;
+    font-size: 14px;
+    border: black 2px solid;
+}
+
+.task-card-text {
+    text-align: center;
+    font-size: 14pt;
+}
+
+.task-card-label {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding-left: 15px;
+}
+
+.add-button {
+    display: inline-block;
+    background-color: blue;
+    color: white;
+    width: 2vw;
+    height: 2vw; /* width and height are equal to make a square */
+    margin-left: 2vw;
+}
+
+.remove-button {
+    background-color: red;
+    color: white;
+    display: inline-block;
+    margin-left: 90px;
+}
+
+.list {
+    display: inline-block;
+    vertical-align: top;
+    min-height: 80vh;
+    border: 5px solid black;
+    border-radius: 10px;
+    background-color: #A8B8D0;
+    color: black;
+    margin-left: 5px;
+    width: 20%;
+    padding-left: 10px;
+    padding-bottom: 10px;
+}
+
+.list-header {
+    display: inline;
+}
+
+.list-label {
+    display: inline-block;
+    font-size: 30px;
+}
+
+.boardButton {
+    color: black;
+    height: 8vh;
+    width: 100%;
+    font-size: 24px;
+}

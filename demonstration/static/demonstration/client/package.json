@@ -1,0 +1,47 @@
+{
+  "name": "mbc",
+  "version": "1.0.0",
+  "description": "A web application that will allow users to easily keep track of progress and goals in their software development projects",
+  "main": "src/server.js",
+  "scripts": {
+    "serve": "node src/server.js",
+    "test": "mocha -u tdd -R spec test/**/*",
+    "test_task_card": "mocha -u tdd -R spec test/model/task_card_test.js",
+    "test_list": "mocha -u tdd -R spec test/model/lists/list_test.js",
+    "test_list_factory": "mocha -u tdd -R spec test/model/factories/list_factory_test.js",
+    "test_board": "mocha -u tdd -R spec test/model/boards/board_test.js",
+    "test_board_factory": "mocha -u tdd -R spec test/model/factories/board_factory_test.js",
+    "test_app": "mocha -u tdd -R spec test/model/app_test.js",
+    "build": "tsc --watch",
+    "lint": "esw . -w --ext .ts --fix",
+    "watchify": "watchify -o ./build/main/Main_transpiled.js ./build/main/Main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chriswolfdesign/DeJesusWolfCapstoneMVC.git"
+  },
+  "author": "De Jesus, Wolf",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chriswolfdesign/DeJesusWolfCapstoneMVC/issues"
+  },
+  "homepage": "https://github.com/chriswolfdesign/DeJesusWolfCapstoneMVC#readme",
+  "dependencies": {
+    "browserify": "^16.5.0",
+    "express": "^4.17.1",
+    "interactjs": "^1.7.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
+    "eslint-watch": "^6.0.1",
+    "mocha": "^6.2.1",
+    "typescript": "^3.7.5",
+    "watchify": "^3.11.1"
+  }
+}
