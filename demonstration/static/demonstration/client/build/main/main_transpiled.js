@@ -1621,9 +1621,9 @@ var View = /** @class */ (function () {
         for (var i = 0; i < model.getProjects().getActiveBoard().getLists().length; i++) {
             html += '<div id=\'' + model.getProjects().getActiveBoard().getLists()[i].getLabel() + '\' class=\'dropzone list\'>' +
                 '<div class=list-header>' +
-                '<h1 class=list-label><u>' +
+                '<div class=list-label><u>' +
                 model.getProjects().getActiveBoard().getLists()[i].getLabel() +
-                '</u></h1>' +
+                '</u></div>' +
                 // '<h1 class=list-label><u>Hello</u></h1>' + 
                 this.generateAddButtonHTML(model.getProjects().getActiveBoard().getLists()[i].getLabel()) +
                 '</div>' +
