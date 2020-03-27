@@ -10,6 +10,8 @@
  */
 exports.__esModule = true;
 var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
 var CouldList = /** @class */ (function () {
     function CouldList() {
     }
@@ -20,7 +22,7 @@ var CouldList = /** @class */ (function () {
      * @return {List} a Could Have List
      */
     CouldList.prototype.generateList = function () {
-        return new List_1.List('Could');
+        return new List_1.List('Could', MoscowStatus_1.MoscowStatus.COULD, BacklogStatus_1.BacklogStatus.NONE);
     }; // end generateList
     return CouldList;
 }()); // end CouldList

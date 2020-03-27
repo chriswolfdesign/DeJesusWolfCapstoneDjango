@@ -9,6 +9,9 @@
 exports.__esModule = true;
 var BoardFactory_1 = require("./factories/BoardFactory");
 var BoardOptions_1 = require("./enums/BoardOptions");
+var TaskCard_1 = require("./TaskCard");
+var MoscowStatus_1 = require("./enums/MoscowStatus");
+var BacklogStatus_1 = require("./enums/BacklogStatus");
 var Project = /** @class */ (function () {
     /**
      * Generates the foundation for the app
@@ -18,6 +21,7 @@ var Project = /** @class */ (function () {
     function Project(title) {
         this.title = title;
         this.boards = [];
+        this.taskCards = [];
         this.boardFactory = new BoardFactory_1.BoardFactory();
         this.boards.push(this.boardFactory.generateBoard(BoardOptions_1.BoardOptions.MOSCOW));
         this.boards.push(this.boardFactory.generateBoard(BoardOptions_1.BoardOptions.SPRINT));
@@ -30,15 +34,33 @@ var Project = /** @class */ (function () {
     Project.prototype.getBoardTitle = function (boardID) {
         return this.boards[boardID].getTitle();
     };
+    /**
+     * gets the board that should be currently shown on the user's browser
+     *
+     * @return the current board on screen
+     */
     Project.prototype.getActiveBoard = function () {
         return this.boards[this.activeBoardIndex];
-    };
+    }; // end getActiveBoard
+    /**
+     * gets the index of the board that be currently shown on the user's browser
+     *
+     * @return the index for the current board on screen
+     */
     Project.prototype.getActiveBoardIndex = function () {
         return this.activeBoardIndex;
-    };
+    }; // end getActiveBoardIndex
+    /**
+     * change the board that is currently displayed on the user's browser
+     *
+     * @param index the index for the board we wish to display on screen
+     */
     Project.prototype.setActiveBoardIndex = function (index) {
         this.activeBoardIndex = index;
-    };
+    }; // end setActiveBoardIndex
+    Project.prototype.getTasks = function () {
+        return this.taskCards;
+    }; // end getTasks
     /**
      * Generates a board from a template based on user preference
      *
@@ -84,13 +106,26 @@ var Project = /** @class */ (function () {
     /**
      * Generates a card within a board's list
      *
-     * @param {number} listID
-     * @param {string} text
+     * @param {number} listID the index of the list the task card will be added to
+     * @param {string} text the text for the task card once it is generated
      *
      */
     Project.prototype.generateTaskCard = function (listID, text) {
         var label = this.generateNextCardLabel();
-        this.getActiveBoard().generateTaskCard(listID, label, text);
+        var listToAddTo = this.getActiveBoard().getLists()[listID];
+        // find the new moscowStatus and backlogStatus
+        var moscowStatus = listToAddTo.getMoscowStatus();
+        var backlogStatus = listToAddTo.getBacklogStatus();
+        // if on the backlogBoard, give a default of MUST
+        if (moscowStatus == MoscowStatus_1.MoscowStatus.NONE) {
+            moscowStatus = MoscowStatus_1.MoscowStatus.MUST;
+        } // end if
+        // if on the moscowBoard, give a default of BACKLOG
+        if (backlogStatus == BacklogStatus_1.BacklogStatus.NONE) {
+            backlogStatus = BacklogStatus_1.BacklogStatus.BACKLOG;
+        } // end if
+        this.taskCards.push(new TaskCard_1.TaskCard(label, text, moscowStatus, backlogStatus));
+        // increment so the next card generated will be next on the list
         this.nextCardNumber++;
     }; // end generateTaskCard
     /**
@@ -111,16 +146,21 @@ var Project = /** @class */ (function () {
         var acronym = '';
         words.forEach(function (word) {
             acronym += word[0].toLowerCase();
-        });
+        }); // end for-each
         return acronym;
     }; // end makeProjectAcronym
     /**
      * Remove a task card from the specified list from a specified board.
-     * @param {integer} listID the ID of the list we're removing a card from.
-     * @param {integer} taskID the ID of the card we're removing.
+     *
+     * @string taskLabel the label of the task card to be removed
      */
-    Project.prototype.removeTaskCard = function (boardID, listID, taskID) {
-        this.boards[boardID].removeTaskCard(listID, taskID);
+    Project.prototype.removeTaskCard = function (taskLabel) {
+        for (var i = 0; i < this.taskCards.length; i++) {
+            if (this.taskCards[i].getLabel() === taskLabel) {
+                this.taskCards.splice(i, 1);
+                return;
+            } // end if
+        } // end for
     }; // end removeTaskCard
     /**
      * Loads a board given to it by the controller.

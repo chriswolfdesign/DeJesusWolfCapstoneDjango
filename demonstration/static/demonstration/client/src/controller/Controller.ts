@@ -4,6 +4,10 @@ import { ListOptions } from '../model/enums/ListOptions';
 import { Project } from '../model/Project';
 import { BoardOptions } from '../model/enums/BoardOptions';
 import {Board} from "../model/boards/Board";
+import { List } from '../model/lists/List';
+import { MoscowStatus } from '../model/enums/MoscowStatus';
+import { BacklogStatus } from '../model/enums/BacklogStatus';
+import { TaskCard } from '../model/TaskCard';
 
 export class Controller {
   private model: Model;
@@ -42,11 +46,21 @@ export class Controller {
    * @param taskIndex which task card we are changing
    * @param newTaskText the text to change the task card to
    */
-  editTaskText(listIndex: number, taskIndex: number, newTaskText: string) {
-    if (newTaskText !== '' && newTaskText !== null) {
-      this.model.getProjects().getActiveBoard().getLists()[listIndex].getTasks()[taskIndex].setText(newTaskText);
-    } // end if
-  } // end editTaskText
+  // editTaskText(listIndex: number, taskIndex: number, newTaskText: string) {
+  //   if (newTaskText !== '' && newTaskText !== null) {
+  //     this.model.getProjects().getActiveBoard().getLists()[listIndex].getTasks()[taskIndex].setText(newTaskText);
+  //   } // end if
+  // } // end editTaskText
+  editTaskText(taskLabel: string, newText: string) {
+    let tasks = this.model.getProjects().getTasks();
+
+    tasks.forEach(task => {
+      if (task.getLabel() === taskLabel) {
+        task.setText(newText);
+        return;
+      }
+    })
+  }
 
   /**
    * removes a board from our model
@@ -106,9 +120,13 @@ export class Controller {
    * @param {number} listID the list from which we are removing a task card
    * @param {number} taskID -- the ID of the task card we are removing
    */
-  removeTaskCard(listID: number, taskID: number) {
-    this.model.removeTaskCard(this.model.getProjects().getActiveBoardIndex(), listID, taskID);
-  } // end removeTaskCard
+  // removeTaskCard(listID: number, taskID: number) {
+  //   this.model.removeTaskCard(this.model.getProjects().getActiveBoardIndex(), listID, taskID);
+  // } // end removeTaskCard
+
+  removeTaskCard(taskLabel: string) {
+    this.getModel().getProjects().removeTaskCard(taskLabel);
+  }
 
   /**
    * Moves a task card from one list to another
@@ -117,37 +135,51 @@ export class Controller {
    * @param {HTML} movedTaskCard -- the HTML representation of the task card we're moving
    */
   moveTaskCard(newList: any, movedTaskCard: any) {
-    let listIndex = this.findListIndex(newList.id);
-    let taskIndices = this.getTaskIndices(movedTaskCard.id);
+    let list = this.findList(newList.id);
+    let task = this.findTask(movedTaskCard.id);
 
-    // store the data that was in the moved task card
-    let tempData = this.getTaskData(taskIndices[0], taskIndices[1]);
+    if(list.getMoscowStatus() != MoscowStatus.NONE) {
+      task.setMoscowStatus(list.getMoscowStatus());
+    }
 
-    // remove the old task card
-    this.removeTaskCard(taskIndices[0], taskIndices[1]);
-
-    // add a new task card with the same data to the new list
-    this.model.getProjects().getActiveBoard().getLists()[listIndex].addTask(tempData[0], tempData[1]);
+    if (list.getBacklogStatus() != BacklogStatus.NONE) {
+      task.setBacklogStatus(list.getBacklogStatus());
+    }
   } // end moveTaskCard
 
   /**
-   * Finds the list index of a list by its label
-   *
-   * @param {string} listLabel -- the list label we are searching for
-   *
-   * @return {int} the list index of the requested list if it exists
-   *               -1 otherwise
+   * Finds a list in the current board given the list's label
+   * 
+   * @param listLabel the label for the list we're looking for
+   * 
+   * @return the list we're looking for
    */
-  findListIndex(listLabel: string) {
-    for (let i = 0; i < this.model.getProjects().getActiveBoard().getLists().length; i++) {
-      if (this.model.getProjects().getActiveBoard().getLists()[i].getLabel() === listLabel) {
-        return i;
+  findList(listLabel: string): List {
+    let lists: List[] = this.model.getProjects().getActiveBoard().getLists();
+
+    for(let i = 0; i < lists.length; i++) {
+      if(lists[i].getLabel() === listLabel) {
+        return lists[i];
       } // end if
     } // end for
+  } // end findList
 
-    // if the list does not exist
-    return -1;
-  } // end findListIndex
+  /**
+   * Finds a task card in the project by its id
+   * 
+   * @param taskID the id of the task we're looking for
+   * 
+   * @return the task card we're looking for
+   */
+  findTask(taskID: string): TaskCard {
+    let tasks = this.model.getProjects().getTasks();
+
+    for (let i = 0; i < tasks.length; i++) {
+      if (tasks[i].getLabel() === taskID) {
+        return tasks[i];
+      } // end if
+    } // end for
+  } // end findTask
 
   /**
    * Gets the board indices of the task card we are looking for

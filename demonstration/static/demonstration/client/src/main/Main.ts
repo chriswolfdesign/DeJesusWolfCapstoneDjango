@@ -13,6 +13,7 @@ import { Controller } from '../controller/Controller';
 import { Model } from '../model/Model';
 import interact from 'interactjs';
 import { Project } from '../model/Project';
+import { TaskCard } from '../model/TaskCard';
 
 let controller: Controller;  // I really don't like that this is global, let's look into other options
 
@@ -48,7 +49,9 @@ function highlightCurrentBoard(controller: Controller): void {
  * @param {Controller} controller -- the controller holding each of the buttons
  */
 function addClickListeners(controller: Controller): void {
+  let tasks: TaskCard[] = controller.getModel().getProjects().getTasks();
   // generate the add button listeners
+  // console.log(controller);
   for (let i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
     let buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getLabel() + 'AddButton';
     document.getElementById(buttonID).addEventListener('click', function (event) {
@@ -58,31 +61,25 @@ function addClickListeners(controller: Controller): void {
     }); // end Event Listener
   } // end for
 
-  // generate the listeners for editting task cards
-  for (let i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
-    for (let j = 0; j < controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks().length; j++) {
-      let taskID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks()[j].getLabel() + 'TextField';
-      document.getElementById(taskID).addEventListener('click', function (event) {
-        let newTaskText = prompt('Please enter the new text', controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks()[j].getText());
-        controller.editTaskText(i, j, newTaskText);
-        render(controller);
-      }); // end Event Listener
-    } // end for each task
-  } // end for each list
+  tasks.forEach(task => {
+    let taskID: string = task.getLabel() + 'TextField';
+    document.getElementById(taskID).addEventListener('click', function(event) {
+      let newTaskText = prompt('Please enter new text: ');
+      controller.editTaskText(task.getLabel(), newTaskText);
+      render(controller);
+    })
+  });
 
-  // generate the listener for removing task cards
-  for (let i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
-    for (let j = 0; j < controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks().length; j++) {
-      let buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks()[j].getLabel() + 'RemoveButton';
-      document.getElementById(buttonID).addEventListener('click', function (event) {
-        let choice = confirm('Delete this task card?');
-        if (choice) {
-          controller.removeTaskCard(i, j);
-          render(controller);
-        } // end if
-      }); // end buttonID
-    } // end inner for loop
-  } // end outer for loop
+  tasks.forEach(task => {
+    let taskID: string = task.getLabel() + 'RemoveButton';
+    document.getElementById(taskID).addEventListener('click', function(event) {
+      let choice = confirm('Delete this task card?'):
+      if (choice) {
+        controller.removeTaskCard(task.getLabel());
+        render(controller);
+      }
+    })
+  })
 
   // allows us to change the active board based on user preference via click
   for (let i = 0; i < controller.getModel().getProjects().getBoards().length; i++) {

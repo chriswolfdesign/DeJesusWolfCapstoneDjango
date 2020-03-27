@@ -3,6 +3,8 @@
 exports.__esModule = true;
 var Model_1 = require("../model/Model");
 var view_1 = require("../view/view");
+var MoscowStatus_1 = require("../model/enums/MoscowStatus");
+var BacklogStatus_1 = require("../model/enums/BacklogStatus");
 var Controller = /** @class */ (function () {
     function Controller(projectName) {
         this.projectName = projectName;
@@ -33,11 +35,20 @@ var Controller = /** @class */ (function () {
      * @param taskIndex which task card we are changing
      * @param newTaskText the text to change the task card to
      */
-    Controller.prototype.editTaskText = function (listIndex, taskIndex, newTaskText) {
-        if (newTaskText !== '' && newTaskText !== null) {
-            this.model.getProjects().getActiveBoard().getLists()[listIndex].getTasks()[taskIndex].setText(newTaskText);
-        } // end if
-    }; // end editTaskText
+    // editTaskText(listIndex: number, taskIndex: number, newTaskText: string) {
+    //   if (newTaskText !== '' && newTaskText !== null) {
+    //     this.model.getProjects().getActiveBoard().getLists()[listIndex].getTasks()[taskIndex].setText(newTaskText);
+    //   } // end if
+    // } // end editTaskText
+    Controller.prototype.editTaskText = function (taskLabel, newText) {
+        var tasks = this.model.getProjects().getTasks();
+        tasks.forEach(function (task) {
+            if (task.getLabel() === taskLabel) {
+                task.setText(newText);
+                return;
+            }
+        });
+    };
     /**
      * removes a board from our model
      *
@@ -91,9 +102,12 @@ var Controller = /** @class */ (function () {
      * @param {number} listID the list from which we are removing a task card
      * @param {number} taskID -- the ID of the task card we are removing
      */
-    Controller.prototype.removeTaskCard = function (listID, taskID) {
-        this.model.removeTaskCard(this.model.getProjects().getActiveBoardIndex(), listID, taskID);
-    }; // end removeTaskCard
+    // removeTaskCard(listID: number, taskID: number) {
+    //   this.model.removeTaskCard(this.model.getProjects().getActiveBoardIndex(), listID, taskID);
+    // } // end removeTaskCard
+    Controller.prototype.removeTaskCard = function (taskLabel) {
+        this.getModel().getProjects().removeTaskCard(taskLabel);
+    };
     /**
      * Moves a task card from one list to another
      *
@@ -101,32 +115,45 @@ var Controller = /** @class */ (function () {
      * @param {HTML} movedTaskCard -- the HTML representation of the task card we're moving
      */
     Controller.prototype.moveTaskCard = function (newList, movedTaskCard) {
-        var listIndex = this.findListIndex(newList.id);
-        var taskIndices = this.getTaskIndices(movedTaskCard.id);
-        // store the data that was in the moved task card
-        var tempData = this.getTaskData(taskIndices[0], taskIndices[1]);
-        // remove the old task card
-        this.removeTaskCard(taskIndices[0], taskIndices[1]);
-        // add a new task card with the same data to the new list
-        this.model.getProjects().getActiveBoard().getLists()[listIndex].addTask(tempData[0], tempData[1]);
+        var list = this.findList(newList.id);
+        var task = this.findTask(movedTaskCard.id);
+        if (list.getMoscowStatus() != MoscowStatus_1.MoscowStatus.NONE) {
+            task.setMoscowStatus(list.getMoscowStatus());
+        }
+        if (list.getBacklogStatus() != BacklogStatus_1.BacklogStatus.NONE) {
+            task.setBacklogStatus(list.getBacklogStatus());
+        }
     }; // end moveTaskCard
     /**
-     * Finds the list index of a list by its label
+     * Finds a list in the current board given the list's label
      *
-     * @param {string} listLabel -- the list label we are searching for
+     * @param listLabel the label for the list we're looking for
      *
-     * @return {int} the list index of the requested list if it exists
-     *               -1 otherwise
+     * @return the list we're looking for
      */
-    Controller.prototype.findListIndex = function (listLabel) {
-        for (var i = 0; i < this.model.getProjects().getActiveBoard().getLists().length; i++) {
-            if (this.model.getProjects().getActiveBoard().getLists()[i].getLabel() === listLabel) {
-                return i;
+    Controller.prototype.findList = function (listLabel) {
+        var lists = this.model.getProjects().getActiveBoard().getLists();
+        for (var i = 0; i < lists.length; i++) {
+            if (lists[i].getLabel() === listLabel) {
+                return lists[i];
             } // end if
         } // end for
-        // if the list does not exist
-        return -1;
-    }; // end findListIndex
+    }; // end findList
+    /**
+     * Finds a task card in the project by its id
+     *
+     * @param taskID the id of the task we're looking for
+     *
+     * @return the task card we're looking for
+     */
+    Controller.prototype.findTask = function (taskID) {
+        var tasks = this.model.getProjects().getTasks();
+        for (var i = 0; i < tasks.length; i++) {
+            if (tasks[i].getLabel() === taskID) {
+                return tasks[i];
+            } // end if
+        } // end for
+    }; // end findTask
     /**
      * Gets the board indices of the task card we are looking for
      *
@@ -182,7 +209,7 @@ var Controller = /** @class */ (function () {
 }()); // end Controller
 exports.Controller = Controller;
 
-},{"../model/Model":3,"../view/view":25}],2:[function(require,module,exports){
+},{"../model/Model":3,"../model/enums/BacklogStatus":9,"../model/enums/MoscowStatus":12,"../view/view":27}],2:[function(require,module,exports){
 "use strict";
 /**
  * main.js
@@ -222,6 +249,7 @@ function highlightCurrentBoard(controller) {
  * @param {Controller} controller -- the controller holding each of the buttons
  */
 function addClickListeners(controller) {
+    var tasks = controller.getModel().getProjects().getTasks();
     var _loop_1 = function (i) {
         var buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getLabel() + 'AddButton';
         document.getElementById(buttonID).addEventListener('click', function (event) {
@@ -231,46 +259,29 @@ function addClickListeners(controller) {
         }); // end Event Listener
     };
     // generate the add button listeners
+    // console.log(controller);
     for (var i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
         _loop_1(i);
     } // end for
-    var _loop_2 = function (i) {
-        var _loop_5 = function (j) {
-            var taskID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks()[j].getLabel() + 'TextField';
-            document.getElementById(taskID).addEventListener('click', function (event) {
-                var newTaskText = prompt('Please enter the new text', controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks()[j].getText());
-                controller.editTaskText(i, j, newTaskText);
+    tasks.forEach(function (task) {
+        var taskID = task.getLabel() + 'TextField';
+        document.getElementById(taskID).addEventListener('click', function (event) {
+            var newTaskText = prompt('Please enter new text: ');
+            controller.editTaskText(task.getLabel(), newTaskText);
+            render(controller);
+        });
+    });
+    tasks.forEach(function (task) {
+        var taskID = task.getLabel() + 'RemoveButton';
+        document.getElementById(taskID).addEventListener('click', function (event) {
+            var choice = confirm('Delete this task card?');
+            if (choice) {
+                controller.removeTaskCard(task.getLabel());
                 render(controller);
-            }); // end Event Listener
-        };
-        for (var j = 0; j < controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks().length; j++) {
-            _loop_5(j);
-        } // end for each task
-    };
-    // generate the listeners for editting task cards
-    for (var i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
-        _loop_2(i);
-    } // end for each list
-    var _loop_3 = function (i) {
-        var _loop_6 = function (j) {
-            var buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks()[j].getLabel() + 'RemoveButton';
-            document.getElementById(buttonID).addEventListener('click', function (event) {
-                var choice = confirm('Delete this task card?');
-                if (choice) {
-                    controller.removeTaskCard(i, j);
-                    render(controller);
-                } // end if
-            }); // end buttonID
-        };
-        for (var j = 0; j < controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks().length; j++) {
-            _loop_6(j);
-        } // end inner for loop
-    };
-    // generate the listener for removing task cards
-    for (var i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
-        _loop_3(i);
-    } // end outer for loop
-    var _loop_4 = function (i) {
+            }
+        });
+    });
+    var _loop_2 = function (i) {
         var boardID = 'board' + i.toString();
         document.getElementById(boardID).addEventListener('click', function (event) {
             controller.getModel().getProjects().setActiveBoardIndex(i);
@@ -279,7 +290,7 @@ function addClickListeners(controller) {
     };
     // allows us to change the active board based on user preference via click
     for (var i = 0; i < controller.getModel().getProjects().getBoards().length; i++) {
-        _loop_4(i);
+        _loop_2(i);
     }
     // allows us to save the current instance of the project onto our local file system
     document.getElementById("save").addEventListener('click', function (event) {
@@ -399,7 +410,7 @@ function dropped() {
     render(controller);
 } // end dropped
 
-},{"../controller/Controller":1,"interactjs":26}],3:[function(require,module,exports){
+},{"../controller/Controller":1,"interactjs":28}],3:[function(require,module,exports){
 "use strict";
 /**
  * model.js
@@ -534,7 +545,7 @@ var Model = /** @class */ (function () {
 }()); // end App
 exports.Model = Model;
 
-},{"./Project":4,"./factories/ProjectFactory":14}],4:[function(require,module,exports){
+},{"./Project":4,"./factories/ProjectFactory":16}],4:[function(require,module,exports){
 "use strict";
 /**
  * Holds and allows for the manipulation of Boards.
@@ -546,6 +557,9 @@ exports.Model = Model;
 exports.__esModule = true;
 var BoardFactory_1 = require("./factories/BoardFactory");
 var BoardOptions_1 = require("./enums/BoardOptions");
+var TaskCard_1 = require("./TaskCard");
+var MoscowStatus_1 = require("./enums/MoscowStatus");
+var BacklogStatus_1 = require("./enums/BacklogStatus");
 var Project = /** @class */ (function () {
     /**
      * Generates the foundation for the app
@@ -555,6 +569,7 @@ var Project = /** @class */ (function () {
     function Project(title) {
         this.title = title;
         this.boards = [];
+        this.taskCards = [];
         this.boardFactory = new BoardFactory_1.BoardFactory();
         this.boards.push(this.boardFactory.generateBoard(BoardOptions_1.BoardOptions.MOSCOW));
         this.boards.push(this.boardFactory.generateBoard(BoardOptions_1.BoardOptions.SPRINT));
@@ -567,15 +582,33 @@ var Project = /** @class */ (function () {
     Project.prototype.getBoardTitle = function (boardID) {
         return this.boards[boardID].getTitle();
     };
+    /**
+     * gets the board that should be currently shown on the user's browser
+     *
+     * @return the current board on screen
+     */
     Project.prototype.getActiveBoard = function () {
         return this.boards[this.activeBoardIndex];
-    };
+    }; // end getActiveBoard
+    /**
+     * gets the index of the board that be currently shown on the user's browser
+     *
+     * @return the index for the current board on screen
+     */
     Project.prototype.getActiveBoardIndex = function () {
         return this.activeBoardIndex;
-    };
+    }; // end getActiveBoardIndex
+    /**
+     * change the board that is currently displayed on the user's browser
+     *
+     * @param index the index for the board we wish to display on screen
+     */
     Project.prototype.setActiveBoardIndex = function (index) {
         this.activeBoardIndex = index;
-    };
+    }; // end setActiveBoardIndex
+    Project.prototype.getTasks = function () {
+        return this.taskCards;
+    }; // end getTasks
     /**
      * Generates a board from a template based on user preference
      *
@@ -621,13 +654,26 @@ var Project = /** @class */ (function () {
     /**
      * Generates a card within a board's list
      *
-     * @param {number} listID
-     * @param {string} text
+     * @param {number} listID the index of the list the task card will be added to
+     * @param {string} text the text for the task card once it is generated
      *
      */
     Project.prototype.generateTaskCard = function (listID, text) {
         var label = this.generateNextCardLabel();
-        this.getActiveBoard().generateTaskCard(listID, label, text);
+        var listToAddTo = this.getActiveBoard().getLists()[listID];
+        // find the new moscowStatus and backlogStatus
+        var moscowStatus = listToAddTo.getMoscowStatus();
+        var backlogStatus = listToAddTo.getBacklogStatus();
+        // if on the backlogBoard, give a default of MUST
+        if (moscowStatus == MoscowStatus_1.MoscowStatus.NONE) {
+            moscowStatus = MoscowStatus_1.MoscowStatus.MUST;
+        } // end if
+        // if on the moscowBoard, give a default of BACKLOG
+        if (backlogStatus == BacklogStatus_1.BacklogStatus.NONE) {
+            backlogStatus = BacklogStatus_1.BacklogStatus.BACKLOG;
+        } // end if
+        this.taskCards.push(new TaskCard_1.TaskCard(label, text, moscowStatus, backlogStatus));
+        // increment so the next card generated will be next on the list
         this.nextCardNumber++;
     }; // end generateTaskCard
     /**
@@ -648,16 +694,21 @@ var Project = /** @class */ (function () {
         var acronym = '';
         words.forEach(function (word) {
             acronym += word[0].toLowerCase();
-        });
+        }); // end for-each
         return acronym;
     }; // end makeProjectAcronym
     /**
      * Remove a task card from the specified list from a specified board.
-     * @param {integer} listID the ID of the list we're removing a card from.
-     * @param {integer} taskID the ID of the card we're removing.
+     *
+     * @string taskLabel the label of the task card to be removed
      */
-    Project.prototype.removeTaskCard = function (boardID, listID, taskID) {
-        this.boards[boardID].removeTaskCard(listID, taskID);
+    Project.prototype.removeTaskCard = function (taskLabel) {
+        for (var i = 0; i < this.taskCards.length; i++) {
+            if (this.taskCards[i].getLabel() === taskLabel) {
+                this.taskCards.splice(i, 1);
+                return;
+            } // end if
+        } // end for
     }; // end removeTaskCard
     /**
      * Loads a board given to it by the controller.
@@ -681,7 +732,7 @@ var Project = /** @class */ (function () {
 }()); //end of Project
 exports.Project = Project;
 
-},{"./enums/BoardOptions":9,"./factories/BoardFactory":11}],5:[function(require,module,exports){
+},{"./TaskCard":5,"./enums/BacklogStatus":9,"./enums/BoardOptions":10,"./enums/MoscowStatus":12,"./factories/BoardFactory":13}],5:[function(require,module,exports){
 "use strict";
 /**
  * task_card.js
@@ -700,10 +751,14 @@ var TaskCard = /** @class */ (function () {
      *
      * @param {string} label the label representing this task card
      * @param {string} text the text this task card should display
+     * @param {MoscowStatus} moscowStats the card's Moscow status
+     * @param {BacklogStatus} backlogStatus the card's Backlog status
      */
-    function TaskCard(label, text) {
+    function TaskCard(label, text, moscowStatus, backlogStatus) {
         this.label = label;
         this.text = text;
+        this.moscowStatus = moscowStatus;
+        this.backlogStatus = backlogStatus;
     } // end constructor
     TaskCard.prototype.setText = function (text) {
         this.text = text;
@@ -714,10 +769,24 @@ var TaskCard = /** @class */ (function () {
     TaskCard.prototype.getText = function () {
         return this.text;
     }; // end getText
+    TaskCard.prototype.getMoscowStatus = function () {
+        return this.moscowStatus;
+    }; // end getMoscowStatus
+    TaskCard.prototype.setMoscowStatus = function (moscowStatus) {
+        this.moscowStatus = moscowStatus;
+    }; // end setMoscowStatus
+    TaskCard.prototype.getBacklogStatus = function () {
+        return this.backlogStatus;
+    }; // end getBacklogStatus
+    TaskCard.prototype.setBacklogStatus = function (backlogStatus) {
+        this.backlogStatus = backlogStatus;
+    }; // end setBacklogStatus
     TaskCard.prototype.loadTaskCard = function (taskcard) {
         this.label = taskcard.label;
         this.text = taskcard.text;
-    };
+        this.moscowStatus = taskcard.moscowStatus;
+        this.backlogStatus = taskcard.backlogStatus;
+    }; // end loadTaskCard
     return TaskCard;
 }()); // end class
 exports.TaskCard = TaskCard;
@@ -823,7 +892,7 @@ var Board = /** @class */ (function () {
 }()); // end Board
 exports.Board = Board;
 
-},{"../factories/ListFactory":12,"../lists/List":16}],7:[function(require,module,exports){
+},{"../factories/ListFactory":14,"../lists/List":18}],7:[function(require,module,exports){
 "use strict";
 /**
  * moscow_board.js
@@ -859,7 +928,7 @@ var MoscowBoard = /** @class */ (function () {
 }()); // end MoscowBoard
 exports.MoscowBoard = MoscowBoard;
 
-},{"../enums/ListOptions":10,"../factories/MoscowListFactory":13,"./Board":6}],8:[function(require,module,exports){
+},{"../enums/ListOptions":11,"../factories/MoscowListFactory":15,"./Board":6}],8:[function(require,module,exports){
 "use strict";
 /**
  * sprint_backlog_board.js
@@ -895,7 +964,28 @@ var SprintBacklogBoard = /** @class */ (function () {
 }()); // end SprintBacklogBoard
 exports.SprintBacklogBoard = SprintBacklogBoard;
 
-},{"../enums/ListOptions":10,"../factories/SprintBacklogListFactory":15,"./Board":6}],9:[function(require,module,exports){
+},{"../enums/ListOptions":11,"../factories/SprintBacklogListFactory":17,"./Board":6}],9:[function(require,module,exports){
+"use strict";
+/**
+ * BacklogStatus.ts
+ *
+ * An enumeration to represent a task card or list's backlog status
+ *
+ * @author Ellery De Jesus
+ * @author Chris Wolf
+ * @version 1.0.0 (March 27, 2020)
+ */
+exports.__esModule = true;
+var BacklogStatus;
+(function (BacklogStatus) {
+    BacklogStatus["BACKLOG"] = "BACKLOG";
+    BacklogStatus["IN_PROGRESS"] = "IN_PROGRESS";
+    BacklogStatus["IN_REVIEW"] = "IN_REVIEW";
+    BacklogStatus["COMPLETE"] = "COMPLETE";
+    BacklogStatus["NONE"] = "NONE";
+})(BacklogStatus = exports.BacklogStatus || (exports.BacklogStatus = {}));
+
+},{}],10:[function(require,module,exports){
 "use strict";
 /**
  * board_options.js
@@ -914,7 +1004,7 @@ var BoardOptions;
     BoardOptions["SPRINT"] = "Sprint Backlog";
 })(BoardOptions = exports.BoardOptions || (exports.BoardOptions = {})); // end BoardOptions
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 /**
  * ListOptions.ts
@@ -939,7 +1029,29 @@ var ListOptions;
     ListOptions["COMPLETE"] = "Complete";
 })(ListOptions = exports.ListOptions || (exports.ListOptions = {})); // end ListOptions
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
+"use strict";
+/**
+ * MoscowStatus.ts
+ *
+ * An enumeration that demonstrates what priority a task card or list is
+ *
+ * @author Ellery De Jesus
+ * @author Chris Wolf
+ * @version 1.0.0 (March 27, 2020)
+ */
+exports.__esModule = true;
+var MoscowStatus;
+(function (MoscowStatus) {
+    MoscowStatus["MUST"] = "MUST";
+    MoscowStatus["SHOULD"] = "SHOULD";
+    MoscowStatus["COULD"] = "COULD";
+    MoscowStatus["WONT"] = "WONT";
+    MoscowStatus["NONE"] = "NONE";
+})(MoscowStatus = exports.MoscowStatus || (exports.MoscowStatus = {}));
+;
+
+},{}],13:[function(require,module,exports){
 "use strict";
 /**
  * board_factory.js
@@ -981,7 +1093,7 @@ var BoardFactory = /** @class */ (function () {
 }()); // end BoardFactory
 exports.BoardFactory = BoardFactory;
 
-},{"../boards/MoscowBoard":7,"../boards/SprintBacklogBoard":8,"../enums/BoardOptions":9}],12:[function(require,module,exports){
+},{"../boards/MoscowBoard":7,"../boards/SprintBacklogBoard":8,"../enums/BoardOptions":10}],14:[function(require,module,exports){
 "use strict";
 /**
  * list_factory.js
@@ -1072,7 +1184,7 @@ var ListFactory = /** @class */ (function () {
 }()); // end ListFactory
 exports.ListFactory = ListFactory;
 
-},{"../enums/ListOptions":10,"../lists/List":16,"../lists/moscow_lists/CouldList":17,"../lists/moscow_lists/MustList":18,"../lists/moscow_lists/ShouldList":19,"../lists/moscow_lists/WontList":20,"../lists/sprint_backlog_lists/BacklogList":21,"../lists/sprint_backlog_lists/CompleteList":22,"../lists/sprint_backlog_lists/InProgressList":23,"../lists/sprint_backlog_lists/InReviewList":24}],13:[function(require,module,exports){
+},{"../enums/ListOptions":11,"../lists/List":18,"../lists/moscow_lists/CouldList":19,"../lists/moscow_lists/MustList":20,"../lists/moscow_lists/ShouldList":21,"../lists/moscow_lists/WontList":22,"../lists/sprint_backlog_lists/BacklogList":23,"../lists/sprint_backlog_lists/CompleteList":24,"../lists/sprint_backlog_lists/InProgressList":25,"../lists/sprint_backlog_lists/InReviewList":26}],15:[function(require,module,exports){
 "use strict";
 /**
  * moscow_list_factory.js
@@ -1108,7 +1220,7 @@ var MoscowListFactory = /** @class */ (function (_super) {
 }(ListFactory_1.ListFactory)); // end MoscowListFactory
 exports.MoscowListFactory = MoscowListFactory;
 
-},{"./ListFactory":12}],14:[function(require,module,exports){
+},{"./ListFactory":14}],16:[function(require,module,exports){
 "use strict";
 /**
  * ProjectFactory.ts
@@ -1138,7 +1250,7 @@ var ProjectFactory = /** @class */ (function () {
 }()); //end of ProjectFactory
 exports.ProjectFactory = ProjectFactory;
 
-},{"../Project":4}],15:[function(require,module,exports){
+},{"../Project":4}],17:[function(require,module,exports){
 "use strict";
 /**
  * sprint_backlog_list_factory.js
@@ -1174,7 +1286,7 @@ var SprintBacklogListFactory = /** @class */ (function (_super) {
 }(ListFactory_1.ListFactory)); // end SprintBacklogListFactory
 exports.SprintBacklogListFactory = SprintBacklogListFactory;
 
-},{"./ListFactory":12}],16:[function(require,module,exports){
+},{"./ListFactory":14}],18:[function(require,module,exports){
 "use strict";
 /**
  * list.js
@@ -1194,20 +1306,36 @@ var List = /** @class */ (function () {
      *
      * @param {string} label the label for the this list
      * @param {Colors} color the background color of this list
+     * @param {MoscowStatus} moscowStatus the Moscow status of this list
+     * @param {BacklogStatus} backlogStatus the Backlog status of this list
      */
-    function List(label) {
+    function List(label, moscowStatus, backlogStatus) {
         this.label = label;
         this.tasks = [];
+        this.moscowStatus = moscowStatus;
+        this.backlogStatus = backlogStatus;
     } // end constructor
     List.prototype.getLabel = function () {
         return this.label;
     }; // end getLabel
     List.prototype.setLabel = function (label) {
         this.label = label;
-    };
+    }; // end setLabel
     List.prototype.getTasks = function () {
         return this.tasks;
     }; // end getTasks
+    List.prototype.getMoscowStatus = function () {
+        return this.moscowStatus;
+    }; // end getMoscowStatus
+    List.prototype.setMoscowStatus = function (moscowStatus) {
+        this.moscowStatus = moscowStatus;
+    }; // end setMoscowStatus
+    List.prototype.getBacklogStatus = function () {
+        return this.backlogStatus;
+    }; // end getBacklogStatus
+    List.prototype.setBacklogStatus = function (backlogStatus) {
+        this.backlogStatus = backlogStatus;
+    }; // end setBacklogStatus
     /**
      * adds a new task card to the tasks field
      *
@@ -1215,7 +1343,7 @@ var List = /** @class */ (function () {
      * @param {string} text the text for the new task card
      */
     List.prototype.addTask = function (label, text) {
-        this.tasks.push(new TaskCard_1.TaskCard(label, text));
+        this.tasks.push(new TaskCard_1.TaskCard(label, text, this.moscowStatus, this.backlogStatus));
     }; // end addTask
     /**
      * Removes a task card from the tasks field
@@ -1236,7 +1364,7 @@ var List = /** @class */ (function () {
         this.tasks = [];
         for (var _i = 0, _a = list.tasks; _i < _a.length; _i++) {
             var task = _a[_i];
-            ntask = new TaskCard_1.TaskCard("", "");
+            ntask = new TaskCard_1.TaskCard("", "", this.moscowStatus, this.backlogStatus);
             ntask.loadTaskCard(task);
             this.tasks.push(ntask);
         } // end for
@@ -1245,7 +1373,7 @@ var List = /** @class */ (function () {
 }()); // end List
 exports.List = List;
 
-},{"../TaskCard":5}],17:[function(require,module,exports){
+},{"../TaskCard":5}],19:[function(require,module,exports){
 "use strict";
 /**
  * could_list.js
@@ -1258,6 +1386,8 @@ exports.List = List;
  */
 exports.__esModule = true;
 var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
 var CouldList = /** @class */ (function () {
     function CouldList() {
     }
@@ -1268,13 +1398,13 @@ var CouldList = /** @class */ (function () {
      * @return {List} a Could Have List
      */
     CouldList.prototype.generateList = function () {
-        return new List_1.List('Could');
+        return new List_1.List('Could', MoscowStatus_1.MoscowStatus.COULD, BacklogStatus_1.BacklogStatus.NONE);
     }; // end generateList
     return CouldList;
 }()); // end CouldList
 exports.CouldList = CouldList;
 
-},{"../List":16}],18:[function(require,module,exports){
+},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],20:[function(require,module,exports){
 "use strict";
 /**
  * must_list.js
@@ -1287,6 +1417,8 @@ exports.CouldList = CouldList;
  */
 exports.__esModule = true;
 var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
 var MustList = /** @class */ (function () {
     function MustList() {
     }
@@ -1297,13 +1429,13 @@ var MustList = /** @class */ (function () {
      * @return {List} a Must Have List
      */
     MustList.prototype.generateList = function () {
-        return new List_1.List('Must');
+        return new List_1.List('Must', MoscowStatus_1.MoscowStatus.MUST, BacklogStatus_1.BacklogStatus.NONE);
     }; // end generateList
     return MustList;
 }()); // end MustList
 exports.MustList = MustList;
 
-},{"../List":16}],19:[function(require,module,exports){
+},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],21:[function(require,module,exports){
 "use strict";
 /**
  * should_list.js
@@ -1316,6 +1448,8 @@ exports.MustList = MustList;
  */
 exports.__esModule = true;
 var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
 var ShouldList = /** @class */ (function () {
     function ShouldList() {
     }
@@ -1326,13 +1460,13 @@ var ShouldList = /** @class */ (function () {
      * @return {List} a Should Have List
      */
     ShouldList.prototype.generateList = function () {
-        return new List_1.List('Should');
+        return new List_1.List('Should', MoscowStatus_1.MoscowStatus.SHOULD, BacklogStatus_1.BacklogStatus.NONE);
     }; // end generateList
     return ShouldList;
 }()); // end MustList
 exports.ShouldList = ShouldList;
 
-},{"../List":16}],20:[function(require,module,exports){
+},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],22:[function(require,module,exports){
 "use strict";
 /**
  * wont_list.js
@@ -1345,6 +1479,8 @@ exports.ShouldList = ShouldList;
  */
 exports.__esModule = true;
 var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
 var WontList = /** @class */ (function () {
     function WontList() {
     }
@@ -1355,13 +1491,13 @@ var WontList = /** @class */ (function () {
      * @return {List} a Wont Have List
      */
     WontList.prototype.generateList = function () {
-        return new List_1.List('Wont');
+        return new List_1.List('Wont', MoscowStatus_1.MoscowStatus.WONT, BacklogStatus_1.BacklogStatus.NONE);
     }; // end generateList
     return WontList;
 }()); // end WontList
 exports.WontList = WontList;
 
-},{"../List":16}],21:[function(require,module,exports){
+},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],23:[function(require,module,exports){
 "use strict";
 /**
  * backlog_list.js
@@ -1374,6 +1510,8 @@ exports.WontList = WontList;
  */
 exports.__esModule = true;
 var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
 var BacklogList = /** @class */ (function () {
     function BacklogList() {
     }
@@ -1384,13 +1522,13 @@ var BacklogList = /** @class */ (function () {
      * @return {List} a Backlog List
      */
     BacklogList.prototype.generateList = function () {
-        return new List_1.List('Backlog');
+        return new List_1.List('Backlog', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.BACKLOG);
     }; // end generateList
     return BacklogList;
 }()); // end BacklogList
 exports.BacklogList = BacklogList;
 
-},{"../List":16}],22:[function(require,module,exports){
+},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],24:[function(require,module,exports){
 "use strict";
 /**
  * complete_list.js
@@ -1403,6 +1541,8 @@ exports.BacklogList = BacklogList;
  */
 exports.__esModule = true;
 var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
 var CompleteList = /** @class */ (function () {
     function CompleteList() {
     }
@@ -1413,13 +1553,13 @@ var CompleteList = /** @class */ (function () {
      * @return {List} a Complete List
      */
     CompleteList.prototype.generateList = function () {
-        return new List_1.List('Complete');
+        return new List_1.List('Complete', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.COMPLETE);
     }; // end generateList
     return CompleteList;
 }()); // end CompleteList
 exports.CompleteList = CompleteList;
 
-},{"../List":16}],23:[function(require,module,exports){
+},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],25:[function(require,module,exports){
 "use strict";
 /**
  * in_progress_list.js
@@ -1432,6 +1572,8 @@ exports.CompleteList = CompleteList;
  */
 exports.__esModule = true;
 var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
 var InProgressList = /** @class */ (function () {
     function InProgressList() {
     }
@@ -1442,13 +1584,13 @@ var InProgressList = /** @class */ (function () {
      * @return {List} an In Progress List
      */
     InProgressList.prototype.generateList = function () {
-        return new List_1.List('In Progress');
+        return new List_1.List('In Progress', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.IN_PROGRESS);
     }; // end generateList
     return InProgressList;
 }()); // end InProgressList
 exports.InProgressList = InProgressList;
 
-},{"../List":16}],24:[function(require,module,exports){
+},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],26:[function(require,module,exports){
 "use strict";
 /**
  * in_review_list.js
@@ -1461,6 +1603,8 @@ exports.InProgressList = InProgressList;
  */
 exports.__esModule = true;
 var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
 var InReviewList = /** @class */ (function () {
     function InReviewList() {
     }
@@ -1471,13 +1615,13 @@ var InReviewList = /** @class */ (function () {
      * @return {List} an InReviewList
      */
     InReviewList.prototype.generateList = function () {
-        return new List_1.List('In Review');
+        return new List_1.List('In Review', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.IN_REVIEW);
     }; // end generateList
     return InReviewList;
 }()); // end InReviewList
 exports.InReviewList = InReviewList;
 
-},{"../List":16}],25:[function(require,module,exports){
+},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],27:[function(require,module,exports){
 "use strict";
 /**
  * view.js
@@ -1624,11 +1768,9 @@ var View = /** @class */ (function () {
                 '<div class=list-label><u>' +
                 model.getProjects().getActiveBoard().getLists()[i].getLabel() +
                 '</u></div>' +
-                // '<h1 class=list-label><u>Hello</u></h1>' + 
                 this.generateAddButtonHTML(model.getProjects().getActiveBoard().getLists()[i].getLabel()) +
                 '</div>' +
-                this.generateIndividualListHTML(model.getProjects().getActiveBoard().getLists()[i]) +
-                // this.generateAddButtonHTML(model.getProjects().getActiveBoard().getLists()[i].getLabel()) +
+                this.generateIndividualListHTML(model.getProjects().getActiveBoard().getLists()[i], model) +
                 '</div>';
         } // end for loop
         return html;
@@ -1640,9 +1782,9 @@ var View = /** @class */ (function () {
      *
      * @return {string} the HTML representation of the given list
      */
-    View.prototype.generateIndividualListHTML = function (list) {
+    View.prototype.generateIndividualListHTML = function (list, model) {
         var html = '<div>';
-        html += this.generateTaskCardsHTML(list);
+        html += this.generateTaskCardsHTML(list, model);
         html += '</div>';
         return html;
     }; // end generateIndividualListHTML
@@ -1654,12 +1796,15 @@ var View = /** @class */ (function () {
      * @return {string} the HTML representation of all of the task cards in the
      *                  list
      */
-    View.prototype.generateTaskCardsHTML = function (list) {
+    View.prototype.generateTaskCardsHTML = function (list, model) {
+        var _this = this;
         var html = '<div>';
-        // for each task card, generate the HTML
-        for (var i = 0; i < list.getTasks().length; i++) {
-            html += this.generateIndividualTaskCardHTML(list.getTasks()[i]);
-        } // end for loop
+        model.getProjects().getTasks().forEach(function (task) {
+            if (task.getMoscowStatus() == list.getMoscowStatus() ||
+                task.getBacklogStatus() == list.getBacklogStatus()) {
+                html += _this.generateIndividualTaskCardHTML(task);
+            }
+        });
         html += '</div>';
         return html;
     }; // end generateTaskCardsHTML
@@ -1678,7 +1823,12 @@ var View = /** @class */ (function () {
         html += this.generateRemoveButtonHTML(task);
         html += '</div>';
         html += '<div class=task-card-text id=' + task.getLabel() + 'TextField>' + task.getText() + '</div>';
-        html += '</div></div>';
+        html += '</div>';
+        html += '<div class=task-card-statuses>';
+        html += '<div><b>' + task.getMoscowStatus() + '</b></div>';
+        html += '<div><b>' + task.getBacklogStatus() + '</b></div>';
+        html += '</div>';
+        html += '</div>';
         return html;
     }; // end generateIndividualTaskCardHTML
     /**
@@ -1716,7 +1866,7 @@ var View = /** @class */ (function () {
 }()); // end View
 exports.View = View;
 
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 (function (global){
 /**
  * interact.js 1.7.0

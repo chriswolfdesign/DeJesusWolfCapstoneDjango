@@ -140,6 +140,10 @@ body {
     /*color: pink;*/
 }
 
+.task-card-statuses {
+    margin-top: 30px;
+}
+
 .boardButton {
     color: black;
     height: 8vh;

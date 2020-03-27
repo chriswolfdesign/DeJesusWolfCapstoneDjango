@@ -168,11 +168,9 @@ export class View {
         '<div class=list-label><u>' +
         model.getProjects().getActiveBoard().getLists()[i].getLabel() + 
         '</u></div>' +
-        // '<h1 class=list-label><u>Hello</u></h1>' + 
         this.generateAddButtonHTML(model.getProjects().getActiveBoard().getLists()[i].getLabel()) + 
         '</div>' + 
-        this.generateIndividualListHTML(model.getProjects().getActiveBoard().getLists()[i]) +
-        // this.generateAddButtonHTML(model.getProjects().getActiveBoard().getLists()[i].getLabel()) +
+        this.generateIndividualListHTML(model.getProjects().getActiveBoard().getLists()[i], model) +
         '</div>';
     } // end for loop
 
@@ -186,9 +184,9 @@ export class View {
    *
    * @return {string} the HTML representation of the given list
    */
-  generateIndividualListHTML(list: List): string {
+  generateIndividualListHTML(list: List, model: Model): string {
     let html = '<div>';
-    html += this.generateTaskCardsHTML(list);
+    html += this.generateTaskCardsHTML(list, model);
     html += '</div>';
     return html;
   } // end generateIndividualListHTML
@@ -201,13 +199,15 @@ export class View {
    * @return {string} the HTML representation of all of the task cards in the
    *                  list
    */
-  generateTaskCardsHTML(list: List): string {
+  generateTaskCardsHTML(list: List, model: Model): string {
     let html = '<div>';
 
-    // for each task card, generate the HTML
-    for (let i = 0; i < list.getTasks().length; i++) {
-      html += this.generateIndividualTaskCardHTML(list.getTasks()[i]);
-    } // end for loop
+    model.getProjects().getTasks().forEach(task => {
+      if (task.getMoscowStatus() == list.getMoscowStatus() ||
+        task.getBacklogStatus() == list.getBacklogStatus()) {
+          html += this.generateIndividualTaskCardHTML(task);
+        }
+    });
 
     html += '</div>';
 
@@ -231,7 +231,14 @@ export class View {
     html += '</div>';
     html += '<div class=task-card-text id=' + task.getLabel() + 'TextField>' + task.getText() + '</div>';
 
-    html += '</div></div>';
+    html += '</div>'
+
+    html += '<div class=task-card-statuses>';
+    html += '<div><b>' + task.getMoscowStatus() + '</b></div>';
+    html += '<div><b>' + task.getBacklogStatus() + '</b></div>';
+    html += '</div>';
+
+    html += '</div>';
 
     return html;
   } // end generateIndividualTaskCardHTML

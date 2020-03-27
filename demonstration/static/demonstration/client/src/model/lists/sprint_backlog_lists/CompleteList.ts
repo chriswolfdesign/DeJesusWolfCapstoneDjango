@@ -9,6 +9,8 @@
  */
 
 import {List} from '../List';
+import { MoscowStatus } from '../../enums/MoscowStatus';
+import { BacklogStatus } from '../../enums/BacklogStatus';
 
 export class CompleteList {
   // Constructor deliberately left out
@@ -19,6 +21,6 @@ export class CompleteList {
    * @return {List} a Complete List
    */
   generateList(): List {
-    return new List('Complete');
+    return new List('Complete', MoscowStatus.NONE, BacklogStatus.COMPLETE);
   } // end generateList
 } // end CompleteList

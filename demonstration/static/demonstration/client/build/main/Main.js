@@ -37,6 +37,7 @@ function highlightCurrentBoard(controller) {
  * @param {Controller} controller -- the controller holding each of the buttons
  */
 function addClickListeners(controller) {
+    var tasks = controller.getModel().getProjects().getTasks();
     var _loop_1 = function (i) {
         var buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getLabel() + 'AddButton';
         document.getElementById(buttonID).addEventListener('click', function (event) {
@@ -46,46 +47,29 @@ function addClickListeners(controller) {
         }); // end Event Listener
     };
     // generate the add button listeners
+    // console.log(controller);
     for (var i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
         _loop_1(i);
     } // end for
-    var _loop_2 = function (i) {
-        var _loop_5 = function (j) {
-            var taskID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks()[j].getLabel() + 'TextField';
-            document.getElementById(taskID).addEventListener('click', function (event) {
-                var newTaskText = prompt('Please enter the new text', controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks()[j].getText());
-                controller.editTaskText(i, j, newTaskText);
+    tasks.forEach(function (task) {
+        var taskID = task.getLabel() + 'TextField';
+        document.getElementById(taskID).addEventListener('click', function (event) {
+            var newTaskText = prompt('Please enter new text: ');
+            controller.editTaskText(task.getLabel(), newTaskText);
+            render(controller);
+        });
+    });
+    tasks.forEach(function (task) {
+        var taskID = task.getLabel() + 'RemoveButton';
+        document.getElementById(taskID).addEventListener('click', function (event) {
+            var choice = confirm('Delete this task card?');
+            if (choice) {
+                controller.removeTaskCard(task.getLabel());
                 render(controller);
-            }); // end Event Listener
-        };
-        for (var j = 0; j < controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks().length; j++) {
-            _loop_5(j);
-        } // end for each task
-    };
-    // generate the listeners for editting task cards
-    for (var i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
-        _loop_2(i);
-    } // end for each list
-    var _loop_3 = function (i) {
-        var _loop_6 = function (j) {
-            var buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks()[j].getLabel() + 'RemoveButton';
-            document.getElementById(buttonID).addEventListener('click', function (event) {
-                var choice = confirm('Delete this task card?');
-                if (choice) {
-                    controller.removeTaskCard(i, j);
-                    render(controller);
-                } // end if
-            }); // end buttonID
-        };
-        for (var j = 0; j < controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks().length; j++) {
-            _loop_6(j);
-        } // end inner for loop
-    };
-    // generate the listener for removing task cards
-    for (var i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
-        _loop_3(i);
-    } // end outer for loop
-    var _loop_4 = function (i) {
+            }
+        });
+    });
+    var _loop_2 = function (i) {
         var boardID = 'board' + i.toString();
         document.getElementById(boardID).addEventListener('click', function (event) {
             controller.getModel().getProjects().setActiveBoardIndex(i);
@@ -94,7 +78,7 @@ function addClickListeners(controller) {
     };
     // allows us to change the active board based on user preference via click
     for (var i = 0; i < controller.getModel().getProjects().getBoards().length; i++) {
-        _loop_4(i);
+        _loop_2(i);
     }
     // allows us to save the current instance of the project onto our local file system
     document.getElementById("save").addEventListener('click', function (event) {

@@ -144,11 +144,9 @@ var View = /** @class */ (function () {
                 '<div class=list-label><u>' +
                 model.getProjects().getActiveBoard().getLists()[i].getLabel() +
                 '</u></div>' +
-                // '<h1 class=list-label><u>Hello</u></h1>' + 
                 this.generateAddButtonHTML(model.getProjects().getActiveBoard().getLists()[i].getLabel()) +
                 '</div>' +
-                this.generateIndividualListHTML(model.getProjects().getActiveBoard().getLists()[i]) +
-                // this.generateAddButtonHTML(model.getProjects().getActiveBoard().getLists()[i].getLabel()) +
+                this.generateIndividualListHTML(model.getProjects().getActiveBoard().getLists()[i], model) +
                 '</div>';
         } // end for loop
         return html;
@@ -160,9 +158,9 @@ var View = /** @class */ (function () {
      *
      * @return {string} the HTML representation of the given list
      */
-    View.prototype.generateIndividualListHTML = function (list) {
+    View.prototype.generateIndividualListHTML = function (list, model) {
         var html = '<div>';
-        html += this.generateTaskCardsHTML(list);
+        html += this.generateTaskCardsHTML(list, model);
         html += '</div>';
         return html;
     }; // end generateIndividualListHTML
@@ -174,12 +172,15 @@ var View = /** @class */ (function () {
      * @return {string} the HTML representation of all of the task cards in the
      *                  list
      */
-    View.prototype.generateTaskCardsHTML = function (list) {
+    View.prototype.generateTaskCardsHTML = function (list, model) {
+        var _this = this;
         var html = '<div>';
-        // for each task card, generate the HTML
-        for (var i = 0; i < list.getTasks().length; i++) {
-            html += this.generateIndividualTaskCardHTML(list.getTasks()[i]);
-        } // end for loop
+        model.getProjects().getTasks().forEach(function (task) {
+            if (task.getMoscowStatus() == list.getMoscowStatus() ||
+                task.getBacklogStatus() == list.getBacklogStatus()) {
+                html += _this.generateIndividualTaskCardHTML(task);
+            }
+        });
         html += '</div>';
         return html;
     }; // end generateTaskCardsHTML
@@ -198,7 +199,12 @@ var View = /** @class */ (function () {
         html += this.generateRemoveButtonHTML(task);
         html += '</div>';
         html += '<div class=task-card-text id=' + task.getLabel() + 'TextField>' + task.getText() + '</div>';
-        html += '</div></div>';
+        html += '</div>';
+        html += '<div class=task-card-statuses>';
+        html += '<div><b>' + task.getMoscowStatus() + '</b></div>';
+        html += '<div><b>' + task.getBacklogStatus() + '</b></div>';
+        html += '</div>';
+        html += '</div>';
         return html;
     }; // end generateIndividualTaskCardHTML
     /**
