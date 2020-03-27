@@ -11,6 +11,8 @@
 import { List } from '../lists/List';
 import { ListFactory } from '../factories/ListFactory';
 import { ListOptions } from '../enums/ListOptions';
+import { MoscowStatus } from '../enums/MoscowStatus';
+import { BacklogStatus } from '../enums/BacklogStatus';
 
 export class Board {
   private title: string;
@@ -44,7 +46,7 @@ export class Board {
    * @param {Colors} color the optional color value for our list
    */
   addList(label: string) {
-    this.lists.push(new List(label));
+    this.lists.push(new List(label, MoscowStatus.NONE, BacklogStatus.NONE));
   } // end addList
 
   /**

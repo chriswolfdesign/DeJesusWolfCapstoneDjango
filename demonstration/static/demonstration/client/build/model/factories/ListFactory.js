@@ -20,6 +20,8 @@ var BacklogList_1 = require("../lists/sprint_backlog_lists/BacklogList");
 var InProgressList_1 = require("../lists/sprint_backlog_lists/InProgressList");
 var InReviewList_1 = require("../lists/sprint_backlog_lists/InReviewList");
 var CompleteList_1 = require("../lists/sprint_backlog_lists/CompleteList");
+var MoscowStatus_1 = require("../enums/MoscowStatus");
+var BacklogStatus_1 = require("../enums/BacklogStatus");
 var ListFactory = /** @class */ (function () {
     function ListFactory() {
         this.mustList = new MustList_1.MustList();
@@ -81,7 +83,7 @@ var ListFactory = /** @class */ (function () {
             case ListOptions_1.ListOptions.COMPLETE:
                 return this.completeList.generateList();
             default:
-                return new List_1.List("");
+                return new List_1.List("", MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.NONE);
         } // end switch
     }; // end generateList
     return ListFactory;

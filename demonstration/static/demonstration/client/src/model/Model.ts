@@ -110,17 +110,6 @@ export class Model {
   } // end generateTaskCard
 
   /**
-   * Remove a task card from the specified list from a specified board.
-   * @param {number} projectID -- the ID of the board's project
-   * @param {number} boardID -- the ID of the list's board
-   * @param {integer} listID -- the ID of the list we're removing a card from.
-   * @param {integer} taskID -- the ID of the card we're removing.
-   */
-  removeTaskCard(boardID: number, listID: number, taskID: number): void {
-    this.project.removeTaskCard(boardID, listID, taskID);
-  } // end removeTaskCard
-
-  /**
    * Sets the controller of this app.
    *
    * @param {controller} Controller the controller that will send commands to this app.

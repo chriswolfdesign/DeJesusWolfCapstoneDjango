@@ -507,16 +507,6 @@ var Model = /** @class */ (function () {
         this.project.generateTaskCard(listID, text);
     }; // end generateTaskCard
     /**
-     * Remove a task card from the specified list from a specified board.
-     * @param {number} projectID -- the ID of the board's project
-     * @param {number} boardID -- the ID of the list's board
-     * @param {integer} listID -- the ID of the list we're removing a card from.
-     * @param {integer} taskID -- the ID of the card we're removing.
-     */
-    Model.prototype.removeTaskCard = function (boardID, listID, taskID) {
-        this.project.removeTaskCard(boardID, listID, taskID);
-    }; // end removeTaskCard
-    /**
      * Sets the controller of this app.
      *
      * @param {controller} Controller the controller that will send commands to this app.
@@ -805,6 +795,8 @@ exports.TaskCard = TaskCard;
 exports.__esModule = true;
 var List_1 = require("../lists/List");
 var ListFactory_1 = require("../factories/ListFactory");
+var MoscowStatus_1 = require("../enums/MoscowStatus");
+var BacklogStatus_1 = require("../enums/BacklogStatus");
 var Board = /** @class */ (function () {
     /**
      * Generates the board object
@@ -831,7 +823,7 @@ var Board = /** @class */ (function () {
      * @param {Colors} color the optional color value for our list
      */
     Board.prototype.addList = function (label) {
-        this.lists.push(new List_1.List(label));
+        this.lists.push(new List_1.List(label, MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.NONE));
     }; // end addList
     /**
      * Creates a task card within the specified list.
@@ -892,7 +884,7 @@ var Board = /** @class */ (function () {
 }()); // end Board
 exports.Board = Board;
 
-},{"../factories/ListFactory":14,"../lists/List":18}],7:[function(require,module,exports){
+},{"../enums/BacklogStatus":9,"../enums/MoscowStatus":12,"../factories/ListFactory":14,"../lists/List":18}],7:[function(require,module,exports){
 "use strict";
 /**
  * moscow_board.js
@@ -1116,6 +1108,8 @@ var BacklogList_1 = require("../lists/sprint_backlog_lists/BacklogList");
 var InProgressList_1 = require("../lists/sprint_backlog_lists/InProgressList");
 var InReviewList_1 = require("../lists/sprint_backlog_lists/InReviewList");
 var CompleteList_1 = require("../lists/sprint_backlog_lists/CompleteList");
+var MoscowStatus_1 = require("../enums/MoscowStatus");
+var BacklogStatus_1 = require("../enums/BacklogStatus");
 var ListFactory = /** @class */ (function () {
     function ListFactory() {
         this.mustList = new MustList_1.MustList();
@@ -1177,14 +1171,14 @@ var ListFactory = /** @class */ (function () {
             case ListOptions_1.ListOptions.COMPLETE:
                 return this.completeList.generateList();
             default:
-                return new List_1.List("");
+                return new List_1.List("", MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.NONE);
         } // end switch
     }; // end generateList
     return ListFactory;
 }()); // end ListFactory
 exports.ListFactory = ListFactory;
 
-},{"../enums/ListOptions":11,"../lists/List":18,"../lists/moscow_lists/CouldList":19,"../lists/moscow_lists/MustList":20,"../lists/moscow_lists/ShouldList":21,"../lists/moscow_lists/WontList":22,"../lists/sprint_backlog_lists/BacklogList":23,"../lists/sprint_backlog_lists/CompleteList":24,"../lists/sprint_backlog_lists/InProgressList":25,"../lists/sprint_backlog_lists/InReviewList":26}],15:[function(require,module,exports){
+},{"../enums/BacklogStatus":9,"../enums/ListOptions":11,"../enums/MoscowStatus":12,"../lists/List":18,"../lists/moscow_lists/CouldList":19,"../lists/moscow_lists/MustList":20,"../lists/moscow_lists/ShouldList":21,"../lists/moscow_lists/WontList":22,"../lists/sprint_backlog_lists/BacklogList":23,"../lists/sprint_backlog_lists/CompleteList":24,"../lists/sprint_backlog_lists/InProgressList":25,"../lists/sprint_backlog_lists/InReviewList":26}],15:[function(require,module,exports){
 "use strict";
 /**
  * moscow_list_factory.js

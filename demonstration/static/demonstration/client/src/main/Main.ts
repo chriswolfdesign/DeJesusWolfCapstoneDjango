@@ -73,7 +73,7 @@ function addClickListeners(controller: Controller): void {
   tasks.forEach(task => {
     let taskID: string = task.getLabel() + 'RemoveButton';
     document.getElementById(taskID).addEventListener('click', function(event) {
-      let choice = confirm('Delete this task card?'):
+      let choice = confirm('Delete this task card?');
       if (choice) {
         controller.removeTaskCard(task.getLabel());
         render(controller);
