@@ -67,6 +67,41 @@ body {
     /* position: fixed; */
 }
 
+#editable-task-card {
+    left: 10%;
+    top: 10%;
+    width: 80%;
+    height: 80%;
+    position: absolute;
+    background-color: #F0EAD6;
+    border: black solid 5px;
+    color: black;
+    z-index: 10;
+    padding: 5px;
+}
+
+#editable-task-card-header {
+    font-size: 38px;
+    font-weight: bold;
+    text-decoration: underline;
+    text-align: center;
+}
+
+#editable-task-card-description {
+    width: 98%;
+    height: 50%;
+}
+
+#editable-task-card-cancel-button {
+    background-color: red;
+    color: white;
+}
+
+#editable-task-card-submit-button {
+    background-color: blue;
+    color: white;
+}
+
  /***********
   * CLASSES *
   ***********/

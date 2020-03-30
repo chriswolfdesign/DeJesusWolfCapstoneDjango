@@ -9,6 +9,16 @@ import { MoscowStatus } from '../model/enums/MoscowStatus';
 import { BacklogStatus } from '../model/enums/BacklogStatus';
 import { TaskCard } from '../model/TaskCard';
 
+/**
+ * Controller.ts
+ * 
+ * Manages the changes in the model and the view
+ * 
+ * @author Ellery De Jesus
+ * @author Chris Wolf
+ * @version 1.0.0 (March 30, 2020)
+ */
+
 export class Controller {
   private model: Model;
   private view: View;
@@ -28,7 +38,24 @@ export class Controller {
    */
   getView(): View {
     return this.view;
-  }
+  } // end getView
+
+  setEditableTaskCard(taskLabel: string) {
+    this.view.setEditableTaskCard(this.findTask(taskLabel));
+  } // end setEditableTaskCard
+
+  removeEditableTaskCard() {
+    this.view.setEditableTaskCard(null);
+  } // end removeEditableTaskCard
+
+  getEditableTaskCard(): TaskCard {
+    return this.view.getEditableTaskCard();
+  } // end getEditableTaskCard
+
+  getNewestTaskCard(): TaskCard {
+    let tasks = this.model.getProjects().getTasks();
+    return tasks[tasks.length - 1];
+  } // end getNewestTaskCard
 
   /**
    * calls on the model to create a new board from a template
@@ -46,11 +73,6 @@ export class Controller {
    * @param taskIndex which task card we are changing
    * @param newTaskText the text to change the task card to
    */
-  // editTaskText(listIndex: number, taskIndex: number, newTaskText: string) {
-  //   if (newTaskText !== '' && newTaskText !== null) {
-  //     this.model.getProjects().getActiveBoard().getLists()[listIndex].getTasks()[taskIndex].setText(newTaskText);
-  //   } // end if
-  // } // end editTaskText
   editTaskText(taskLabel: string, newText: string) {
     let tasks = this.model.getProjects().getTasks();
 
@@ -58,9 +80,9 @@ export class Controller {
       if (task.getLabel() === taskLabel) {
         task.setText(newText);
         return;
-      }
-    })
-  }
+      } // end if
+    }); // end forEach
+  } // end editTaskText
 
   /**
    * removes a board from our model
@@ -120,10 +142,6 @@ export class Controller {
    * @param {number} listID the list from which we are removing a task card
    * @param {number} taskID -- the ID of the task card we are removing
    */
-  // removeTaskCard(listID: number, taskID: number) {
-  //   this.model.removeTaskCard(this.model.getProjects().getActiveBoardIndex(), listID, taskID);
-  // } // end removeTaskCard
-
   removeTaskCard(taskLabel: string) {
     this.getModel().getProjects().removeTaskCard(taskLabel);
   }
@@ -140,11 +158,11 @@ export class Controller {
 
     if(list.getMoscowStatus() != MoscowStatus.NONE) {
       task.setMoscowStatus(list.getMoscowStatus());
-    }
+    } // end if
 
     if (list.getBacklogStatus() != BacklogStatus.NONE) {
       task.setBacklogStatus(list.getBacklogStatus());
-    }
+    } // end if
   } // end moveTaskCard
 
   /**
@@ -171,11 +189,11 @@ export class Controller {
    * 
    * @return the task card we're looking for
    */
-  findTask(taskID: string): TaskCard {
+  findTask(taskLabel: string): TaskCard {
     let tasks = this.model.getProjects().getTasks();
 
     for (let i = 0; i < tasks.length; i++) {
-      if (tasks[i].getLabel() === taskID) {
+      if (tasks[i].getLabel() === taskLabel) {
         return tasks[i];
       } // end if
     } // end for
@@ -233,7 +251,6 @@ export class Controller {
    * 
    * @param {Model} model the board we are trying to load into model
    */
-
   loadProject(project: Project) {
     this.model.loadProject(project);
   } // end loadProject

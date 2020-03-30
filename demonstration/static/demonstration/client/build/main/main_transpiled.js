@@ -5,6 +5,15 @@ var Model_1 = require("../model/Model");
 var view_1 = require("../view/view");
 var MoscowStatus_1 = require("../model/enums/MoscowStatus");
 var BacklogStatus_1 = require("../model/enums/BacklogStatus");
+/**
+ * Controller.ts
+ *
+ * Manages the changes in the model and the view
+ *
+ * @author Ellery De Jesus
+ * @author Chris Wolf
+ * @version 1.0.0 (March 30, 2020)
+ */
 var Controller = /** @class */ (function () {
     function Controller(projectName) {
         this.projectName = projectName;
@@ -19,7 +28,20 @@ var Controller = /** @class */ (function () {
      */
     Controller.prototype.getView = function () {
         return this.view;
-    };
+    }; // end getView
+    Controller.prototype.setEditableTaskCard = function (taskLabel) {
+        this.view.setEditableTaskCard(this.findTask(taskLabel));
+    }; // end setEditableTaskCard
+    Controller.prototype.removeEditableTaskCard = function () {
+        this.view.setEditableTaskCard(null);
+    }; // end removeEditableTaskCard
+    Controller.prototype.getEditableTaskCard = function () {
+        return this.view.getEditableTaskCard();
+    }; // end getEditableTaskCard
+    Controller.prototype.getNewestTaskCard = function () {
+        var tasks = this.model.getProjects().getTasks();
+        return tasks[tasks.length - 1];
+    }; // end getNewestTaskCard
     /**
      * calls on the model to create a new board from a template
      *
@@ -35,20 +57,15 @@ var Controller = /** @class */ (function () {
      * @param taskIndex which task card we are changing
      * @param newTaskText the text to change the task card to
      */
-    // editTaskText(listIndex: number, taskIndex: number, newTaskText: string) {
-    //   if (newTaskText !== '' && newTaskText !== null) {
-    //     this.model.getProjects().getActiveBoard().getLists()[listIndex].getTasks()[taskIndex].setText(newTaskText);
-    //   } // end if
-    // } // end editTaskText
     Controller.prototype.editTaskText = function (taskLabel, newText) {
         var tasks = this.model.getProjects().getTasks();
         tasks.forEach(function (task) {
             if (task.getLabel() === taskLabel) {
                 task.setText(newText);
                 return;
-            }
-        });
-    };
+            } // end if
+        }); // end forEach
+    }; // end editTaskText
     /**
      * removes a board from our model
      *
@@ -102,9 +119,6 @@ var Controller = /** @class */ (function () {
      * @param {number} listID the list from which we are removing a task card
      * @param {number} taskID -- the ID of the task card we are removing
      */
-    // removeTaskCard(listID: number, taskID: number) {
-    //   this.model.removeTaskCard(this.model.getProjects().getActiveBoardIndex(), listID, taskID);
-    // } // end removeTaskCard
     Controller.prototype.removeTaskCard = function (taskLabel) {
         this.getModel().getProjects().removeTaskCard(taskLabel);
     };
@@ -119,10 +133,10 @@ var Controller = /** @class */ (function () {
         var task = this.findTask(movedTaskCard.id);
         if (list.getMoscowStatus() != MoscowStatus_1.MoscowStatus.NONE) {
             task.setMoscowStatus(list.getMoscowStatus());
-        }
+        } // end if
         if (list.getBacklogStatus() != BacklogStatus_1.BacklogStatus.NONE) {
             task.setBacklogStatus(list.getBacklogStatus());
-        }
+        } // end if
     }; // end moveTaskCard
     /**
      * Finds a list in the current board given the list's label
@@ -146,10 +160,10 @@ var Controller = /** @class */ (function () {
      *
      * @return the task card we're looking for
      */
-    Controller.prototype.findTask = function (taskID) {
+    Controller.prototype.findTask = function (taskLabel) {
         var tasks = this.model.getProjects().getTasks();
         for (var i = 0; i < tasks.length; i++) {
-            if (tasks[i].getLabel() === taskID) {
+            if (tasks[i].getLabel() === taskLabel) {
                 return tasks[i];
             } // end if
         } // end for
@@ -253,24 +267,25 @@ function addClickListeners(controller) {
     var _loop_1 = function (i) {
         var buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getLabel() + 'AddButton';
         document.getElementById(buttonID).addEventListener('click', function (event) {
-            var newTaskText = prompt('Please enter the new task text: ');
+            var newTaskText = 'Enter description here';
             controller.getModel().getProjects().generateTaskCard(i, newTaskText);
+            controller.setEditableTaskCard(controller.getNewestTaskCard().getLabel());
             render(controller);
         }); // end Event Listener
     };
     // generate the add button listeners
-    // console.log(controller);
     for (var i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
         _loop_1(i);
     } // end for
+    // Add button for editting text
     tasks.forEach(function (task) {
         var taskID = task.getLabel() + 'TextField';
         document.getElementById(taskID).addEventListener('click', function (event) {
-            var newTaskText = prompt('Please enter new text: ');
-            controller.editTaskText(task.getLabel(), newTaskText);
+            controller.setEditableTaskCard(task.getLabel());
             render(controller);
         });
     });
+    // Add button for removing text
     tasks.forEach(function (task) {
         var taskID = task.getLabel() + 'RemoveButton';
         document.getElementById(taskID).addEventListener('click', function (event) {
@@ -280,6 +295,23 @@ function addClickListeners(controller) {
                 render(controller);
             }
         });
+    });
+    // add functionality for the editable task card's cancel button
+    document.getElementById('editable-task-card-cancel-button').
+        addEventListener('click', function (event) {
+        controller.removeEditableTaskCard();
+        render(controller);
+    });
+    // add functionality for the editable task card's submit button
+    document.getElementById('editable-task-card-submit-button').
+        addEventListener('click', function (event) {
+        var newText = document.
+            getElementById('editable-task-card-description').value;
+        if (newText !== '') {
+            controller.editTaskText(controller.getEditableTaskCard().getLabel(), newText);
+        }
+        controller.removeEditableTaskCard();
+        render(controller);
     });
     var _loop_2 = function (i) {
         var boardID = 'board' + i.toString();
@@ -340,6 +372,15 @@ function changeBoardMenuVisibility(controller) {
         document.getElementById('boardButtons').style.visibility = 'hidden';
     } // end else
 } // end changeBoardMenuVisibility
+function changeEditableTaskCardVisibility(controller) {
+    if (controller.getEditableTaskCard() !== null) {
+        document.getElementById('editable-task-card').style.visibility = 'visible';
+        document.getElementById('editable-task-card-description').focus();
+    }
+    else {
+        document.getElementById('editable-task-card').style.visibility = 'hidden';
+    }
+} // end changeEditableTaskCardVisibility
 /**
  * Updates the size based on whether or not the board menu is visible
  *
@@ -366,6 +407,7 @@ function render(controller) {
     addClickListeners(controller);
     highlightCurrentBoard(controller);
     changeBoardMenuVisibility(controller);
+    changeEditableTaskCardVisibility(controller);
     setCurrentBoardSize(controller);
 } // end render
 // Set up interact
@@ -1629,6 +1671,7 @@ exports.__esModule = true;
 var View = /** @class */ (function () {
     function View() {
         this.isBoardMenuVisible = true;
+        this.editableTaskCard = null;
     } // end constructor
     /**
      * if the board menu is visible, hide it and vice-versa
@@ -1644,6 +1687,12 @@ var View = /** @class */ (function () {
     View.prototype.getIsBoardMenuVisibile = function () {
         return this.isBoardMenuVisible;
     }; // end getIsBoardMenuVisibile
+    View.prototype.setEditableTaskCard = function (task) {
+        this.editableTaskCard = task;
+    };
+    View.prototype.getEditableTaskCard = function () {
+        return this.editableTaskCard;
+    };
     /**
      * generates HTML based on the current model
      *
@@ -1655,9 +1704,36 @@ var View = /** @class */ (function () {
         var html = '<div>';
         html += this.generateToolbar(model);
         html += this.generateBodyHTML(model);
+        html += this.generateEditableTaskCardHTML();
         html += '</div>';
         return html;
     }; // end generateHTML
+    /**
+     * generates the html for the edit screen for editting a task card
+     *
+     * @return the HTML for the edit screen
+     */
+    View.prototype.generateEditableTaskCardHTML = function () {
+        var html = '';
+        var label = '';
+        var text = '';
+        if (this.editableTaskCard !== null) {
+            label = this.editableTaskCard.getLabel();
+            text = this.editableTaskCard.getText();
+        }
+        html += '<div id=editable-task-card>';
+        html += '<div id=editable-task-card-header>' +
+            label + '</div>';
+        html += '<textarea id=editable-task-card-description placeholder="'
+            + text + '"></textarea>';
+        html += '<br/>';
+        html += '<button id=editable-task-card-cancel-button type=button' +
+            '>Cancel</button>';
+        html += '<button id=editable-task-card-submit-button type=button' +
+            '>Submit</button>';
+        html += '</div>';
+        return html;
+    }; // end generateEditableTaskCard
     /**
      * generates the toolbar HTML
      *
@@ -1701,7 +1777,8 @@ var View = /** @class */ (function () {
     /**
      * Generates the body of the application
      *
-     * @param {Model} model -- the data structure of the application to be displayed
+     * @param {Model} model -- the data structure of the application to be
+     * displayed
      *
      * @return {string} -- the HTML for the body of the application
      */
@@ -1757,14 +1834,16 @@ var View = /** @class */ (function () {
         var html = '<div class=lists>';
         // for every list, generate the HTML
         for (var i = 0; i < model.getProjects().getActiveBoard().getLists().length; i++) {
-            html += '<div id=\'' + model.getProjects().getActiveBoard().getLists()[i].getLabel() + '\' class=\'dropzone list\'>' +
+            html += '<div id=\'' + model.getProjects().getActiveBoard().getLists()[i].
+                getLabel() + '\' class=\'dropzone list\'>' +
                 '<div class=list-header>' +
                 '<div class=list-label><u>' +
                 model.getProjects().getActiveBoard().getLists()[i].getLabel() +
                 '</u></div>' +
                 this.generateAddButtonHTML(model.getProjects().getActiveBoard().getLists()[i].getLabel()) +
                 '</div>' +
-                this.generateIndividualListHTML(model.getProjects().getActiveBoard().getLists()[i], model) +
+                this.generateIndividualListHTML(model.getProjects().getActiveBoard().
+                    getLists()[i], model) +
                 '</div>';
         } // end for loop
         return html;
@@ -1849,7 +1928,8 @@ var View = /** @class */ (function () {
         return '<button id=\'' + thisID + '\' class=add-button>+</button>';
     }; // end generateAddButtonHTML
     /**
-     * Generates the button that will allow us to toggle the visibility of the Board Menu
+     * Generates the button that will allow us to toggle the visibility of the
+     * Board Menu
      *
      * @return {string} -- the HTML for the Board Menu Toggle button
      */

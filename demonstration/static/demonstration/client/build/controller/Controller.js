@@ -4,6 +4,15 @@ var Model_1 = require("../model/Model");
 var view_1 = require("../view/view");
 var MoscowStatus_1 = require("../model/enums/MoscowStatus");
 var BacklogStatus_1 = require("../model/enums/BacklogStatus");
+/**
+ * Controller.ts
+ *
+ * Manages the changes in the model and the view
+ *
+ * @author Ellery De Jesus
+ * @author Chris Wolf
+ * @version 1.0.0 (March 30, 2020)
+ */
 var Controller = /** @class */ (function () {
     function Controller(projectName) {
         this.projectName = projectName;
@@ -18,7 +27,20 @@ var Controller = /** @class */ (function () {
      */
     Controller.prototype.getView = function () {
         return this.view;
-    };
+    }; // end getView
+    Controller.prototype.setEditableTaskCard = function (taskLabel) {
+        this.view.setEditableTaskCard(this.findTask(taskLabel));
+    }; // end setEditableTaskCard
+    Controller.prototype.removeEditableTaskCard = function () {
+        this.view.setEditableTaskCard(null);
+    }; // end removeEditableTaskCard
+    Controller.prototype.getEditableTaskCard = function () {
+        return this.view.getEditableTaskCard();
+    }; // end getEditableTaskCard
+    Controller.prototype.getNewestTaskCard = function () {
+        var tasks = this.model.getProjects().getTasks();
+        return tasks[tasks.length - 1];
+    }; // end getNewestTaskCard
     /**
      * calls on the model to create a new board from a template
      *
@@ -34,20 +56,15 @@ var Controller = /** @class */ (function () {
      * @param taskIndex which task card we are changing
      * @param newTaskText the text to change the task card to
      */
-    // editTaskText(listIndex: number, taskIndex: number, newTaskText: string) {
-    //   if (newTaskText !== '' && newTaskText !== null) {
-    //     this.model.getProjects().getActiveBoard().getLists()[listIndex].getTasks()[taskIndex].setText(newTaskText);
-    //   } // end if
-    // } // end editTaskText
     Controller.prototype.editTaskText = function (taskLabel, newText) {
         var tasks = this.model.getProjects().getTasks();
         tasks.forEach(function (task) {
             if (task.getLabel() === taskLabel) {
                 task.setText(newText);
                 return;
-            }
-        });
-    };
+            } // end if
+        }); // end forEach
+    }; // end editTaskText
     /**
      * removes a board from our model
      *
@@ -101,9 +118,6 @@ var Controller = /** @class */ (function () {
      * @param {number} listID the list from which we are removing a task card
      * @param {number} taskID -- the ID of the task card we are removing
      */
-    // removeTaskCard(listID: number, taskID: number) {
-    //   this.model.removeTaskCard(this.model.getProjects().getActiveBoardIndex(), listID, taskID);
-    // } // end removeTaskCard
     Controller.prototype.removeTaskCard = function (taskLabel) {
         this.getModel().getProjects().removeTaskCard(taskLabel);
     };
@@ -118,10 +132,10 @@ var Controller = /** @class */ (function () {
         var task = this.findTask(movedTaskCard.id);
         if (list.getMoscowStatus() != MoscowStatus_1.MoscowStatus.NONE) {
             task.setMoscowStatus(list.getMoscowStatus());
-        }
+        } // end if
         if (list.getBacklogStatus() != BacklogStatus_1.BacklogStatus.NONE) {
             task.setBacklogStatus(list.getBacklogStatus());
-        }
+        } // end if
     }; // end moveTaskCard
     /**
      * Finds a list in the current board given the list's label
@@ -145,10 +159,10 @@ var Controller = /** @class */ (function () {
      *
      * @return the task card we're looking for
      */
-    Controller.prototype.findTask = function (taskID) {
+    Controller.prototype.findTask = function (taskLabel) {
         var tasks = this.model.getProjects().getTasks();
         for (var i = 0; i < tasks.length; i++) {
-            if (tasks[i].getLabel() === taskID) {
+            if (tasks[i].getLabel() === taskLabel) {
                 return tasks[i];
             } // end if
         } // end for

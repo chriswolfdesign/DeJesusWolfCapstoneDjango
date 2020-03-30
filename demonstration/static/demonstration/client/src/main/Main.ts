@@ -50,26 +50,29 @@ function highlightCurrentBoard(controller: Controller): void {
  */
 function addClickListeners(controller: Controller): void {
   let tasks: TaskCard[] = controller.getModel().getProjects().getTasks();
+  
   // generate the add button listeners
-  // console.log(controller);
   for (let i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
     let buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getLabel() + 'AddButton';
     document.getElementById(buttonID).addEventListener('click', function (event) {
-      let newTaskText = prompt('Please enter the new task text: ');
+      let newTaskText = 'Enter description here';
       controller.getModel().getProjects().generateTaskCard(i, newTaskText);
+      controller.setEditableTaskCard(controller.getNewestTaskCard().getLabel());
       render(controller);
     }); // end Event Listener
   } // end for
 
+  // Add button for editting text
   tasks.forEach(task => {
     let taskID: string = task.getLabel() + 'TextField';
     document.getElementById(taskID).addEventListener('click', function(event) {
-      let newTaskText = prompt('Please enter new text: ');
-      controller.editTaskText(task.getLabel(), newTaskText);
+
+      controller.setEditableTaskCard(task.getLabel());
       render(controller);
     })
   });
 
+  // Add button for removing text
   tasks.forEach(task => {
     let taskID: string = task.getLabel() + 'RemoveButton';
     document.getElementById(taskID).addEventListener('click', function(event) {
@@ -80,6 +83,28 @@ function addClickListeners(controller: Controller): void {
       }
     })
   })
+
+  // add functionality for the editable task card's cancel button
+  document.getElementById('editable-task-card-cancel-button').
+    addEventListener('click', function(event) {
+      controller.removeEditableTaskCard();
+      render(controller);
+  });
+
+  // add functionality for the editable task card's submit button
+  document.getElementById('editable-task-card-submit-button').
+    addEventListener('click', function(event) {
+      let newText = (<HTMLInputElement> document.
+        getElementById('editable-task-card-description')).value;
+
+        if (newText !== '') {
+          controller.editTaskText(controller.getEditableTaskCard().getLabel(),
+          newText);
+        }
+
+        controller.removeEditableTaskCard();
+        render(controller);
+  });
 
   // allows us to change the active board based on user preference via click
   for (let i = 0; i < controller.getModel().getProjects().getBoards().length; i++) {
@@ -144,6 +169,16 @@ function changeBoardMenuVisibility(controller: Controller) {
  } // end else
 } // end changeBoardMenuVisibility
 
+
+function changeEditableTaskCardVisibility(controller) {
+  if (controller.getEditableTaskCard() !== null) {
+    document.getElementById('editable-task-card').style.visibility = 'visible';
+    document.getElementById('editable-task-card-description').focus();
+  } else {
+    document.getElementById('editable-task-card').style.visibility = 'hidden';
+  }
+} // end changeEditableTaskCardVisibility
+
 /**
  * Updates the size based on whether or not the board menu is visible
  * 
@@ -171,6 +206,7 @@ function render(controller: Controller): void {
   addClickListeners(controller);
   highlightCurrentBoard(controller);
   changeBoardMenuVisibility(controller);
+  changeEditableTaskCardVisibility(controller);
   setCurrentBoardSize(controller);
 } // end render
 

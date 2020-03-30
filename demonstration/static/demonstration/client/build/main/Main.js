@@ -41,24 +41,25 @@ function addClickListeners(controller) {
     var _loop_1 = function (i) {
         var buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getLabel() + 'AddButton';
         document.getElementById(buttonID).addEventListener('click', function (event) {
-            var newTaskText = prompt('Please enter the new task text: ');
+            var newTaskText = 'Enter description here';
             controller.getModel().getProjects().generateTaskCard(i, newTaskText);
+            controller.setEditableTaskCard(controller.getNewestTaskCard().getLabel());
             render(controller);
         }); // end Event Listener
     };
     // generate the add button listeners
-    // console.log(controller);
     for (var i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
         _loop_1(i);
     } // end for
+    // Add button for editting text
     tasks.forEach(function (task) {
         var taskID = task.getLabel() + 'TextField';
         document.getElementById(taskID).addEventListener('click', function (event) {
-            var newTaskText = prompt('Please enter new text: ');
-            controller.editTaskText(task.getLabel(), newTaskText);
+            controller.setEditableTaskCard(task.getLabel());
             render(controller);
         });
     });
+    // Add button for removing text
     tasks.forEach(function (task) {
         var taskID = task.getLabel() + 'RemoveButton';
         document.getElementById(taskID).addEventListener('click', function (event) {
@@ -68,6 +69,23 @@ function addClickListeners(controller) {
                 render(controller);
             }
         });
+    });
+    // add functionality for the editable task card's cancel button
+    document.getElementById('editable-task-card-cancel-button').
+        addEventListener('click', function (event) {
+        controller.removeEditableTaskCard();
+        render(controller);
+    });
+    // add functionality for the editable task card's submit button
+    document.getElementById('editable-task-card-submit-button').
+        addEventListener('click', function (event) {
+        var newText = document.
+            getElementById('editable-task-card-description').value;
+        if (newText !== '') {
+            controller.editTaskText(controller.getEditableTaskCard().getLabel(), newText);
+        }
+        controller.removeEditableTaskCard();
+        render(controller);
     });
     var _loop_2 = function (i) {
         var boardID = 'board' + i.toString();
@@ -128,6 +146,15 @@ function changeBoardMenuVisibility(controller) {
         document.getElementById('boardButtons').style.visibility = 'hidden';
     } // end else
 } // end changeBoardMenuVisibility
+function changeEditableTaskCardVisibility(controller) {
+    if (controller.getEditableTaskCard() !== null) {
+        document.getElementById('editable-task-card').style.visibility = 'visible';
+        document.getElementById('editable-task-card-description').focus();
+    }
+    else {
+        document.getElementById('editable-task-card').style.visibility = 'hidden';
+    }
+} // end changeEditableTaskCardVisibility
 /**
  * Updates the size based on whether or not the board menu is visible
  *
@@ -154,6 +181,7 @@ function render(controller) {
     addClickListeners(controller);
     highlightCurrentBoard(controller);
     changeBoardMenuVisibility(controller);
+    changeEditableTaskCardVisibility(controller);
     setCurrentBoardSize(controller);
 } // end render
 // Set up interact

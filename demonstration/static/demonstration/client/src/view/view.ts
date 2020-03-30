@@ -12,12 +12,12 @@ import { TaskCard } from '../model/TaskCard';
 import { Model } from '../model/Model';
 
 export class View {
-  // Intentionally no constructor
-
   private isBoardMenuVisible: boolean;
+  private editableTaskCard: TaskCard;
 
   constructor() {
     this.isBoardMenuVisible = true;
+    this.editableTaskCard = null;
   } // end constructor
 
   /**
@@ -36,6 +36,14 @@ export class View {
     return this.isBoardMenuVisible;
   } // end getIsBoardMenuVisibile
 
+  setEditableTaskCard(task: TaskCard) {
+    this.editableTaskCard = task;
+  }
+
+  getEditableTaskCard(): TaskCard {
+    return this.editableTaskCard;
+  }
+
   /**
    * generates HTML based on the current model
    *
@@ -47,9 +55,43 @@ export class View {
     let html = '<div>';
     html += this.generateToolbar(model);
     html += this.generateBodyHTML(model);
+    html += this.generateEditableTaskCardHTML();
     html += '</div>';
     return html;
   } // end generateHTML
+
+  /**
+   * generates the html for the edit screen for editting a task card
+   * 
+   * @return the HTML for the edit screen
+   */
+  generateEditableTaskCardHTML(): string {
+    let html: string = '';
+    let label: string = '';
+    let text: string = '';
+    if (this.editableTaskCard !== null) {
+      label = this.editableTaskCard.getLabel();
+      text = this.editableTaskCard.getText();
+    }
+
+    html += '<div id=editable-task-card>'
+    html += '<div id=editable-task-card-header>' + 
+      label + '</div>';
+    
+    html += '<textarea id=editable-task-card-description placeholder="'
+      + text + '"></textarea>';
+    html += '<br/>';
+
+    html += '<button id=editable-task-card-cancel-button type=button' +         
+      '>Cancel</button>';
+
+    html += '<button id=editable-task-card-submit-button type=button' + 
+      '>Submit</button>';
+
+    html += '</div>';
+
+    return html;
+  } // end generateEditableTaskCard
 
   /**
    * generates the toolbar HTML
@@ -98,7 +140,8 @@ export class View {
   /**
    * Generates the body of the application
    *
-   * @param {Model} model -- the data structure of the application to be displayed
+   * @param {Model} model -- the data structure of the application to be 
+   * displayed
    *
    * @return {string} -- the HTML for the body of the application
    */
@@ -163,14 +206,17 @@ export class View {
 
     // for every list, generate the HTML
     for (let i = 0; i < model.getProjects().getActiveBoard().getLists().length; i++) {
-      html += '<div id=\'' + model.getProjects().getActiveBoard().getLists()[i].getLabel() + '\' class=\'dropzone list\'>' + 
+      html += '<div id=\'' + model.getProjects().getActiveBoard().getLists()[i].
+        getLabel() + '\' class=\'dropzone list\'>' + 
         '<div class=list-header>' + 
         '<div class=list-label><u>' +
         model.getProjects().getActiveBoard().getLists()[i].getLabel() + 
         '</u></div>' +
-        this.generateAddButtonHTML(model.getProjects().getActiveBoard().getLists()[i].getLabel()) + 
+        this.generateAddButtonHTML(model.getProjects().getActiveBoard().getLists
+          ()[i].getLabel()) + 
         '</div>' + 
-        this.generateIndividualListHTML(model.getProjects().getActiveBoard().getLists()[i], model) +
+        this.generateIndividualListHTML(model.getProjects().getActiveBoard().
+          getLists()[i], model) +
         '</div>';
     } // end for loop
 
@@ -231,7 +277,7 @@ export class View {
     html += '</div>';
     html += '<div class=task-card-text id=' + task.getLabel() + 'TextField>' + task.getText() + '</div>';
 
-    html += '</div>'
+    html += '</div>';
 
     html += '<div class=task-card-statuses>';
     html += '<div><b>' + task.getMoscowStatus() + '</b></div>';
@@ -269,7 +315,8 @@ export class View {
   } // end generateAddButtonHTML
 
   /**
-   * Generates the button that will allow us to toggle the visibility of the Board Menu
+   * Generates the button that will allow us to toggle the visibility of the
+   * Board Menu
    *
    * @return {string} -- the HTML for the Board Menu Toggle button
    */
