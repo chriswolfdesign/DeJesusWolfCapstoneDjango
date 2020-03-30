@@ -167,10 +167,10 @@ export class View {
    * @return {string} the HTML for the header of the model
    */
   generateHeaderHTML(model): string {
-    let html = '<div id=header>';
-    html += '<h1><u>';
+    let html = '<h1 id=header>';
+    html += '<u>';
     html += model.getProjects().getActiveBoard().getTitle();
-    html += '</u></h1></div>';
+    html += '</u></h1>';
     return html;
   } // end generateHeaderHTML
 

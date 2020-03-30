@@ -1924,10 +1924,10 @@ var View = /** @class */ (function () {
      * @return {string} the HTML for the header of the model
      */
     View.prototype.generateHeaderHTML = function (model) {
-        var html = '<div id=header>';
-        html += '<h1><u>';
+        var html = '<h1 id=header>';
+        html += '<u>';
         html += model.getProjects().getActiveBoard().getTitle();
-        html += '</u></h1></div>';
+        html += '</u></h1>';
         return html;
     }; // end generateHeaderHTML
     /**
