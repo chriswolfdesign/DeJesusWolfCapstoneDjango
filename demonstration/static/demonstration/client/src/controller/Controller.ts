@@ -84,6 +84,19 @@ export class Controller {
     }); // end forEach
   } // end editTaskText
 
+  setConditions(completedArray: boolean[]) {
+    for (let i = 0; i < this.getEditableTaskCard().getNumberOfConditions();
+     i++) {
+      if (completedArray[i]) {
+        this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
+          setComplete();
+      } else {
+        this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
+          setIncomplete();
+      }
+    }
+  }
+
   /**
    * removes a board from our model
    *

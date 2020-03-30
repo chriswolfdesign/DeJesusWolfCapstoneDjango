@@ -65,6 +65,18 @@ var Controller = /** @class */ (function () {
             } // end if
         }); // end forEach
     }; // end editTaskText
+    Controller.prototype.setConditions = function (completedArray) {
+        for (var i = 0; i < this.getEditableTaskCard().getNumberOfConditions(); i++) {
+            if (completedArray[i]) {
+                this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
+                    setComplete();
+            }
+            else {
+                this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
+                    setIncomplete();
+            }
+        }
+    };
     /**
      * removes a board from our model
      *

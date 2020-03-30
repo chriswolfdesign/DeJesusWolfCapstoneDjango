@@ -11,10 +11,13 @@
 
 import { MoscowStatus } from "./enums/MoscowStatus";
 import { BacklogStatus } from "./enums/BacklogStatus";
+import { ConditionOfSatisfaction } from "./ConditionOfSatisfaction";
 
 export class TaskCard {
+
   private label: string;
   private text: string;
+  private conditionsOfSatisfaction: ConditionOfSatisfaction[];
   private moscowStatus: MoscowStatus;
   private backlogStatus: BacklogStatus;
 
@@ -30,6 +33,7 @@ export class TaskCard {
     backlogStatus: BacklogStatus) {
     this.label = label;
     this.text = text;
+    this.conditionsOfSatisfaction = [];
     this.moscowStatus = moscowStatus;
     this.backlogStatus = backlogStatus;
   } // end constructor
@@ -46,6 +50,33 @@ export class TaskCard {
     return this.text;
   } // end getText
 
+  getNumberOfConditions(): number {
+    return this.conditionsOfSatisfaction.length;
+  } // end getNumberOfConditions
+
+  /**
+   * Gets the number of conditions of satisfaction that have been completed
+   * for this card
+   * 
+   * @return the number of conditions of satisfaction that have been completed
+   */
+  getNumberOfCompletedConditions(): number {
+    let completed = 0;
+
+    for (let i = 0; i < this.getNumberOfConditions(); i++) {
+      if(this.conditionsOfSatisfaction[i].isComplete()) {
+        completed++;
+      } // end if
+    } // end for
+
+    return completed;
+  } // end getNumberOfCompletedConditions
+
+  getConditionsStats(): string {
+    return this.getNumberOfCompletedConditions() + '/' + 
+      this.getNumberOfConditions();
+  } // end getConditionsStats
+
   getMoscowStatus(): MoscowStatus {
     return this.moscowStatus;
   } // end getMoscowStatus
@@ -61,6 +92,19 @@ export class TaskCard {
   setBacklogStatus(backlogStatus: BacklogStatus) {
     this.backlogStatus = backlogStatus;
   } // end setBacklogStatus
+
+  getConditionsOfSatisfaction(): ConditionOfSatisfaction[] {
+    return this.conditionsOfSatisfaction;
+  } // end getConditionsOfSatisfaction
+
+  /**
+   * Adds a condition of satisfaction to the task card
+   * 
+   * @param text the text for the condition of satisfaction
+   */
+  addConditionOfSatisfaction(text: string) {
+    this.conditionsOfSatisfaction.push(new ConditionOfSatisfaction(text));
+  }
 
   loadTaskCard(taskcard: TaskCard) {
     this.label = taskcard.label;

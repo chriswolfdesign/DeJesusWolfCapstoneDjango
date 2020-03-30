@@ -102,6 +102,11 @@ body {
     color: white;
 }
 
+#conditions-of-satisfaction-header {
+    font-weight:bold;
+    text-decoration: underline;
+}
+
  /***********
   * CLASSES *
   ***********/

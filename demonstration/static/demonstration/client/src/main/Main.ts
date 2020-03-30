@@ -14,6 +14,7 @@ import { Model } from '../model/Model';
 import interact from 'interactjs';
 import { Project } from '../model/Project';
 import { TaskCard } from '../model/TaskCard';
+import { ConditionOfSatisfaction } from '../model/ConditionOfSatisfaction';
 
 let controller: Controller;  // I really don't like that this is global, let's look into other options
 
@@ -54,7 +55,8 @@ function addClickListeners(controller: Controller): void {
   // generate the add button listeners
   for (let i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
     let buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getLabel() + 'AddButton';
-    document.getElementById(buttonID).addEventListener('click', function (event) {
+    document.getElementById(buttonID).addEventListener('click', function 
+      (event) {
       let newTaskText = 'Enter description here';
       controller.getModel().getProjects().generateTaskCard(i, newTaskText);
       controller.setEditableTaskCard(controller.getNewestTaskCard().getLabel());
@@ -69,8 +71,8 @@ function addClickListeners(controller: Controller): void {
 
       controller.setEditableTaskCard(task.getLabel());
       render(controller);
-    })
-  });
+    }); // end eventListener
+  }); // end forEach
 
   // Add button for removing text
   tasks.forEach(task => {
@@ -80,9 +82,9 @@ function addClickListeners(controller: Controller): void {
       if (choice) {
         controller.removeTaskCard(task.getLabel());
         render(controller);
-      }
-    })
-  })
+      } // end if
+    }); // end eventListener
+  }); // end forEach
 
   // add functionality for the editable task card's cancel button
   document.getElementById('editable-task-card-cancel-button').
@@ -94,26 +96,53 @@ function addClickListeners(controller: Controller): void {
   // add functionality for the editable task card's submit button
   document.getElementById('editable-task-card-submit-button').
     addEventListener('click', function(event) {
-      let newText = (<HTMLInputElement> document.
+      let newText : string = (<HTMLInputElement> document.
         getElementById('editable-task-card-description')).value;
 
         if (newText !== '') {
           controller.editTaskText(controller.getEditableTaskCard().getLabel(),
           newText);
-        }
+        } // end if
+
+        let conditions : ConditionOfSatisfaction[] = controller.
+          getEditableTaskCard().getConditionsOfSatisfaction();
+
+        let completedArray: boolean[] = [];
+
+        for (let i = 0; i < conditions.length; i++) {
+          completedArray.push((<HTMLInputElement> document.getElementById
+            ('condition' + i)).checked);
+        } // end for
+
+        controller.setConditions(completedArray);
+        
+        console.log(controller.getEditableTaskCard());
 
         controller.removeEditableTaskCard();
         render(controller);
   });
 
+  // when the enter button is clicked in the satisfaction enter text box
+  document.getElementById('new-condition').addEventListener('keyup', 
+    function(event) {
+      let newConditionText = (<HTMLInputElement> document.getElementById(
+        'new-condition')).value;
+      if (event.keyCode === 13) {
+        controller.getEditableTaskCard().addConditionOfSatisfaction(
+          newConditionText);
+        render(controller);
+      } // end if
+  }); // end for
+
   // allows us to change the active board based on user preference via click
-  for (let i = 0; i < controller.getModel().getProjects().getBoards().length; i++) {
+  for (let i = 0; i < controller.getModel().getProjects().getBoards().length; 
+    i++) {
     let boardID = 'board' + i.toString();
     document.getElementById(boardID).addEventListener('click', function (event) {
       controller.getModel().getProjects().setActiveBoardIndex(i);
       render(controller);
     });
-  }
+  } // end for
 
   // allows us to save the current instance of the project onto our local file system
   document.getElementById("save").addEventListener('click', function (event) {
@@ -174,6 +203,7 @@ function changeEditableTaskCardVisibility(controller) {
   if (controller.getEditableTaskCard() !== null) {
     document.getElementById('editable-task-card').style.visibility = 'visible';
     document.getElementById('editable-task-card-description').focus();
+    setConditionsChecked(controller);
   } else {
     document.getElementById('editable-task-card').style.visibility = 'hidden';
   }
@@ -195,6 +225,26 @@ function setCurrentBoardSize(controller: Controller) {
     document.getElementById('currentBoard').style.width = '90%';
   } // end else
 } // end setCurrentBoardSize
+
+/**
+ * 
+ * 
+ * @param controller the controller in charge of editting the model
+ */
+function setConditionsChecked(controller: Controller) {
+  let conditions = controller.getEditableTaskCard().
+    getConditionsOfSatisfaction();
+
+  for (let i = 0; i < conditions.length; i++) {
+    if (conditions[i].isComplete()) {
+      (<HTMLInputElement> document.getElementById('condition' + i)).checked = 
+        true;
+    } else {
+      (<HTMLInputElement> document.getElementById('condition' + i)).checked = 
+        false;
+    }
+  }
+}
 
 /**
  * Causes the HTML to be drawn, or redrawn, to the screen

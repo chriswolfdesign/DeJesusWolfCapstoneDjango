@@ -29,10 +29,10 @@ var View = /** @class */ (function () {
     }; // end getIsBoardMenuVisibile
     View.prototype.setEditableTaskCard = function (task) {
         this.editableTaskCard = task;
-    };
+    }; // end setEditableTaskCard
     View.prototype.getEditableTaskCard = function () {
         return this.editableTaskCard;
-    };
+    }; // end getEditableTaskCard
     /**
      * generates HTML based on the current model
      *
@@ -67,6 +67,8 @@ var View = /** @class */ (function () {
         html += '<textarea id=editable-task-card-description placeholder="'
             + text + '"></textarea>';
         html += '<br/>';
+        html += this.getConditionsOfSatisfactionHTML();
+        html += '<br/>';
         html += '<button id=editable-task-card-cancel-button type=button' +
             '>Cancel</button>';
         html += '<button id=editable-task-card-submit-button type=button' +
@@ -74,6 +76,33 @@ var View = /** @class */ (function () {
         html += '</div>';
         return html;
     }; // end generateEditableTaskCard
+    /**
+     * Generates the HTML for the conditions of satisfaction
+     *
+     * @return the HTML for the conditions of satisfaction
+     */
+    View.prototype.getConditionsOfSatisfactionHTML = function () {
+        var conditionStats = '0/0';
+        if (this.editableTaskCard !== null) {
+            conditionStats = this.editableTaskCard.getConditionsStats();
+        } // end if
+        var html = '<div id=conditions-of-satisfaction-header>';
+        html += 'Conditions Of Satisfaction ';
+        html += conditionStats;
+        html += '</div>';
+        // add each of the conditions of satisfaction
+        if (this.editableTaskCard !== null) {
+            for (var i = 0; i < this.editableTaskCard.getNumberOfConditions(); i++) {
+                html += '<div>';
+                html += '<input id=condition' + i + ' type=checkbox></input>';
+                html += this.editableTaskCard.getConditionsOfSatisfaction()[i].
+                    getText();
+                html += '</div>';
+            } // end for
+        } // end if
+        html += '<input id=new-condition type=text></input>';
+        return html;
+    };
     /**
      * generates the toolbar HTML
      *
@@ -240,6 +269,7 @@ var View = /** @class */ (function () {
         html += '<div class=task-card-statuses>';
         html += '<div><b>' + task.getMoscowStatus() + '</b></div>';
         html += '<div><b>' + task.getBacklogStatus() + '</b></div>';
+        html += '<div><b>' + task.getConditionsStats() + '</b></div>';
         html += '</div>';
         html += '</div>';
         return html;

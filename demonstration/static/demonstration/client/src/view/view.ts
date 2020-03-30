@@ -38,11 +38,11 @@ export class View {
 
   setEditableTaskCard(task: TaskCard) {
     this.editableTaskCard = task;
-  }
+  } // end setEditableTaskCard
 
   getEditableTaskCard(): TaskCard {
     return this.editableTaskCard;
-  }
+  } // end getEditableTaskCard
 
   /**
    * generates HTML based on the current model
@@ -82,6 +82,10 @@ export class View {
       + text + '"></textarea>';
     html += '<br/>';
 
+    html += this.getConditionsOfSatisfactionHTML();
+
+    html += '<br/>';
+
     html += '<button id=editable-task-card-cancel-button type=button' +         
       '>Cancel</button>';
 
@@ -92,6 +96,39 @@ export class View {
 
     return html;
   } // end generateEditableTaskCard
+
+  /**
+   * Generates the HTML for the conditions of satisfaction
+   * 
+   * @return the HTML for the conditions of satisfaction
+   */
+  getConditionsOfSatisfactionHTML(): string {
+    let conditionStats: string = '0/0';
+
+    if (this.editableTaskCard !== null) {
+      conditionStats = this.editableTaskCard.getConditionsStats();
+    } // end if
+
+    let html = '<div id=conditions-of-satisfaction-header>';
+    html += 'Conditions Of Satisfaction ';
+    html += conditionStats;
+    html += '</div>';
+
+    // add each of the conditions of satisfaction
+    if (this.editableTaskCard !== null) {
+      for (let i = 0; i < this.editableTaskCard.getNumberOfConditions(); i++) {
+        html += '<div>';
+        html += '<input id=condition' + i + ' type=checkbox></input>';
+        html += this.editableTaskCard.getConditionsOfSatisfaction()[i].
+          getText();
+        html += '</div>';
+      } // end for
+    } // end if
+
+    html += '<input id=new-condition type=text></input>';
+
+    return html;
+  }
 
   /**
    * generates the toolbar HTML
@@ -282,6 +319,7 @@ export class View {
     html += '<div class=task-card-statuses>';
     html += '<div><b>' + task.getMoscowStatus() + '</b></div>';
     html += '<div><b>' + task.getBacklogStatus() + '</b></div>';
+    html += '<div><b>' + task.getConditionsStats() + '</b></div>';
     html += '</div>';
 
     html += '</div>';

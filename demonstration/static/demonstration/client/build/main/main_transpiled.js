@@ -66,6 +66,18 @@ var Controller = /** @class */ (function () {
             } // end if
         }); // end forEach
     }; // end editTaskText
+    Controller.prototype.setConditions = function (completedArray) {
+        for (var i = 0; i < this.getEditableTaskCard().getNumberOfConditions(); i++) {
+            if (completedArray[i]) {
+                this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
+                    setComplete();
+            }
+            else {
+                this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
+                    setIncomplete();
+            }
+        }
+    };
     /**
      * removes a board from our model
      *
@@ -223,7 +235,7 @@ var Controller = /** @class */ (function () {
 }()); // end Controller
 exports.Controller = Controller;
 
-},{"../model/Model":3,"../model/enums/BacklogStatus":9,"../model/enums/MoscowStatus":12,"../view/view":27}],2:[function(require,module,exports){
+},{"../model/Model":4,"../model/enums/BacklogStatus":10,"../model/enums/MoscowStatus":13,"../view/view":28}],2:[function(require,module,exports){
 "use strict";
 /**
  * main.js
@@ -283,8 +295,8 @@ function addClickListeners(controller) {
         document.getElementById(taskID).addEventListener('click', function (event) {
             controller.setEditableTaskCard(task.getLabel());
             render(controller);
-        });
-    });
+        }); // end eventListener
+    }); // end forEach
     // Add button for removing text
     tasks.forEach(function (task) {
         var taskID = task.getLabel() + 'RemoveButton';
@@ -293,9 +305,9 @@ function addClickListeners(controller) {
             if (choice) {
                 controller.removeTaskCard(task.getLabel());
                 render(controller);
-            }
-        });
-    });
+            } // end if
+        }); // end eventListener
+    }); // end forEach
     // add functionality for the editable task card's cancel button
     document.getElementById('editable-task-card-cancel-button').
         addEventListener('click', function (event) {
@@ -309,10 +321,26 @@ function addClickListeners(controller) {
             getElementById('editable-task-card-description').value;
         if (newText !== '') {
             controller.editTaskText(controller.getEditableTaskCard().getLabel(), newText);
-        }
+        } // end if
+        var conditions = controller.
+            getEditableTaskCard().getConditionsOfSatisfaction();
+        var completedArray = [];
+        for (var i = 0; i < conditions.length; i++) {
+            completedArray.push(document.getElementById('condition' + i).checked);
+        } // end for
+        controller.setConditions(completedArray);
+        console.log(controller.getEditableTaskCard());
         controller.removeEditableTaskCard();
         render(controller);
     });
+    // when the enter button is clicked in the satisfaction enter text box
+    document.getElementById('new-condition').addEventListener('keyup', function (event) {
+        var newConditionText = document.getElementById('new-condition').value;
+        if (event.keyCode === 13) {
+            controller.getEditableTaskCard().addConditionOfSatisfaction(newConditionText);
+            render(controller);
+        } // end if
+    }); // end for
     var _loop_2 = function (i) {
         var boardID = 'board' + i.toString();
         document.getElementById(boardID).addEventListener('click', function (event) {
@@ -323,7 +351,7 @@ function addClickListeners(controller) {
     // allows us to change the active board based on user preference via click
     for (var i = 0; i < controller.getModel().getProjects().getBoards().length; i++) {
         _loop_2(i);
-    }
+    } // end for
     // allows us to save the current instance of the project onto our local file system
     document.getElementById("save").addEventListener('click', function (event) {
         var temp = controller;
@@ -376,6 +404,7 @@ function changeEditableTaskCardVisibility(controller) {
     if (controller.getEditableTaskCard() !== null) {
         document.getElementById('editable-task-card').style.visibility = 'visible';
         document.getElementById('editable-task-card-description').focus();
+        setConditionsChecked(controller);
     }
     else {
         document.getElementById('editable-task-card').style.visibility = 'hidden';
@@ -397,6 +426,25 @@ function setCurrentBoardSize(controller) {
         document.getElementById('currentBoard').style.width = '90%';
     } // end else
 } // end setCurrentBoardSize
+/**
+ *
+ *
+ * @param controller the controller in charge of editting the model
+ */
+function setConditionsChecked(controller) {
+    var conditions = controller.getEditableTaskCard().
+        getConditionsOfSatisfaction();
+    for (var i = 0; i < conditions.length; i++) {
+        if (conditions[i].isComplete()) {
+            document.getElementById('condition' + i).checked =
+                true;
+        }
+        else {
+            document.getElementById('condition' + i).checked =
+                false;
+        }
+    }
+}
 /**
  * Causes the HTML to be drawn, or redrawn, to the screen
  *
@@ -452,7 +500,51 @@ function dropped() {
     render(controller);
 } // end dropped
 
-},{"../controller/Controller":1,"interactjs":28}],3:[function(require,module,exports){
+},{"../controller/Controller":1,"interactjs":29}],3:[function(require,module,exports){
+"use strict";
+/**
+ * ConditionOfSatisfaction.ts
+ *
+ * Represents a condition of satisfaction for a task
+ *
+ * @author Ellery De Jesus
+ * @author Chris Wolf
+ * @version 1.0.0 (March 30, 2020)
+ */
+exports.__esModule = true;
+var ConditionOfSatisfaction = /** @class */ (function () {
+    function ConditionOfSatisfaction(text) {
+        this.text = text;
+        this.complete = false;
+    } // end constructor
+    /**
+     * Sets this condition of satisfaction to complete
+     */
+    ConditionOfSatisfaction.prototype.setComplete = function () {
+        this.complete = true;
+    }; // end setComplete
+    /**
+     * Sets this condition of satisfaction to incomplete
+     */
+    ConditionOfSatisfaction.prototype.setIncomplete = function () {
+        this.complete = false;
+    }; // setIncomplete
+    ConditionOfSatisfaction.prototype.getText = function () {
+        return this.text;
+    }; // end getText
+    /**
+     * Returns whether or not this condition of satisfaction is complete
+     *
+     * @return true if completed, false otherwise
+     */
+    ConditionOfSatisfaction.prototype.isComplete = function () {
+        return this.complete;
+    }; // end isComplete
+    return ConditionOfSatisfaction;
+}()); // end class
+exports.ConditionOfSatisfaction = ConditionOfSatisfaction;
+
+},{}],4:[function(require,module,exports){
 "use strict";
 /**
  * model.js
@@ -577,7 +669,7 @@ var Model = /** @class */ (function () {
 }()); // end App
 exports.Model = Model;
 
-},{"./Project":4,"./factories/ProjectFactory":16}],4:[function(require,module,exports){
+},{"./Project":5,"./factories/ProjectFactory":17}],5:[function(require,module,exports){
 "use strict";
 /**
  * Holds and allows for the manipulation of Boards.
@@ -764,7 +856,7 @@ var Project = /** @class */ (function () {
 }()); //end of Project
 exports.Project = Project;
 
-},{"./TaskCard":5,"./enums/BacklogStatus":9,"./enums/BoardOptions":10,"./enums/MoscowStatus":12,"./factories/BoardFactory":13}],5:[function(require,module,exports){
+},{"./TaskCard":6,"./enums/BacklogStatus":10,"./enums/BoardOptions":11,"./enums/MoscowStatus":13,"./factories/BoardFactory":14}],6:[function(require,module,exports){
 "use strict";
 /**
  * task_card.js
@@ -777,6 +869,7 @@ exports.Project = Project;
  * @version 2.0.0 (October 5, 2019)
  */
 exports.__esModule = true;
+var ConditionOfSatisfaction_1 = require("./ConditionOfSatisfaction");
 var TaskCard = /** @class */ (function () {
     /**
      * Generates the TaskCard object
@@ -789,6 +882,7 @@ var TaskCard = /** @class */ (function () {
     function TaskCard(label, text, moscowStatus, backlogStatus) {
         this.label = label;
         this.text = text;
+        this.conditionsOfSatisfaction = [];
         this.moscowStatus = moscowStatus;
         this.backlogStatus = backlogStatus;
     } // end constructor
@@ -801,6 +895,28 @@ var TaskCard = /** @class */ (function () {
     TaskCard.prototype.getText = function () {
         return this.text;
     }; // end getText
+    TaskCard.prototype.getNumberOfConditions = function () {
+        return this.conditionsOfSatisfaction.length;
+    }; // end getNumberOfConditions
+    /**
+     * Gets the number of conditions of satisfaction that have been completed
+     * for this card
+     *
+     * @return the number of conditions of satisfaction that have been completed
+     */
+    TaskCard.prototype.getNumberOfCompletedConditions = function () {
+        var completed = 0;
+        for (var i = 0; i < this.getNumberOfConditions(); i++) {
+            if (this.conditionsOfSatisfaction[i].isComplete()) {
+                completed++;
+            } // end if
+        } // end for
+        return completed;
+    }; // end getNumberOfCompletedConditions
+    TaskCard.prototype.getConditionsStats = function () {
+        return this.getNumberOfCompletedConditions() + '/' +
+            this.getNumberOfConditions();
+    }; // end getConditionsStats
     TaskCard.prototype.getMoscowStatus = function () {
         return this.moscowStatus;
     }; // end getMoscowStatus
@@ -813,6 +929,17 @@ var TaskCard = /** @class */ (function () {
     TaskCard.prototype.setBacklogStatus = function (backlogStatus) {
         this.backlogStatus = backlogStatus;
     }; // end setBacklogStatus
+    TaskCard.prototype.getConditionsOfSatisfaction = function () {
+        return this.conditionsOfSatisfaction;
+    }; // end getConditionsOfSatisfaction
+    /**
+     * Adds a condition of satisfaction to the task card
+     *
+     * @param text the text for the condition of satisfaction
+     */
+    TaskCard.prototype.addConditionOfSatisfaction = function (text) {
+        this.conditionsOfSatisfaction.push(new ConditionOfSatisfaction_1.ConditionOfSatisfaction(text));
+    };
     TaskCard.prototype.loadTaskCard = function (taskcard) {
         this.label = taskcard.label;
         this.text = taskcard.text;
@@ -823,7 +950,7 @@ var TaskCard = /** @class */ (function () {
 }()); // end class
 exports.TaskCard = TaskCard;
 
-},{}],6:[function(require,module,exports){
+},{"./ConditionOfSatisfaction":3}],7:[function(require,module,exports){
 "use strict";
 /**
  * board.js
@@ -926,7 +1053,7 @@ var Board = /** @class */ (function () {
 }()); // end Board
 exports.Board = Board;
 
-},{"../enums/BacklogStatus":9,"../enums/MoscowStatus":12,"../factories/ListFactory":14,"../lists/List":18}],7:[function(require,module,exports){
+},{"../enums/BacklogStatus":10,"../enums/MoscowStatus":13,"../factories/ListFactory":15,"../lists/List":19}],8:[function(require,module,exports){
 "use strict";
 /**
  * moscow_board.js
@@ -962,7 +1089,7 @@ var MoscowBoard = /** @class */ (function () {
 }()); // end MoscowBoard
 exports.MoscowBoard = MoscowBoard;
 
-},{"../enums/ListOptions":11,"../factories/MoscowListFactory":15,"./Board":6}],8:[function(require,module,exports){
+},{"../enums/ListOptions":12,"../factories/MoscowListFactory":16,"./Board":7}],9:[function(require,module,exports){
 "use strict";
 /**
  * sprint_backlog_board.js
@@ -998,7 +1125,7 @@ var SprintBacklogBoard = /** @class */ (function () {
 }()); // end SprintBacklogBoard
 exports.SprintBacklogBoard = SprintBacklogBoard;
 
-},{"../enums/ListOptions":11,"../factories/SprintBacklogListFactory":17,"./Board":6}],9:[function(require,module,exports){
+},{"../enums/ListOptions":12,"../factories/SprintBacklogListFactory":18,"./Board":7}],10:[function(require,module,exports){
 "use strict";
 /**
  * BacklogStatus.ts
@@ -1019,7 +1146,7 @@ var BacklogStatus;
     BacklogStatus["NONE"] = "NONE";
 })(BacklogStatus = exports.BacklogStatus || (exports.BacklogStatus = {}));
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 /**
  * board_options.js
@@ -1038,7 +1165,7 @@ var BoardOptions;
     BoardOptions["SPRINT"] = "Sprint Backlog";
 })(BoardOptions = exports.BoardOptions || (exports.BoardOptions = {})); // end BoardOptions
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 /**
  * ListOptions.ts
@@ -1063,7 +1190,7 @@ var ListOptions;
     ListOptions["COMPLETE"] = "Complete";
 })(ListOptions = exports.ListOptions || (exports.ListOptions = {})); // end ListOptions
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 /**
  * MoscowStatus.ts
@@ -1085,7 +1212,7 @@ var MoscowStatus;
 })(MoscowStatus = exports.MoscowStatus || (exports.MoscowStatus = {}));
 ;
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 /**
  * board_factory.js
@@ -1127,7 +1254,7 @@ var BoardFactory = /** @class */ (function () {
 }()); // end BoardFactory
 exports.BoardFactory = BoardFactory;
 
-},{"../boards/MoscowBoard":7,"../boards/SprintBacklogBoard":8,"../enums/BoardOptions":10}],14:[function(require,module,exports){
+},{"../boards/MoscowBoard":8,"../boards/SprintBacklogBoard":9,"../enums/BoardOptions":11}],15:[function(require,module,exports){
 "use strict";
 /**
  * list_factory.js
@@ -1220,7 +1347,7 @@ var ListFactory = /** @class */ (function () {
 }()); // end ListFactory
 exports.ListFactory = ListFactory;
 
-},{"../enums/BacklogStatus":9,"../enums/ListOptions":11,"../enums/MoscowStatus":12,"../lists/List":18,"../lists/moscow_lists/CouldList":19,"../lists/moscow_lists/MustList":20,"../lists/moscow_lists/ShouldList":21,"../lists/moscow_lists/WontList":22,"../lists/sprint_backlog_lists/BacklogList":23,"../lists/sprint_backlog_lists/CompleteList":24,"../lists/sprint_backlog_lists/InProgressList":25,"../lists/sprint_backlog_lists/InReviewList":26}],15:[function(require,module,exports){
+},{"../enums/BacklogStatus":10,"../enums/ListOptions":12,"../enums/MoscowStatus":13,"../lists/List":19,"../lists/moscow_lists/CouldList":20,"../lists/moscow_lists/MustList":21,"../lists/moscow_lists/ShouldList":22,"../lists/moscow_lists/WontList":23,"../lists/sprint_backlog_lists/BacklogList":24,"../lists/sprint_backlog_lists/CompleteList":25,"../lists/sprint_backlog_lists/InProgressList":26,"../lists/sprint_backlog_lists/InReviewList":27}],16:[function(require,module,exports){
 "use strict";
 /**
  * moscow_list_factory.js
@@ -1256,7 +1383,7 @@ var MoscowListFactory = /** @class */ (function (_super) {
 }(ListFactory_1.ListFactory)); // end MoscowListFactory
 exports.MoscowListFactory = MoscowListFactory;
 
-},{"./ListFactory":14}],16:[function(require,module,exports){
+},{"./ListFactory":15}],17:[function(require,module,exports){
 "use strict";
 /**
  * ProjectFactory.ts
@@ -1286,7 +1413,7 @@ var ProjectFactory = /** @class */ (function () {
 }()); //end of ProjectFactory
 exports.ProjectFactory = ProjectFactory;
 
-},{"../Project":4}],17:[function(require,module,exports){
+},{"../Project":5}],18:[function(require,module,exports){
 "use strict";
 /**
  * sprint_backlog_list_factory.js
@@ -1322,7 +1449,7 @@ var SprintBacklogListFactory = /** @class */ (function (_super) {
 }(ListFactory_1.ListFactory)); // end SprintBacklogListFactory
 exports.SprintBacklogListFactory = SprintBacklogListFactory;
 
-},{"./ListFactory":14}],18:[function(require,module,exports){
+},{"./ListFactory":15}],19:[function(require,module,exports){
 "use strict";
 /**
  * list.js
@@ -1409,7 +1536,7 @@ var List = /** @class */ (function () {
 }()); // end List
 exports.List = List;
 
-},{"../TaskCard":5}],19:[function(require,module,exports){
+},{"../TaskCard":6}],20:[function(require,module,exports){
 "use strict";
 /**
  * could_list.js
@@ -1440,7 +1567,7 @@ var CouldList = /** @class */ (function () {
 }()); // end CouldList
 exports.CouldList = CouldList;
 
-},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],20:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],21:[function(require,module,exports){
 "use strict";
 /**
  * must_list.js
@@ -1471,7 +1598,7 @@ var MustList = /** @class */ (function () {
 }()); // end MustList
 exports.MustList = MustList;
 
-},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],21:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],22:[function(require,module,exports){
 "use strict";
 /**
  * should_list.js
@@ -1502,7 +1629,7 @@ var ShouldList = /** @class */ (function () {
 }()); // end MustList
 exports.ShouldList = ShouldList;
 
-},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],22:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],23:[function(require,module,exports){
 "use strict";
 /**
  * wont_list.js
@@ -1533,7 +1660,7 @@ var WontList = /** @class */ (function () {
 }()); // end WontList
 exports.WontList = WontList;
 
-},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],23:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],24:[function(require,module,exports){
 "use strict";
 /**
  * backlog_list.js
@@ -1564,7 +1691,7 @@ var BacklogList = /** @class */ (function () {
 }()); // end BacklogList
 exports.BacklogList = BacklogList;
 
-},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],24:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],25:[function(require,module,exports){
 "use strict";
 /**
  * complete_list.js
@@ -1595,7 +1722,7 @@ var CompleteList = /** @class */ (function () {
 }()); // end CompleteList
 exports.CompleteList = CompleteList;
 
-},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],25:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],26:[function(require,module,exports){
 "use strict";
 /**
  * in_progress_list.js
@@ -1626,7 +1753,7 @@ var InProgressList = /** @class */ (function () {
 }()); // end InProgressList
 exports.InProgressList = InProgressList;
 
-},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],26:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],27:[function(require,module,exports){
 "use strict";
 /**
  * in_review_list.js
@@ -1657,7 +1784,7 @@ var InReviewList = /** @class */ (function () {
 }()); // end InReviewList
 exports.InReviewList = InReviewList;
 
-},{"../../enums/BacklogStatus":9,"../../enums/MoscowStatus":12,"../List":18}],27:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],28:[function(require,module,exports){
 "use strict";
 /**
  * view.js
@@ -1689,10 +1816,10 @@ var View = /** @class */ (function () {
     }; // end getIsBoardMenuVisibile
     View.prototype.setEditableTaskCard = function (task) {
         this.editableTaskCard = task;
-    };
+    }; // end setEditableTaskCard
     View.prototype.getEditableTaskCard = function () {
         return this.editableTaskCard;
-    };
+    }; // end getEditableTaskCard
     /**
      * generates HTML based on the current model
      *
@@ -1727,6 +1854,8 @@ var View = /** @class */ (function () {
         html += '<textarea id=editable-task-card-description placeholder="'
             + text + '"></textarea>';
         html += '<br/>';
+        html += this.getConditionsOfSatisfactionHTML();
+        html += '<br/>';
         html += '<button id=editable-task-card-cancel-button type=button' +
             '>Cancel</button>';
         html += '<button id=editable-task-card-submit-button type=button' +
@@ -1734,6 +1863,33 @@ var View = /** @class */ (function () {
         html += '</div>';
         return html;
     }; // end generateEditableTaskCard
+    /**
+     * Generates the HTML for the conditions of satisfaction
+     *
+     * @return the HTML for the conditions of satisfaction
+     */
+    View.prototype.getConditionsOfSatisfactionHTML = function () {
+        var conditionStats = '0/0';
+        if (this.editableTaskCard !== null) {
+            conditionStats = this.editableTaskCard.getConditionsStats();
+        } // end if
+        var html = '<div id=conditions-of-satisfaction-header>';
+        html += 'Conditions Of Satisfaction ';
+        html += conditionStats;
+        html += '</div>';
+        // add each of the conditions of satisfaction
+        if (this.editableTaskCard !== null) {
+            for (var i = 0; i < this.editableTaskCard.getNumberOfConditions(); i++) {
+                html += '<div>';
+                html += '<input id=condition' + i + ' type=checkbox></input>';
+                html += this.editableTaskCard.getConditionsOfSatisfaction()[i].
+                    getText();
+                html += '</div>';
+            } // end for
+        } // end if
+        html += '<input id=new-condition type=text></input>';
+        return html;
+    };
     /**
      * generates the toolbar HTML
      *
@@ -1900,6 +2056,7 @@ var View = /** @class */ (function () {
         html += '<div class=task-card-statuses>';
         html += '<div><b>' + task.getMoscowStatus() + '</b></div>';
         html += '<div><b>' + task.getBacklogStatus() + '</b></div>';
+        html += '<div><b>' + task.getConditionsStats() + '</b></div>';
         html += '</div>';
         html += '</div>';
         return html;
@@ -1940,7 +2097,7 @@ var View = /** @class */ (function () {
 }()); // end View
 exports.View = View;
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 (function (global){
 /**
  * interact.js 1.7.0
