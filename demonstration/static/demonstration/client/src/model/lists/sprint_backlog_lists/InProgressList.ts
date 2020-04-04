@@ -9,6 +9,8 @@
  */
 
 import {List} from '../List';
+import { MoscowStatus } from '../../enums/MoscowStatus';
+import { BacklogStatus } from '../../enums/BacklogStatus';
 
 export class InProgressList {
   // Constructor deliberately left out
@@ -19,6 +21,6 @@ export class InProgressList {
    * @return {List} an In Progress List
    */
   generateList(): List {
-    return new List('In Progress');
+    return new List('In Progress', MoscowStatus.NONE, BacklogStatus.IN_PROGRESS);
   } // end generateList
 } // end InProgressList

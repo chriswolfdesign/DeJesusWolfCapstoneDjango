@@ -11,6 +11,8 @@
 exports.__esModule = true;
 var List_1 = require("../lists/List");
 var ListFactory_1 = require("../factories/ListFactory");
+var MoscowStatus_1 = require("../enums/MoscowStatus");
+var BacklogStatus_1 = require("../enums/BacklogStatus");
 var Board = /** @class */ (function () {
     /**
      * Generates the board object
@@ -37,7 +39,7 @@ var Board = /** @class */ (function () {
      * @param {Colors} color the optional color value for our list
      */
     Board.prototype.addList = function (label) {
-        this.lists.push(new List_1.List(label));
+        this.lists.push(new List_1.List(label, MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.NONE));
     }; // end addList
     /**
      * Creates a task card within the specified list.

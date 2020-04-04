@@ -10,6 +10,8 @@
  */
 exports.__esModule = true;
 var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
 var BacklogList = /** @class */ (function () {
     function BacklogList() {
     }
@@ -20,7 +22,7 @@ var BacklogList = /** @class */ (function () {
      * @return {List} a Backlog List
      */
     BacklogList.prototype.generateList = function () {
-        return new List_1.List('Backlog');
+        return new List_1.List('Backlog', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.BACKLOG);
     }; // end generateList
     return BacklogList;
 }()); // end BacklogList

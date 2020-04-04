@@ -9,6 +9,8 @@
  */
 
 import {List} from '../List';
+import { MoscowStatus } from '../../enums/MoscowStatus';
+import { BacklogStatus } from '../../enums/BacklogStatus';
 
 export class MustList {
   // Constructor deliberately left out
@@ -19,6 +21,6 @@ export class MustList {
    * @return {List} a Must Have List
    */
   generateList(): List {
-    return new List('Must');
+    return new List('Must', MoscowStatus.MUST, BacklogStatus.NONE);
   } // end generateList
 } // end MustList

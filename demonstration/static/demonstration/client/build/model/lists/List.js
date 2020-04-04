@@ -17,20 +17,36 @@ var List = /** @class */ (function () {
      *
      * @param {string} label the label for the this list
      * @param {Colors} color the background color of this list
+     * @param {MoscowStatus} moscowStatus the Moscow status of this list
+     * @param {BacklogStatus} backlogStatus the Backlog status of this list
      */
-    function List(label) {
+    function List(label, moscowStatus, backlogStatus) {
         this.label = label;
         this.tasks = [];
+        this.moscowStatus = moscowStatus;
+        this.backlogStatus = backlogStatus;
     } // end constructor
     List.prototype.getLabel = function () {
         return this.label;
     }; // end getLabel
     List.prototype.setLabel = function (label) {
         this.label = label;
-    };
+    }; // end setLabel
     List.prototype.getTasks = function () {
         return this.tasks;
     }; // end getTasks
+    List.prototype.getMoscowStatus = function () {
+        return this.moscowStatus;
+    }; // end getMoscowStatus
+    List.prototype.setMoscowStatus = function (moscowStatus) {
+        this.moscowStatus = moscowStatus;
+    }; // end setMoscowStatus
+    List.prototype.getBacklogStatus = function () {
+        return this.backlogStatus;
+    }; // end getBacklogStatus
+    List.prototype.setBacklogStatus = function (backlogStatus) {
+        this.backlogStatus = backlogStatus;
+    }; // end setBacklogStatus
     /**
      * adds a new task card to the tasks field
      *
@@ -38,7 +54,7 @@ var List = /** @class */ (function () {
      * @param {string} text the text for the new task card
      */
     List.prototype.addTask = function (label, text) {
-        this.tasks.push(new TaskCard_1.TaskCard(label, text));
+        this.tasks.push(new TaskCard_1.TaskCard(label, text, this.moscowStatus, this.backlogStatus));
     }; // end addTask
     /**
      * Removes a task card from the tasks field
@@ -59,7 +75,7 @@ var List = /** @class */ (function () {
         this.tasks = [];
         for (var _i = 0, _a = list.tasks; _i < _a.length; _i++) {
             var task = _a[_i];
-            ntask = new TaskCard_1.TaskCard("", "");
+            ntask = new TaskCard_1.TaskCard("", "", this.moscowStatus, this.backlogStatus);
             ntask.loadTaskCard(task);
             this.tasks.push(ntask);
         } // end for

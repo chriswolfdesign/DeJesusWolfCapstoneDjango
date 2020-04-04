@@ -37,11 +37,13 @@ function highlightCurrentBoard(controller) {
  * @param {Controller} controller -- the controller holding each of the buttons
  */
 function addClickListeners(controller) {
+    var tasks = controller.getModel().getProjects().getTasks();
     var _loop_1 = function (i) {
         var buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getLabel() + 'AddButton';
         document.getElementById(buttonID).addEventListener('click', function (event) {
-            var newTaskText = prompt('Please enter the new task text: ');
+            var newTaskText = 'Enter description here';
             controller.getModel().getProjects().generateTaskCard(i, newTaskText);
+            controller.setEditableTaskCard(controller.getNewestTaskCard().getLabel());
             render(controller);
         }); // end Event Listener
     };
@@ -49,43 +51,59 @@ function addClickListeners(controller) {
     for (var i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
         _loop_1(i);
     } // end for
-    var _loop_2 = function (i) {
-        var _loop_5 = function (j) {
-            var taskID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks()[j].getLabel() + 'TextField';
-            document.getElementById(taskID).addEventListener('click', function (event) {
-                var newTaskText = prompt('Please enter the new text', controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks()[j].getText());
-                controller.editTaskText(i, j, newTaskText);
+    // Add button for editting text
+    tasks.forEach(function (task) {
+        var taskID = task.getLabel() + 'TextField';
+        document.getElementById(taskID).addEventListener('click', function (event) {
+            controller.setEditableTaskCard(task.getLabel());
+            render(controller);
+        }); // end eventListener
+    }); // end forEach
+    // Add button for removing text
+    tasks.forEach(function (task) {
+        var taskID = task.getLabel() + 'RemoveButton';
+        document.getElementById(taskID).addEventListener('click', function (event) {
+            var choice = confirm('Delete this task card?');
+            if (choice) {
+                controller.removeTaskCard(task.getLabel());
                 render(controller);
-            }); // end Event Listener
-        };
-        for (var j = 0; j < controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks().length; j++) {
-            _loop_5(j);
-        } // end for each task
-    };
-    // generate the listeners for editting task cards
-    for (var i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
-        _loop_2(i);
-    } // end for each list
-    var _loop_3 = function (i) {
-        var _loop_6 = function (j) {
-            var buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks()[j].getLabel() + 'RemoveButton';
-            document.getElementById(buttonID).addEventListener('click', function (event) {
-                var choice = confirm('Delete this task card?');
-                if (choice) {
-                    controller.removeTaskCard(i, j);
-                    render(controller);
-                } // end if
-            }); // end buttonID
-        };
-        for (var j = 0; j < controller.getModel().getProjects().getActiveBoard().getLists()[i].getTasks().length; j++) {
-            _loop_6(j);
-        } // end inner for loop
-    };
-    // generate the listener for removing task cards
-    for (var i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
-        _loop_3(i);
-    } // end outer for loop
-    var _loop_4 = function (i) {
+            } // end if
+        }); // end eventListener
+    }); // end forEach
+    // add functionality for the editable task card's cancel button
+    document.getElementById('editable-task-card-cancel-button').
+        addEventListener('click', function (event) {
+        controller.removeEditableTaskCard();
+        render(controller);
+    });
+    // add functionality for the editable task card's submit button
+    document.getElementById('editable-task-card-submit-button').
+        addEventListener('click', function (event) {
+        var newText = document.
+            getElementById('editable-task-card-description').value;
+        if (newText !== '') {
+            controller.editTaskText(controller.getEditableTaskCard().getLabel(), newText);
+        } // end if
+        var conditions = controller.
+            getEditableTaskCard().getConditionsOfSatisfaction();
+        var completedArray = [];
+        for (var i = 0; i < conditions.length; i++) {
+            completedArray.push(document.getElementById('condition' + i).checked);
+        } // end for
+        controller.setConditions(completedArray);
+        console.log(controller.getEditableTaskCard());
+        controller.removeEditableTaskCard();
+        render(controller);
+    });
+    // when the enter button is clicked in the satisfaction enter text box
+    document.getElementById('new-condition').addEventListener('keyup', function (event) {
+        var newConditionText = document.getElementById('new-condition').value;
+        if (event.keyCode === 13) {
+            controller.getEditableTaskCard().addConditionOfSatisfaction(newConditionText);
+            render(controller);
+        } // end if
+    }); // end for
+    var _loop_2 = function (i) {
         var boardID = 'board' + i.toString();
         document.getElementById(boardID).addEventListener('click', function (event) {
             controller.getModel().getProjects().setActiveBoardIndex(i);
@@ -94,8 +112,8 @@ function addClickListeners(controller) {
     };
     // allows us to change the active board based on user preference via click
     for (var i = 0; i < controller.getModel().getProjects().getBoards().length; i++) {
-        _loop_4(i);
-    }
+        _loop_2(i);
+    } // end for
     // allows us to save the current instance of the project onto our local file system
     document.getElementById("save").addEventListener('click', function (event) {
         var temp = controller;
@@ -144,6 +162,16 @@ function changeBoardMenuVisibility(controller) {
         document.getElementById('boardButtons').style.visibility = 'hidden';
     } // end else
 } // end changeBoardMenuVisibility
+function changeEditableTaskCardVisibility(controller) {
+    if (controller.getEditableTaskCard() !== null) {
+        document.getElementById('editable-task-card').style.visibility = 'visible';
+        document.getElementById('editable-task-card-description').focus();
+        setConditionsChecked(controller);
+    }
+    else {
+        document.getElementById('editable-task-card').style.visibility = 'hidden';
+    }
+} // end changeEditableTaskCardVisibility
 /**
  * Updates the size based on whether or not the board menu is visible
  *
@@ -161,6 +189,25 @@ function setCurrentBoardSize(controller) {
     } // end else
 } // end setCurrentBoardSize
 /**
+ *
+ *
+ * @param controller the controller in charge of editting the model
+ */
+function setConditionsChecked(controller) {
+    var conditions = controller.getEditableTaskCard().
+        getConditionsOfSatisfaction();
+    for (var i = 0; i < conditions.length; i++) {
+        if (conditions[i].isComplete()) {
+            document.getElementById('condition' + i).checked =
+                true;
+        }
+        else {
+            document.getElementById('condition' + i).checked =
+                false;
+        }
+    }
+}
+/**
  * Causes the HTML to be drawn, or redrawn, to the screen
  *
  * @param {Controller} controller responsible for generating the HTML
@@ -170,6 +217,7 @@ function render(controller) {
     addClickListeners(controller);
     highlightCurrentBoard(controller);
     changeBoardMenuVisibility(controller);
+    changeEditableTaskCardVisibility(controller);
     setCurrentBoardSize(controller);
 } // end render
 // Set up interact

@@ -6,15 +6,19 @@
  * @version 0.0.0
  */
 
-
 import {BoardFactory} from './factories/BoardFactory';
 import {Board} from './boards/Board';
 import {BoardOptions} from './enums/BoardOptions';
 import {ListOptions} from './enums/ListOptions';
+import { TaskCard } from './TaskCard';
+import { List } from './lists/List';
+import { MoscowStatus } from './enums/MoscowStatus';
+import { BacklogStatus } from './enums/BacklogStatus';
 
 export class Project {
   private title: string;
   private boards: Board[];
+  private taskCards: TaskCard[];
   private boardFactory: BoardFactory;
   private activeBoardIndex: number;
   private nextCardNumber: number;
@@ -27,6 +31,7 @@ export class Project {
   constructor(title) {
     this.title = title;
     this.boards = [];
+    this.taskCards = [];
     this.boardFactory = new BoardFactory();
     this.boards.push(this.boardFactory.generateBoard(BoardOptions.MOSCOW));
     this.boards.push(this.boardFactory.generateBoard(BoardOptions.SPRINT));
@@ -42,17 +47,36 @@ export class Project {
     return this.boards[boardID].getTitle();
   }
 
+  /**
+   * gets the board that should be currently shown on the user's browser
+   * 
+   * @return the current board on screen
+   */
   getActiveBoard(): Board {
     return this.boards[this.activeBoardIndex];
-  }
+  } // end getActiveBoard
 
+  /**
+   * gets the index of the board that be currently shown on the user's browser
+   * 
+   * @return the index for the current board on screen
+   */
   getActiveBoardIndex(): number {
       return this.activeBoardIndex;
-  }
+  } // end getActiveBoardIndex
 
+  /**
+   * change the board that is currently displayed on the user's browser
+   * 
+   * @param index the index for the board we wish to display on screen
+   */
   setActiveBoardIndex(index: number): void {
     this.activeBoardIndex = index;
-  }
+  } // end setActiveBoardIndex
+
+  getTasks(): TaskCard[] {
+    return this.taskCards;
+  } // end getTasks
 
   /**
    * Generates a board from a template based on user preference
@@ -104,14 +128,32 @@ export class Project {
   /**
    * Generates a card within a board's list
    *
-   * @param {number} listID
-   * @param {string} text
+   * @param {number} listID the index of the list the task card will be added to
+   * @param {string} text the text for the task card once it is generated
    *
    */
   generateTaskCard(listID: number, text: string)
     : void {
     let label: string = this.generateNextCardLabel();
-    this.getActiveBoard().generateTaskCard(listID, label, text);
+    let listToAddTo: List = this.getActiveBoard().getLists()[listID];
+
+    // find the new moscowStatus and backlogStatus
+    let moscowStatus: MoscowStatus = listToAddTo.getMoscowStatus();
+    let backlogStatus: BacklogStatus = listToAddTo.getBacklogStatus();
+
+    // if on the backlogBoard, give a default of MUST
+    if (moscowStatus == MoscowStatus.NONE) {
+      moscowStatus = MoscowStatus.MUST;
+    } // end if
+
+    // if on the moscowBoard, give a default of BACKLOG
+    if (backlogStatus == BacklogStatus.NONE) {
+      backlogStatus = BacklogStatus.BACKLOG;
+    } // end if
+
+    this.taskCards.push(new TaskCard(label, text, moscowStatus, backlogStatus));
+
+    // increment so the next card generated will be next on the list
     this.nextCardNumber++;
   } // end generateTaskCard
 
@@ -134,18 +176,23 @@ export class Project {
     let acronym: string = '';
     words.forEach((word) => {
       acronym += word[0].toLowerCase();
-    });
+    }); // end for-each
 
     return acronym;
   }  // end makeProjectAcronym
 
   /**
    * Remove a task card from the specified list from a specified board.
-   * @param {integer} listID the ID of the list we're removing a card from.
-   * @param {integer} taskID the ID of the card we're removing.
+   * 
+   * @string taskLabel the label of the task card to be removed
    */
-  removeTaskCard(boardID: number, listID: number, taskID: number): void {
-    this.boards[boardID].removeTaskCard(listID, taskID);
+  removeTaskCard(taskLabel: string) {
+    for (let i = 0; i < this.taskCards.length; i++) {
+      if (this.taskCards[i].getLabel() === taskLabel) {
+        this.taskCards.splice(i, 1);
+        return;
+      } // end if
+    } // end for
   } // end removeTaskCard
 
   /**

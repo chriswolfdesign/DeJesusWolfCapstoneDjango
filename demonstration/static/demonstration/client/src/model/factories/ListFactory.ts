@@ -19,6 +19,8 @@ import { BacklogList } from '../lists/sprint_backlog_lists/BacklogList';
 import { InProgressList } from '../lists/sprint_backlog_lists/InProgressList';
 import { InReviewList } from '../lists/sprint_backlog_lists/InReviewList';
 import { CompleteList } from '../lists/sprint_backlog_lists/CompleteList';
+import { MoscowStatus } from '../enums/MoscowStatus';
+import { BacklogStatus } from '../enums/BacklogStatus';
 
 export class ListFactory {
   private mustList: MustList;
@@ -99,7 +101,7 @@ export class ListFactory {
       case ListOptions.COMPLETE:
         return this.completeList.generateList();
       default:
-        return new List("");
+        return new List("", MoscowStatus.NONE, BacklogStatus.NONE);
     } // end switch
   } // end generateList
 } // end ListFactory

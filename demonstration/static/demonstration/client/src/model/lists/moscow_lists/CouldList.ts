@@ -9,6 +9,8 @@
  */
 
 import {List} from '../List';
+import { MoscowStatus } from '../../enums/MoscowStatus';
+import { BacklogStatus } from '../../enums/BacklogStatus';
 
 export class CouldList {
   // Constructor deliberately left out
@@ -19,6 +21,6 @@ export class CouldList {
    * @return {List} a Could Have List
    */
   generateList(): List {
-    return new List('Could');
+    return new List('Could', MoscowStatus.COULD, BacklogStatus.NONE);
   } // end generateList
 } // end CouldList

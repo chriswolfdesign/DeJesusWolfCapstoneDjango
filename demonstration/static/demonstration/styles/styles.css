@@ -2,7 +2,7 @@
  * GLOBALS *
  ***********/
 body {
-    background: #414A4C;
+    background: #C8A2C8;
     color: white;
 }
 
@@ -53,7 +53,6 @@ body {
 #currentBoard {
     display: inline-block;
     width: 75%;
-    /* margin-left: 45vh; */
 }
 
 #boardButtons {
@@ -63,8 +62,47 @@ body {
     background-color: gray;
     border-radius: 5px;
     min-height: 100vh;
-    /*margin-top: -5%;*/
-    /* position: fixed; */
+    margin-left: -8px;
+}
+
+#editable-task-card {
+    left: 10%;
+    top: 10%;
+    width: 80%;
+    height: 80%;
+    position: absolute;
+    background-color: #F0EAD6;
+    border: black solid 5px;
+    color: black;
+    z-index: 10;
+    padding: 5px;
+}
+
+#editable-task-card-header {
+    font-size: 38px;
+    font-weight: bold;
+    text-decoration: underline;
+    text-align: center;
+}
+
+#editable-task-card-description {
+    width: 98%;
+    height: 50%;
+}
+
+#editable-task-card-cancel-button {
+    background-color: red;
+    color: white;
+}
+
+#editable-task-card-submit-button {
+    background-color: blue;
+    color: white;
+}
+
+#conditions-of-satisfaction-header {
+    font-weight:bold;
+    text-decoration: underline;
 }
 
  /***********
@@ -138,6 +176,10 @@ body {
     margin-top: 10px;
     margin-bottom: 10px;
     /*color: pink;*/
+}
+
+.task-card-statuses {
+    margin-top: 30px;
 }
 
 .boardButton {

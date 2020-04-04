@@ -10,6 +10,8 @@
  */
 exports.__esModule = true;
 var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
 var InProgressList = /** @class */ (function () {
     function InProgressList() {
     }
@@ -20,7 +22,7 @@ var InProgressList = /** @class */ (function () {
      * @return {List} an In Progress List
      */
     InProgressList.prototype.generateList = function () {
-        return new List_1.List('In Progress');
+        return new List_1.List('In Progress', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.IN_PROGRESS);
     }; // end generateList
     return InProgressList;
 }()); // end InProgressList
