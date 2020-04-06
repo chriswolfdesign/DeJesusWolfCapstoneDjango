@@ -31,9 +31,31 @@
   <!-- InteractJS -->
   <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 
+  <!-- User data being injected into the script -->
+  <input type="hidden" id="userdata" name="data" value="{{ data }}">
+
+  <!-- JQuery -->
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 
   <!-- JavaScript -->
   <script src="{% static 'demonstration/client/build/main/main_transpiled.js' %}"></script>
+  <script>
+    $(document).ready(function() {
+      $("#userdata").change(function() {
+          $.ajax({
+            url: 'save',
+            data: {
+              'data': $(this).val(),
+              'username': "{{ username }}"
+            },
+            dataType: 'json',
+            success: function (data) {
+              alert("Project has been saved");
+            }
+          });
+      });
+    });
+  </script>
 </head>
 <body>
   <!-- Where main will inject all of our HTML -->

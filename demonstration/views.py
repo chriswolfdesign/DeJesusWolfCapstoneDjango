@@ -4,10 +4,14 @@ from django.forms import inlineformset_factory
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.http import JsonResponse
 
 # Create your views here.
 
-from .forms import CreateUserForm
+from .models import *
+from .forms import *
+import json
+import os
 
 
 def entry(request):
@@ -15,7 +19,10 @@ def entry(request):
 
 
 def index(request):
-    return render(request, 'demonstration/index.html')
+    data = request.user.userprofile.data
+    username = request.user.username
+    context = {'data': data, 'username': username}
+    return render(request, 'demonstration/index.html', context)
 
 
 def loginPage(request):
@@ -31,20 +38,47 @@ def loginPage(request):
             return redirect('home')
         else:
             messages.info(request, 'Username OR Password is incorrect.')
-            return render(request, 'accounts/login.html', context)
+            return render(request, 'demonstration/login.html', context)
     return render(request, 'demonstration/login.html', context)
 
 
 def registerPage(request):
-    form = CreateUserForm()
-
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
-            form.save()
-            user = form.cleaned_data.get('username')
-            messages.success(request, 'Account created for ' + user)
+            user = form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+
+            module_dir = os.path.dirname(__file__)  # get current directory
+            file_path = os.path.join(module_dir, 'blank.json')
+            f = open(file_path, 'r')
+            userdata = json.dumps(json.load(f))
+
+            UserProfile.objects.create(
+                user=user,
+                data=userdata
+            )
+            user = authenticate(username=username, password=password)
+            login(request, user)
             return redirect('login')
+    else:
+        form = CreateUserForm()
 
     context = {'form': form}
     return render(request, 'demonstration/register.html', context)
+
+
+def save(request):
+    userdata = request.GET.get('data', None)
+    username = request.GET.get('username', None)
+
+    u = User.objects.get(username=username)
+    u.userprofile.data = userdata
+    u.userprofile.save()
+    u.save()
+
+    data = {
+        'status': 200,
+    }
+    return JsonResponse(data)
