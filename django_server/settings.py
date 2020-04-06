@@ -29,6 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'dejesuswolfcapstone.herokuapp.com'
+    'arcane-woodland-06016.herokuapp.com'
 ]
 
 
