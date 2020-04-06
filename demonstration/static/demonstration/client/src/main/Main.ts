@@ -20,14 +20,16 @@ let controller: Controller;  // I really don't like that this is global, let's l
 
 // Behavior when the application is started
 window.onload = function (): void {
-  let decision: string = '';
-
-  while (decision === '') {
-    decision = prompt('Please enter the name of your project: ');
+  controller = new Controller('');
+  var data = JSON.parse((<HTMLInputElement>document.getElementById("userdata")).value);
+  var decision = '';
+  if (data.title === '') {
+    while (decision === '') {
+      decision = prompt('Please enter the name of your project: ');
+    }
+    data.title = decision
   }
-
-  controller = new Controller(decision);
-
+  controller.loadProject(data);
   render(controller);
 
 }; // end window.onload
@@ -51,11 +53,11 @@ function highlightCurrentBoard(controller: Controller): void {
  */
 function addClickListeners(controller: Controller): void {
   let tasks: TaskCard[] = controller.getModel().getProjects().getTasks();
-  
+
   // generate the add button listeners
   for (let i = 0; i < controller.getModel().getProjects().getActiveBoard().getLists().length; i++) {
     let buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getLabel() + 'AddButton';
-    document.getElementById(buttonID).addEventListener('click', function 
+    document.getElementById(buttonID).addEventListener('click', function
       (event) {
       let newTaskText = 'Enter description here';
       controller.getModel().getProjects().generateTaskCard(i, newTaskText);
@@ -67,7 +69,7 @@ function addClickListeners(controller: Controller): void {
   // Add button for editting text
   tasks.forEach(task => {
     let taskID: string = task.getLabel() + 'TextField';
-    document.getElementById(taskID).addEventListener('click', function(event) {
+    document.getElementById(taskID).addEventListener('click', function (event) {
 
       controller.setEditableTaskCard(task.getLabel());
       render(controller);
@@ -77,7 +79,7 @@ function addClickListeners(controller: Controller): void {
   // Add button for removing text
   tasks.forEach(task => {
     let taskID: string = task.getLabel() + 'RemoveButton';
-    document.getElementById(taskID).addEventListener('click', function(event) {
+    document.getElementById(taskID).addEventListener('click', function (event) {
       let choice = confirm('Delete this task card?');
       if (choice) {
         controller.removeTaskCard(task.getLabel());
@@ -88,54 +90,54 @@ function addClickListeners(controller: Controller): void {
 
   // add functionality for the editable task card's cancel button
   document.getElementById('editable-task-card-cancel-button').
-    addEventListener('click', function(event) {
+    addEventListener('click', function (event) {
       controller.removeEditableTaskCard();
       render(controller);
-  });
+    });
 
   // add functionality for the editable task card's submit button
   document.getElementById('editable-task-card-submit-button').
-    addEventListener('click', function(event) {
-      let newText : string = (<HTMLInputElement> document.
+    addEventListener('click', function (event) {
+      let newText: string = (<HTMLInputElement>document.
         getElementById('editable-task-card-description')).value;
 
-        if (newText !== '') {
-          controller.editTaskText(controller.getEditableTaskCard().getLabel(),
+      if (newText !== '') {
+        controller.editTaskText(controller.getEditableTaskCard().getLabel(),
           newText);
-        } // end if
+      } // end if
 
-        let conditions : ConditionOfSatisfaction[] = controller.
-          getEditableTaskCard().getConditionsOfSatisfaction();
+      let conditions: ConditionOfSatisfaction[] = controller.
+        getEditableTaskCard().getConditionsOfSatisfaction();
 
-        let completedArray: boolean[] = [];
+      let completedArray: boolean[] = [];
 
-        for (let i = 0; i < conditions.length; i++) {
-          completedArray.push((<HTMLInputElement> document.getElementById
-            ('condition' + i)).checked);
-        } // end for
+      for (let i = 0; i < conditions.length; i++) {
+        completedArray.push((<HTMLInputElement>document.getElementById
+          ('condition' + i)).checked);
+      } // end for
 
-        controller.setConditions(completedArray);
-        
-        console.log(controller.getEditableTaskCard());
+      controller.setConditions(completedArray);
 
-        controller.removeEditableTaskCard();
-        render(controller);
-  });
+      console.log(controller.getEditableTaskCard());
+
+      controller.removeEditableTaskCard();
+      render(controller);
+    });
 
   // when the enter button is clicked in the satisfaction enter text box
-  document.getElementById('new-condition').addEventListener('keyup', 
-    function(event) {
-      let newConditionText = (<HTMLInputElement> document.getElementById(
+  document.getElementById('new-condition').addEventListener('keyup',
+    function (event) {
+      let newConditionText = (<HTMLInputElement>document.getElementById(
         'new-condition')).value;
       if (event.keyCode === 13) {
         controller.getEditableTaskCard().addConditionOfSatisfaction(
           newConditionText);
         render(controller);
       } // end if
-  }); // end for
+    }); // end for
 
   // allows us to change the active board based on user preference via click
-  for (let i = 0; i < controller.getModel().getProjects().getBoards().length; 
+  for (let i = 0; i < controller.getModel().getProjects().getBoards().length;
     i++) {
     let boardID = 'board' + i.toString();
     document.getElementById(boardID).addEventListener('click', function (event) {
@@ -146,21 +148,26 @@ function addClickListeners(controller: Controller): void {
 
   // allows us to save the current instance of the project onto our local file system
   document.getElementById("save").addEventListener('click', function (event) {
-    var temp = controller;
-    var name = prompt("Enter the file name:");
-    const data = JSON.stringify(controller.getModel().getProjects())
-    const blob = new Blob([data], { type: 'text/plain' })
-    const e = document.createEvent('MouseEvents'),
-      a = document.createElement('a');
-    a.download = name + ".json";
-    a.href = window.URL.createObjectURL(blob);
-    a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
-    e.initEvent('click', true, false);
-    a.dispatchEvent(e);
+    /*
+        var temp = controller;
+        var name = prompt("Enter the file name:");
+        var data = JSON.stringify(controller.getModel().getProjects());
+        var blob = new Blob([data], { type: 'text/plain' });
+        var e = document.createEvent('MouseEvents'), a = document.createElement('a');
+        a.download = name + ".json";
+        a.href = window.URL.createObjectURL(blob);
+        a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+        e.initEvent('click', true, false);
+        a.dispatchEvent(e);
+    */
+    var data = JSON.stringify(controller.getModel().getProjects());
+    (<HTMLInputElement>document.getElementById("userdata")).value = data;
+    $("#userdata").trigger('change');
   });
 
   // allows us to load an instance of the project from our local file system
   document.getElementById("submit").addEventListener('click', function (event) {
+    /*
     let file = (<HTMLInputElement>document.getElementById("file-input")).files[0];
     if (file) {
       var reader = new FileReader();
@@ -174,10 +181,11 @@ function addClickListeners(controller: Controller): void {
         alert("Error reading file.");
       };
     }
+    */
   });
 
   // toggle the visibility of the board menu
-  document.getElementById('boardMenuToggleButton').addEventListener('click', function(event) {
+  document.getElementById('boardMenuToggleButton').addEventListener('click', function (event) {
     controller.getView().toggleBoardMenuVisibility();
 
     render(controller);
@@ -190,12 +198,12 @@ function addClickListeners(controller: Controller): void {
  * @param {Controller} controller -- controller for the application
  */
 function changeBoardMenuVisibility(controller: Controller) {
- if (controller.getView().getIsBoardMenuVisibile()) {
-   document.getElementById('boardButtons').style.visibility = 'visible';
- } // end if
- else {
-   document.getElementById('boardButtons').style.visibility = 'hidden';
- } // end else
+  if (controller.getView().getIsBoardMenuVisibile()) {
+    document.getElementById('boardButtons').style.visibility = 'visible';
+  } // end if
+  else {
+    document.getElementById('boardButtons').style.visibility = 'hidden';
+  } // end else
 } // end changeBoardMenuVisibility
 
 
@@ -237,10 +245,10 @@ function setConditionsChecked(controller: Controller) {
 
   for (let i = 0; i < conditions.length; i++) {
     if (conditions[i].isComplete()) {
-      (<HTMLInputElement> document.getElementById('condition' + i)).checked = 
+      (<HTMLInputElement>document.getElementById('condition' + i)).checked =
         true;
     } else {
-      (<HTMLInputElement> document.getElementById('condition' + i)).checked = 
+      (<HTMLInputElement>document.getElementById('condition' + i)).checked =
         false;
     }
   }

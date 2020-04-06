@@ -109,8 +109,16 @@ export class TaskCard {
   loadTaskCard(taskcard: TaskCard) {
     this.label = taskcard.label;
     this.text = taskcard.text;
-    this.conditionsOfSatisfaction = taskcard.conditionsOfSatisfaction;
     this.moscowStatus = taskcard.moscowStatus;
     this.backlogStatus = taskcard.backlogStatus;
+    this.conditionsOfSatisfaction = [];
+
+    let cond: ConditionOfSatisfaction;
+    for (let condition of taskcard.conditionsOfSatisfaction) {
+      cond = new ConditionOfSatisfaction("");
+      cond.load(condition);
+      this.conditionsOfSatisfaction.push(cond);
+    }
+
   } // end loadTaskCard
 } // end class

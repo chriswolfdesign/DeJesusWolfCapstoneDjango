@@ -21,7 +21,7 @@ export class ConditionOfSatisfaction {
    * Sets this condition of satisfaction to complete
    */
   setComplete() {
-      this.complete = true;
+    this.complete = true;
   } // end setComplete
 
   /**
@@ -43,4 +43,9 @@ export class ConditionOfSatisfaction {
   isComplete(): boolean {
     return this.complete;
   } // end isComplete
+
+  load(condition: ConditionOfSatisfaction) {
+    this.text = condition.text;
+    this.complete = condition.complete;
+  }
 } // end class

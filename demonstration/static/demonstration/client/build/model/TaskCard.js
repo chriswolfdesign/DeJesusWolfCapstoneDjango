@@ -84,9 +84,16 @@ var TaskCard = /** @class */ (function () {
     TaskCard.prototype.loadTaskCard = function (taskcard) {
         this.label = taskcard.label;
         this.text = taskcard.text;
-        this.conditionsOfSatisfaction = taskcard.conditionsOfSatisfaction;
         this.moscowStatus = taskcard.moscowStatus;
         this.backlogStatus = taskcard.backlogStatus;
+        this.conditionsOfSatisfaction = [];
+        var cond;
+        for (var _i = 0, _a = taskcard.conditionsOfSatisfaction; _i < _a.length; _i++) {
+            var condition = _a[_i];
+            cond = new ConditionOfSatisfaction_1.ConditionOfSatisfaction("");
+            cond.load(condition);
+            this.conditionsOfSatisfaction.push(cond);
+        }
     }; // end loadTaskCard
     return TaskCard;
 }()); // end class

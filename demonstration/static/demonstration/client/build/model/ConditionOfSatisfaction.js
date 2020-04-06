@@ -37,6 +37,10 @@ var ConditionOfSatisfaction = /** @class */ (function () {
     ConditionOfSatisfaction.prototype.isComplete = function () {
         return this.complete;
     }; // end isComplete
+    ConditionOfSatisfaction.prototype.load = function (condition) {
+        this.text = condition.text;
+        this.complete = condition.complete;
+    };
     return ConditionOfSatisfaction;
 }()); // end class
 exports.ConditionOfSatisfaction = ConditionOfSatisfaction;
