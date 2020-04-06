@@ -6,10 +6,10 @@
  * @version 0.0.0
  */
 
-import {BoardFactory} from './factories/BoardFactory';
-import {Board} from './boards/Board';
-import {BoardOptions} from './enums/BoardOptions';
-import {ListOptions} from './enums/ListOptions';
+import { BoardFactory } from './factories/BoardFactory';
+import { Board } from './boards/Board';
+import { BoardOptions } from './enums/BoardOptions';
+import { ListOptions } from './enums/ListOptions';
 import { TaskCard } from './TaskCard';
 import { List } from './lists/List';
 import { MoscowStatus } from './enums/MoscowStatus';
@@ -62,7 +62,7 @@ export class Project {
    * @return the index for the current board on screen
    */
   getActiveBoardIndex(): number {
-      return this.activeBoardIndex;
+    return this.activeBoardIndex;
   } // end getActiveBoardIndex
 
   /**
@@ -201,12 +201,22 @@ export class Project {
    */
   loadProject(project: Project) {
     this.title = project.title;
+    this.activeBoardIndex = 0;
+    this.nextCardNumber = project.nextCardNumber;
     let nboard: Board;
+    let ntaskCard: TaskCard;
     this.boards = [];
     for (let board of project.boards) {
       nboard = this.boardFactory.generateBoard(BoardOptions.MOSCOW);
       nboard.loadBoard(board);
       this.boards.push(nboard);
+
+    }
+    this.taskCards = [];
+    for (let taskCard of project.taskCards) {
+      ntaskCard = new TaskCard("", "", MoscowStatus.MUST, BacklogStatus.BACKLOG);
+      ntaskCard.loadTaskCard(taskCard);
+      this.taskCards.push(ntaskCard);
     } // end for
   } // end loadBoards
 

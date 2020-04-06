@@ -168,13 +168,23 @@ var Project = /** @class */ (function () {
      */
     Project.prototype.loadProject = function (project) {
         this.title = project.title;
+        this.activeBoardIndex = 0;
+        this.nextCardNumber = project.nextCardNumber;
         var nboard;
+        var ntaskCard;
         this.boards = [];
         for (var _i = 0, _a = project.boards; _i < _a.length; _i++) {
             var board = _a[_i];
             nboard = this.boardFactory.generateBoard(BoardOptions_1.BoardOptions.MOSCOW);
             nboard.loadBoard(board);
             this.boards.push(nboard);
+        }
+        this.taskCards = [];
+        for (var _b = 0, _c = project.taskCards; _b < _c.length; _b++) {
+            var taskCard = _c[_b];
+            ntaskCard = new TaskCard_1.TaskCard("", "", MoscowStatus_1.MoscowStatus.MUST, BacklogStatus_1.BacklogStatus.BACKLOG);
+            ntaskCard.loadTaskCard(taskCard);
+            this.taskCards.push(ntaskCard);
         } // end for
     }; // end loadBoards
     Project.prototype.getBoards = function () {

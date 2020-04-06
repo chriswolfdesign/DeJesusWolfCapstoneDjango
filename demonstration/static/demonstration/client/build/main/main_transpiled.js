@@ -252,17 +252,17 @@ var interactjs_1 = require("interactjs");
 var controller; // I really don't like that this is global, let's look into other options
 // Behavior when the application is started
 window.onload = function () {
-  controller = new Controller_1.Controller('');
-  var data = JSON.parse(document.getElementById("userdata").value);
-  var decision = '';
-  if(data.title === ''){
-    while (decision === '') {
-       decision = prompt('Please enter the name of your project: ');
-    }
-    data.title = decision
-  }
-  controller.loadProject(data);
-  render(controller);
+    controller = new Controller_1.Controller('');	
+    var data = JSON.parse(document.getElementById("userdata").value);	
+    var decision = '';	
+    if(data.title === ''){	
+        while (decision === '') {	
+        decision = prompt('Please enter the name of your project: ');	
+        }	
+        data.title = decision	
+    }	
+    controller.loadProject(data);	
+    render(controller);
 }; // end window.onload
 /**
  * Highlights the button for the board that is current open
@@ -358,9 +358,8 @@ function addClickListeners(controller) {
         _loop_2(i);
     } // end for
     // allows us to save the current instance of the project onto our local file system
-    
     document.getElementById("save").addEventListener('click', function (event) {
-      /*
+        /*
         var temp = controller;
         var name = prompt("Enter the file name:");
         var data = JSON.stringify(controller.getModel().getProjects());
@@ -371,18 +370,15 @@ function addClickListeners(controller) {
         a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
         e.initEvent('click', true, false);
         a.dispatchEvent(e);
-      */
-
-      var data = JSON.stringify(controller.getModel().getProjects());
-      document.getElementById("userdata").value = data;
-      $("#userdata").trigger('change');
-
+        */
+       var data = JSON.stringify(controller.getModel().getProjects());	
+       document.getElementById("userdata").value = data;	
+       $("#userdata").trigger('change');
     });
-    
     // allows us to load an instance of the project from our local file system
-    /*
     document.getElementById("submit").addEventListener('click', function (event) {
-      var file = document.getElementById("file-input").files[0];
+        /*
+        var file = document.getElementById("file-input").files[0];
         if (file) {
             var reader = new FileReader();
             reader.readAsText(file, "UTF-8");
@@ -395,8 +391,8 @@ function addClickListeners(controller) {
                 alert("Error reading file.");
             };
         }
+        */
     });
-    */
     // toggle the visibility of the board menu
     document.getElementById('boardMenuToggleButton').addEventListener('click', function (event) {
         controller.getView().toggleBoardMenuVisibility();
@@ -856,13 +852,23 @@ var Project = /** @class */ (function () {
      */
     Project.prototype.loadProject = function (project) {
         this.title = project.title;
+        this.activeBoardIndex = 0;
+        this.nextCardNumber = project.nextCardNumber;
         var nboard;
+        var ntaskCard;
         this.boards = [];
         for (var _i = 0, _a = project.boards; _i < _a.length; _i++) {
             var board = _a[_i];
             nboard = this.boardFactory.generateBoard(BoardOptions_1.BoardOptions.MOSCOW);
             nboard.loadBoard(board);
             this.boards.push(nboard);
+        }
+        this.taskCards = [];
+        for (var _b = 0, _c = project.taskCards; _b < _c.length; _b++) {
+            var taskCard = _c[_b];
+            ntaskCard = new TaskCard_1.TaskCard("", "", MoscowStatus_1.MoscowStatus.MUST, BacklogStatus_1.BacklogStatus.BACKLOG);
+            ntaskCard.loadTaskCard(taskCard);
+            this.taskCards.push(ntaskCard);
         } // end for
     }; // end loadBoards
     Project.prototype.getBoards = function () {
@@ -959,6 +965,7 @@ var TaskCard = /** @class */ (function () {
     TaskCard.prototype.loadTaskCard = function (taskcard) {
         this.label = taskcard.label;
         this.text = taskcard.text;
+        this.conditionsOfSatisfaction = taskcard.conditionsOfSatisfaction;
         this.moscowStatus = taskcard.moscowStatus;
         this.backlogStatus = taskcard.backlogStatus;
     }; // end loadTaskCard
@@ -1539,6 +1546,8 @@ var List = /** @class */ (function () {
      */
     List.prototype.loadList = function (list) {
         this.label = list.label;
+        this.moscowStatus = list.moscowStatus;
+        this.backlogStatus = list.backlogStatus;
         var ntask;
         this.tasks = [];
         for (var _i = 0, _a = list.tasks; _i < _a.length; _i++) {

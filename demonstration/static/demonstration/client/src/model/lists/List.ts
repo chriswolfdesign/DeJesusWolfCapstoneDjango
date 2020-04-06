@@ -27,7 +27,7 @@ export class List {
    * @param {MoscowStatus} moscowStatus the Moscow status of this list
    * @param {BacklogStatus} backlogStatus the Backlog status of this list
    */
-  constructor(label: string, moscowStatus: MoscowStatus, 
+  constructor(label: string, moscowStatus: MoscowStatus,
     backlogStatus: BacklogStatus) {
     this.label = label;
     this.tasks = [];
@@ -70,7 +70,7 @@ export class List {
    * @param {string} text the text for the new task card
    */
   addTask(label: string, text: string): void {
-    this.tasks.push(new TaskCard(label, text, this.moscowStatus, 
+    this.tasks.push(new TaskCard(label, text, this.moscowStatus,
       this.backlogStatus));
   } // end addTask
 
@@ -91,6 +91,8 @@ export class List {
    */
   loadList(list: List) {
     this.label = list.label;
+    this.moscowStatus = list.moscowStatus;
+    this.backlogStatus = list.backlogStatus;
     let ntask;
     this.tasks = [];
 

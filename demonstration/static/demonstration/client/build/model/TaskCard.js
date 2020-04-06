@@ -84,6 +84,7 @@ var TaskCard = /** @class */ (function () {
     TaskCard.prototype.loadTaskCard = function (taskcard) {
         this.label = taskcard.label;
         this.text = taskcard.text;
+        this.conditionsOfSatisfaction = taskcard.conditionsOfSatisfaction;
         this.moscowStatus = taskcard.moscowStatus;
         this.backlogStatus = taskcard.backlogStatus;
     }; // end loadTaskCard

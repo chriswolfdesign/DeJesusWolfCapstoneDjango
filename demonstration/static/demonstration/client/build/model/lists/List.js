@@ -71,6 +71,8 @@ var List = /** @class */ (function () {
      */
     List.prototype.loadList = function (list) {
         this.label = list.label;
+        this.moscowStatus = list.moscowStatus;
+        this.backlogStatus = list.backlogStatus;
         var ntask;
         this.tasks = [];
         for (var _i = 0, _a = list.tasks; _i < _a.length; _i++) {

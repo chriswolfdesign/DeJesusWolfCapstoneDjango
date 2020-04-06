@@ -29,7 +29,7 @@ export class TaskCard {
    * @param {MoscowStatus} moscowStats the card's Moscow status
    * @param {BacklogStatus} backlogStatus the card's Backlog status
    */
-  constructor(label: string, text: string, moscowStatus: MoscowStatus, 
+  constructor(label: string, text: string, moscowStatus: MoscowStatus,
     backlogStatus: BacklogStatus) {
     this.label = label;
     this.text = text;
@@ -64,7 +64,7 @@ export class TaskCard {
     let completed = 0;
 
     for (let i = 0; i < this.getNumberOfConditions(); i++) {
-      if(this.conditionsOfSatisfaction[i].isComplete()) {
+      if (this.conditionsOfSatisfaction[i].isComplete()) {
         completed++;
       } // end if
     } // end for
@@ -73,7 +73,7 @@ export class TaskCard {
   } // end getNumberOfCompletedConditions
 
   getConditionsStats(): string {
-    return this.getNumberOfCompletedConditions() + '/' + 
+    return this.getNumberOfCompletedConditions() + '/' +
       this.getNumberOfConditions();
   } // end getConditionsStats
 
@@ -109,6 +109,7 @@ export class TaskCard {
   loadTaskCard(taskcard: TaskCard) {
     this.label = taskcard.label;
     this.text = taskcard.text;
+    this.conditionsOfSatisfaction = taskcard.conditionsOfSatisfaction;
     this.moscowStatus = taskcard.moscowStatus;
     this.backlogStatus = taskcard.backlogStatus;
   } // end loadTaskCard

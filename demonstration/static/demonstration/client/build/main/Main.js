@@ -14,11 +14,16 @@ var interactjs_1 = require("interactjs");
 var controller; // I really don't like that this is global, let's look into other options
 // Behavior when the application is started
 window.onload = function () {
-    var decision = '';
-    while (decision === '') {
-        decision = prompt('Please enter the name of your project: ');
-    }
-    controller = new Controller_1.Controller(decision);
+    controller = new Controller_1.Controller('');	
+    var data = JSON.parse(document.getElementById("userdata").value);	
+    var decision = '';	
+    if(data.title === ''){	
+        while (decision === '') {	
+        decision = prompt('Please enter the name of your project: ');	
+        }	
+        data.title = decision	
+    }	
+    controller.loadProject(data);	
     render(controller);
 }; // end window.onload
 /**
@@ -116,6 +121,7 @@ function addClickListeners(controller) {
     } // end for
     // allows us to save the current instance of the project onto our local file system
     document.getElementById("save").addEventListener('click', function (event) {
+        /*
         var temp = controller;
         var name = prompt("Enter the file name:");
         var data = JSON.stringify(controller.getModel().getProjects());
@@ -126,9 +132,14 @@ function addClickListeners(controller) {
         a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
         e.initEvent('click', true, false);
         a.dispatchEvent(e);
+        */
+       var data = JSON.stringify(controller.getModel().getProjects());	
+       document.getElementById("userdata").value = data;	
+       $("#userdata").trigger('change');
     });
     // allows us to load an instance of the project from our local file system
     document.getElementById("submit").addEventListener('click', function (event) {
+        /*
         var file = document.getElementById("file-input").files[0];
         if (file) {
             var reader = new FileReader();
@@ -142,6 +153,7 @@ function addClickListeners(controller) {
                 alert("Error reading file.");
             };
         }
+        */
     });
     // toggle the visibility of the board menu
     document.getElementById('boardMenuToggleButton').addEventListener('click', function (event) {
