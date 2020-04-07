@@ -1,6 +1,16 @@
+<!-- 
+	register.html
+
+	The registration page of our application
+
+	Author: Ellery R. De Jesus
+	Author: Chris Wolf
+
+-->
 <html>
 <head>
     <title>Register</title>
+    <!-- The styles we will be using for this page (Will be removed and placed in a css file at a later date). -->
     <style>
         body,
 		html {
@@ -58,6 +68,7 @@
                 <h3 id="form-title">REGISTER ACCOUNT</h3>
             </div>
             <div class=>
+            <!-- Where we will be accepting input for each of the fields in the User model (username, password1, password2 (For verifying password1), and email) -->
                 <form method="POST" action="">
                     {% csrf_token %}
                     <div class="input-group">
