@@ -22,7 +22,7 @@ var InProgressList = /** @class */ (function () {
      * @return {List} an In Progress List
      */
     InProgressList.prototype.generateList = function () {
-        return new List_1.List('In Progress', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.IN_PROGRESS);
+        return new List_1.List('In Progress', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.IN_PROGRESS);
     }; // end generateList
     return InProgressList;
 }()); // end InProgressList

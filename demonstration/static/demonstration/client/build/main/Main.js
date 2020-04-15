@@ -96,7 +96,6 @@ function addClickListeners(controller) {
             completedArray.push(document.getElementById('condition' + i).checked);
         } // end for
         controller.setConditions(completedArray);
-        console.log(controller.getEditableTaskCard());
         controller.removeEditableTaskCard();
         render(controller);
     });
@@ -193,11 +192,12 @@ function setCurrentBoardSize(controller) {
     // Update styles
     if (controller.getView().getIsBoardMenuVisibile()) {
         document.getElementById('boardButtons').style.width = '20%';
-        document.getElementById('currentBoard').style.width = '75%';
+        document.getElementById('currentBoard').style.width = '79%';
+        document.getElementById('currentBoard').style.marginLeft = '21%';
     } // end if
     else {
-        document.getElementById('boardButtons').style.width = '5%';
-        document.getElementById('currentBoard').style.width = '90%';
+        document.getElementById('boardButtons').style.width = '1%';
+        document.getElementById('currentBoard').style.width = '98%';
     } // end else
 } // end setCurrentBoardSize
 /**

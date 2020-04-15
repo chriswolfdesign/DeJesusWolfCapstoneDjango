@@ -22,7 +22,7 @@ var InReviewList = /** @class */ (function () {
      * @return {List} an InReviewList
      */
     InReviewList.prototype.generateList = function () {
-        return new List_1.List('In Review', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.IN_REVIEW);
+        return new List_1.List('In Review', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.IN_REVIEW);
     }; // end generateList
     return InReviewList;
 }()); // end InReviewList

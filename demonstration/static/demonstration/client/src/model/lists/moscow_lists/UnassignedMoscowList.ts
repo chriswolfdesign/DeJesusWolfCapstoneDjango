@@ -21,6 +21,6 @@ export class UnassignedMoscowList {
    * @return {List} a Must Have List
    */
   generateList(): List {
-    return new List('Unassigned', MoscowStatus.UNASSIGNED, BacklogStatus.NONE);
+    return new List('Unassigned', MoscowStatus.UNASSIGNED, BacklogStatus.BACKLOG);
   } // end generateList
 } // end MustList

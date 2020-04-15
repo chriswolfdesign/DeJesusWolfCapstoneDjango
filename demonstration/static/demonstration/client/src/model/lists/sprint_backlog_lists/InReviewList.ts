@@ -21,6 +21,6 @@ export class InReviewList {
    * @return {List} an InReviewList
    */
   generateList(): List {
-    return new List('In Review', MoscowStatus.UNASSIGNED, BacklogStatus.IN_REVIEW);
+    return new List('In Review', MoscowStatus.NONE, BacklogStatus.IN_REVIEW);
   } // end generateList
 } // end InReviewList

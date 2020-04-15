@@ -169,13 +169,15 @@ export class Controller {
     let list = this.findList(newList.id);
     let task = this.findTask(movedTaskCard.id);
 
-    if(list.getMoscowStatus() != MoscowStatus.UNASSIGNED) {
+    if(list.getMoscowStatus() != MoscowStatus.NONE) {
       task.setMoscowStatus(list.getMoscowStatus());
     } // end if
 
     if (list.getBacklogStatus() != BacklogStatus.NONE) {
       task.setBacklogStatus(list.getBacklogStatus());
     } // end if
+
+    console.log(task);
   } // end moveTaskCard
 
   /**

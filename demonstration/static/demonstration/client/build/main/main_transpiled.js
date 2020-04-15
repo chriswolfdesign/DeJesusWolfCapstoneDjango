@@ -143,7 +143,7 @@ var Controller = /** @class */ (function () {
     Controller.prototype.moveTaskCard = function (newList, movedTaskCard) {
         var list = this.findList(newList.id);
         var task = this.findTask(movedTaskCard.id);
-        if (list.getMoscowStatus() != MoscowStatus_1.MoscowStatus.UNASSIGNED) {
+        if (list.getMoscowStatus() != MoscowStatus_1.MoscowStatus.NONE) {
             task.setMoscowStatus(list.getMoscowStatus());
         } // end if
         if (list.getBacklogStatus() != BacklogStatus_1.BacklogStatus.NONE) {
@@ -334,7 +334,6 @@ function addClickListeners(controller) {
             completedArray.push(document.getElementById('condition' + i).checked);
         } // end for
         controller.setConditions(completedArray);
-        console.log(controller.getEditableTaskCard());
         controller.removeEditableTaskCard();
         render(controller);
     });
@@ -431,11 +430,12 @@ function setCurrentBoardSize(controller) {
     // Update styles
     if (controller.getView().getIsBoardMenuVisibile()) {
         document.getElementById('boardButtons').style.width = '20%';
-        document.getElementById('currentBoard').style.width = '75%';
+        document.getElementById('currentBoard').style.width = '79%';
+        document.getElementById('currentBoard').style.marginLeft = '21%';
     } // end if
     else {
-        document.getElementById('boardButtons').style.width = '5%';
-        document.getElementById('currentBoard').style.width = '90%';
+        document.getElementById('boardButtons').style.width = '1%';
+        document.getElementById('currentBoard').style.width = '98%';
     } // end else
 } // end setCurrentBoardSize
 /**
@@ -1244,6 +1244,7 @@ var MoscowStatus;
     MoscowStatus["COULD"] = "COULD";
     MoscowStatus["WONT"] = "WONT";
     MoscowStatus["UNASSIGNED"] = "UNASSIGNED";
+    MoscowStatus["NONE"] = "NONE";
 })(MoscowStatus = exports.MoscowStatus || (exports.MoscowStatus = {}));
 ;
 
@@ -1695,7 +1696,7 @@ var UnassignedMoscowList = /** @class */ (function () {
      * @return {List} a Must Have List
      */
     UnassignedMoscowList.prototype.generateList = function () {
-        return new List_1.List('Unassigned', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.NONE);
+        return new List_1.List('Unassigned', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.BACKLOG);
     }; // end generateList
     return UnassignedMoscowList;
 }()); // end MustList
@@ -1757,7 +1758,7 @@ var BacklogList = /** @class */ (function () {
      * @return {List} a Backlog List
      */
     BacklogList.prototype.generateList = function () {
-        return new List_1.List('Backlog', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.BACKLOG);
+        return new List_1.List('Backlog', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.BACKLOG);
     }; // end generateList
     return BacklogList;
 }()); // end BacklogList
@@ -1788,7 +1789,7 @@ var CompleteList = /** @class */ (function () {
      * @return {List} a Complete List
      */
     CompleteList.prototype.generateList = function () {
-        return new List_1.List('Complete', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.COMPLETE);
+        return new List_1.List('Complete', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.COMPLETE);
     }; // end generateList
     return CompleteList;
 }()); // end CompleteList
@@ -1819,7 +1820,7 @@ var InProgressList = /** @class */ (function () {
      * @return {List} an In Progress List
      */
     InProgressList.prototype.generateList = function () {
-        return new List_1.List('In Progress', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.IN_PROGRESS);
+        return new List_1.List('In Progress', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.IN_PROGRESS);
     }; // end generateList
     return InProgressList;
 }()); // end InProgressList
@@ -1850,7 +1851,7 @@ var InReviewList = /** @class */ (function () {
      * @return {List} an InReviewList
      */
     InReviewList.prototype.generateList = function () {
-        return new List_1.List('In Review', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.IN_REVIEW);
+        return new List_1.List('In Review', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.IN_REVIEW);
     }; // end generateList
     return InReviewList;
 }()); // end InReviewList

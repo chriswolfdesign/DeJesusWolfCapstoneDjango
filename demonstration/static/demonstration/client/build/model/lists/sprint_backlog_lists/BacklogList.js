@@ -22,7 +22,7 @@ var BacklogList = /** @class */ (function () {
      * @return {List} a Backlog List
      */
     BacklogList.prototype.generateList = function () {
-        return new List_1.List('Backlog', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.BACKLOG);
+        return new List_1.List('Backlog', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.BACKLOG);
     }; // end generateList
     return BacklogList;
 }()); // end BacklogList
