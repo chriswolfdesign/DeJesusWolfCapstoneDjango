@@ -21,6 +21,6 @@ export class InProgressList {
    * @return {List} an In Progress List
    */
   generateList(): List {
-    return new List('In Progress', MoscowStatus.NONE, BacklogStatus.IN_PROGRESS);
+    return new List('In Progress', MoscowStatus.UNASSIGNED, BacklogStatus.IN_PROGRESS);
   } // end generateList
 } // end InProgressList

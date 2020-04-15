@@ -141,10 +141,10 @@ export class Project {
     let moscowStatus: MoscowStatus = listToAddTo.getMoscowStatus();
     let backlogStatus: BacklogStatus = listToAddTo.getBacklogStatus();
 
-    // if on the backlogBoard, give a default of MUST
-    if (moscowStatus == MoscowStatus.NONE) {
-      moscowStatus = MoscowStatus.MUST;
-    } // end if
+    // // if on the backlogBoard, give a default of MUST
+    // if (moscowStatus == MoscowStatus.UNASSIGNED) {
+    //   moscowStatus = MoscowStatus.UNASSIGNED;
+    // } // end if
 
     // if on the moscowBoard, give a default of BACKLOG
     if (backlogStatus == BacklogStatus.NONE) {

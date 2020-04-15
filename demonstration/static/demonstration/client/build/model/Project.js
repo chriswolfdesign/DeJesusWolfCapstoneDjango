@@ -116,10 +116,10 @@ var Project = /** @class */ (function () {
         // find the new moscowStatus and backlogStatus
         var moscowStatus = listToAddTo.getMoscowStatus();
         var backlogStatus = listToAddTo.getBacklogStatus();
-        // if on the backlogBoard, give a default of MUST
-        if (moscowStatus == MoscowStatus_1.MoscowStatus.NONE) {
-            moscowStatus = MoscowStatus_1.MoscowStatus.MUST;
-        } // end if
+        // // if on the backlogBoard, give a default of MUST
+        // if (moscowStatus == MoscowStatus.UNASSIGNED) {
+        //   moscowStatus = MoscowStatus.UNASSIGNED;
+        // } // end if
         // if on the moscowBoard, give a default of BACKLOG
         if (backlogStatus == BacklogStatus_1.BacklogStatus.NONE) {
             backlogStatus = BacklogStatus_1.BacklogStatus.BACKLOG;

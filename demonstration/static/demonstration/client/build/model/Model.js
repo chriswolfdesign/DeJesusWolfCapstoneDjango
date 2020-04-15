@@ -84,7 +84,6 @@ var Model = /** @class */ (function () {
     /**
      * Generates a card within a board's list
      *
-     * @param {number} projectID -- the project to generate a card into
      * @param {number} boardID -- the board to generate a card into
      * @param {number} listID -- the list to generate a card into
      * @param {string} label -- the label for the card being generated
@@ -96,7 +95,7 @@ var Model = /** @class */ (function () {
     /**
      * Sets the controller of this app.
      *
-     * @param {controller} Controller the controller that will send commands to this app.
+     * @param {Controller} controller the controller that will send commands to this app.
      */
     Model.prototype.setController = function (controller) {
         this.controller = controller;
@@ -110,7 +109,7 @@ var Model = /** @class */ (function () {
         newProject.loadProject(project);
         this.project = newProject; // end for
     }; // end loadBoards
-    /*
+    /**
      * Getter for the project field
      *
      * @return {Project} -- the project we are currently working on

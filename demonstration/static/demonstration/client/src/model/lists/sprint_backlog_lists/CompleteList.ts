@@ -21,6 +21,6 @@ export class CompleteList {
    * @return {List} a Complete List
    */
   generateList(): List {
-    return new List('Complete', MoscowStatus.NONE, BacklogStatus.COMPLETE);
+    return new List('Complete', MoscowStatus.UNASSIGNED, BacklogStatus.COMPLETE);
   } // end generateList
 } // end CompleteList

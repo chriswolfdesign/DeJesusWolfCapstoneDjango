@@ -27,6 +27,7 @@ export class MoscowBoard {
     board.addListTemplate(ListOptions.SHOULD);
     board.addListTemplate(ListOptions.COULD);
     board.addListTemplate(ListOptions.WONT);
+    board.addListTemplate(ListOptions.MOSCOW_UNASSIGNED);
 
     return board;
   } // end generateBoard

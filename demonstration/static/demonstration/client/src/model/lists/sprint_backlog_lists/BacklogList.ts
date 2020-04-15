@@ -21,6 +21,6 @@ export class BacklogList {
    * @return {List} a Backlog List
    */
   generateList(): List {
-    return new List('Backlog', MoscowStatus.NONE, BacklogStatus.BACKLOG);
+    return new List('Backlog', MoscowStatus.UNASSIGNED, BacklogStatus.BACKLOG);
   } // end generateList
 } // end BacklogList

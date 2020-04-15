@@ -13,5 +13,5 @@ export enum MoscowStatus {
     SHOULD = "SHOULD",
     COULD = "COULD",
     WONT = "WONT",
-    NONE = "NONE"
+    UNASSIGNED = "UNASSIGNED"
 };

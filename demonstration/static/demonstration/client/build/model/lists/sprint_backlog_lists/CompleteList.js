@@ -22,7 +22,7 @@ var CompleteList = /** @class */ (function () {
      * @return {List} a Complete List
      */
     CompleteList.prototype.generateList = function () {
-        return new List_1.List('Complete', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.COMPLETE);
+        return new List_1.List('Complete', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.COMPLETE);
     }; // end generateList
     return CompleteList;
 }()); // end CompleteList

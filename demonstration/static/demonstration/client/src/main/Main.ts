@@ -27,7 +27,7 @@ window.onload = function (): void {
     while (decision === '') {
       decision = prompt('Please enter the name of your project: ');
     }
-    data.title = decision
+    data.title = decision;
   }
   controller.loadProject(data);
   render(controller);

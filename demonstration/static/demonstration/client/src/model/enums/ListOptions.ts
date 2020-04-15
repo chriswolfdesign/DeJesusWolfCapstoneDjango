@@ -18,4 +18,5 @@ export enum ListOptions {
   INPROGRESS = 'InProgress',
   INREVIEW = 'InReview',
   COMPLETE = 'Complete',
+  MOSCOW_UNASSIGNED = 'MoscowUnassigned'
 } // end ListOptions

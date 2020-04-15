@@ -143,7 +143,7 @@ var Controller = /** @class */ (function () {
     Controller.prototype.moveTaskCard = function (newList, movedTaskCard) {
         var list = this.findList(newList.id);
         var task = this.findTask(movedTaskCard.id);
-        if (list.getMoscowStatus() != MoscowStatus_1.MoscowStatus.NONE) {
+        if (list.getMoscowStatus() != MoscowStatus_1.MoscowStatus.UNASSIGNED) {
             task.setMoscowStatus(list.getMoscowStatus());
         } // end if
         if (list.getBacklogStatus() != BacklogStatus_1.BacklogStatus.NONE) {
@@ -235,7 +235,7 @@ var Controller = /** @class */ (function () {
 }()); // end Controller
 exports.Controller = Controller;
 
-},{"../model/Model":4,"../model/enums/BacklogStatus":10,"../model/enums/MoscowStatus":13,"../view/view":28}],2:[function(require,module,exports){
+},{"../model/Model":4,"../model/enums/BacklogStatus":10,"../model/enums/MoscowStatus":13,"../view/view":29}],2:[function(require,module,exports){
 "use strict";
 /**
  * main.js
@@ -512,7 +512,7 @@ function dropped() {
     render(controller);
 } // end dropped
 
-},{"../controller/Controller":1,"interactjs":29}],3:[function(require,module,exports){
+},{"../controller/Controller":1,"interactjs":30}],3:[function(require,module,exports){
 "use strict";
 /**
  * ConditionOfSatisfaction.ts
@@ -647,7 +647,6 @@ var Model = /** @class */ (function () {
     /**
      * Generates a card within a board's list
      *
-     * @param {number} projectID -- the project to generate a card into
      * @param {number} boardID -- the board to generate a card into
      * @param {number} listID -- the list to generate a card into
      * @param {string} label -- the label for the card being generated
@@ -659,7 +658,7 @@ var Model = /** @class */ (function () {
     /**
      * Sets the controller of this app.
      *
-     * @param {controller} Controller the controller that will send commands to this app.
+     * @param {Controller} controller the controller that will send commands to this app.
      */
     Model.prototype.setController = function (controller) {
         this.controller = controller;
@@ -673,7 +672,7 @@ var Model = /** @class */ (function () {
         newProject.loadProject(project);
         this.project = newProject; // end for
     }; // end loadBoards
-    /*
+    /**
      * Getter for the project field
      *
      * @return {Project} -- the project we are currently working on
@@ -804,10 +803,10 @@ var Project = /** @class */ (function () {
         // find the new moscowStatus and backlogStatus
         var moscowStatus = listToAddTo.getMoscowStatus();
         var backlogStatus = listToAddTo.getBacklogStatus();
-        // if on the backlogBoard, give a default of MUST
-        if (moscowStatus == MoscowStatus_1.MoscowStatus.NONE) {
-            moscowStatus = MoscowStatus_1.MoscowStatus.MUST;
-        } // end if
+        // // if on the backlogBoard, give a default of MUST
+        // if (moscowStatus == MoscowStatus.UNASSIGNED) {
+        //   moscowStatus = MoscowStatus.UNASSIGNED;
+        // } // end if
         // if on the moscowBoard, give a default of BACKLOG
         if (backlogStatus == BacklogStatus_1.BacklogStatus.NONE) {
             backlogStatus = BacklogStatus_1.BacklogStatus.BACKLOG;
@@ -1026,7 +1025,7 @@ var Board = /** @class */ (function () {
      * @param {Colors} color the optional color value for our list
      */
     Board.prototype.addList = function (label) {
-        this.lists.push(new List_1.List(label, MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.NONE));
+        this.lists.push(new List_1.List(label, MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.NONE));
     }; // end addList
     /**
      * Creates a task card within the specified list.
@@ -1117,6 +1116,7 @@ var MoscowBoard = /** @class */ (function () {
         board.addListTemplate(ListOptions_1.ListOptions.SHOULD);
         board.addListTemplate(ListOptions_1.ListOptions.COULD);
         board.addListTemplate(ListOptions_1.ListOptions.WONT);
+        board.addListTemplate(ListOptions_1.ListOptions.MOSCOW_UNASSIGNED);
         return board;
     }; // end generateBoard
     return MoscowBoard;
@@ -1222,6 +1222,7 @@ var ListOptions;
     ListOptions["INPROGRESS"] = "InProgress";
     ListOptions["INREVIEW"] = "InReview";
     ListOptions["COMPLETE"] = "Complete";
+    ListOptions["MOSCOW_UNASSIGNED"] = "MoscowUnassigned";
 })(ListOptions = exports.ListOptions || (exports.ListOptions = {})); // end ListOptions
 
 },{}],13:[function(require,module,exports){
@@ -1242,7 +1243,7 @@ var MoscowStatus;
     MoscowStatus["SHOULD"] = "SHOULD";
     MoscowStatus["COULD"] = "COULD";
     MoscowStatus["WONT"] = "WONT";
-    MoscowStatus["NONE"] = "NONE";
+    MoscowStatus["UNASSIGNED"] = "UNASSIGNED";
 })(MoscowStatus = exports.MoscowStatus || (exports.MoscowStatus = {}));
 ;
 
@@ -1313,6 +1314,7 @@ var InReviewList_1 = require("../lists/sprint_backlog_lists/InReviewList");
 var CompleteList_1 = require("../lists/sprint_backlog_lists/CompleteList");
 var MoscowStatus_1 = require("../enums/MoscowStatus");
 var BacklogStatus_1 = require("../enums/BacklogStatus");
+var UnassignedMoscowList_1 = require("../lists/moscow_lists/UnassignedMoscowList");
 var ListFactory = /** @class */ (function () {
     function ListFactory() {
         this.mustList = new MustList_1.MustList();
@@ -1323,6 +1325,7 @@ var ListFactory = /** @class */ (function () {
         this.inProgressList = new InProgressList_1.InProgressList();
         this.inReviewList = new InReviewList_1.InReviewList();
         this.completeList = new CompleteList_1.CompleteList();
+        this.unassignedMoscowList = new UnassignedMoscowList_1.UnassignedMoscowList();
     } // end constructor
     ListFactory.prototype.getMustList = function () {
         return this.mustList;
@@ -1373,15 +1376,17 @@ var ListFactory = /** @class */ (function () {
                 return this.inReviewList.generateList();
             case ListOptions_1.ListOptions.COMPLETE:
                 return this.completeList.generateList();
+            case ListOptions_1.ListOptions.MOSCOW_UNASSIGNED:
+                return this.unassignedMoscowList.generateList();
             default:
-                return new List_1.List("", MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.NONE);
+                return new List_1.List("", MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.NONE);
         } // end switch
     }; // end generateList
     return ListFactory;
 }()); // end ListFactory
 exports.ListFactory = ListFactory;
 
-},{"../enums/BacklogStatus":10,"../enums/ListOptions":12,"../enums/MoscowStatus":13,"../lists/List":19,"../lists/moscow_lists/CouldList":20,"../lists/moscow_lists/MustList":21,"../lists/moscow_lists/ShouldList":22,"../lists/moscow_lists/WontList":23,"../lists/sprint_backlog_lists/BacklogList":24,"../lists/sprint_backlog_lists/CompleteList":25,"../lists/sprint_backlog_lists/InProgressList":26,"../lists/sprint_backlog_lists/InReviewList":27}],16:[function(require,module,exports){
+},{"../enums/BacklogStatus":10,"../enums/ListOptions":12,"../enums/MoscowStatus":13,"../lists/List":19,"../lists/moscow_lists/CouldList":20,"../lists/moscow_lists/MustList":21,"../lists/moscow_lists/ShouldList":22,"../lists/moscow_lists/UnassignedMoscowList":23,"../lists/moscow_lists/WontList":24,"../lists/sprint_backlog_lists/BacklogList":25,"../lists/sprint_backlog_lists/CompleteList":26,"../lists/sprint_backlog_lists/InProgressList":27,"../lists/sprint_backlog_lists/InReviewList":28}],16:[function(require,module,exports){
 "use strict";
 /**
  * moscow_list_factory.js
@@ -1668,6 +1673,37 @@ exports.ShouldList = ShouldList;
 },{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],23:[function(require,module,exports){
 "use strict";
 /**
+ * UnassignedMoscowList.ts
+ *
+ * A class that will generate a list for MoSCoW cards that have not yet been assigned.
+ *
+ * @author Ellery De Jesus
+ * @author Chris Wolf
+ * @version 2.0.0 (April 15, 2020)
+ */
+exports.__esModule = true;
+var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
+var UnassignedMoscowList = /** @class */ (function () {
+    function UnassignedMoscowList() {
+    }
+    // Constructor deliberately left out
+    /**
+     * generates an Unassigned List for MoSCoW board
+     *
+     * @return {List} a Must Have List
+     */
+    UnassignedMoscowList.prototype.generateList = function () {
+        return new List_1.List('Unassigned', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.NONE);
+    }; // end generateList
+    return UnassignedMoscowList;
+}()); // end MustList
+exports.UnassignedMoscowList = UnassignedMoscowList;
+
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],24:[function(require,module,exports){
+"use strict";
+/**
  * wont_list.js
  *
  * A class that will generate a Wont Have list for a MoSCoW board
@@ -1696,7 +1732,7 @@ var WontList = /** @class */ (function () {
 }()); // end WontList
 exports.WontList = WontList;
 
-},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],24:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],25:[function(require,module,exports){
 "use strict";
 /**
  * backlog_list.js
@@ -1721,13 +1757,13 @@ var BacklogList = /** @class */ (function () {
      * @return {List} a Backlog List
      */
     BacklogList.prototype.generateList = function () {
-        return new List_1.List('Backlog', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.BACKLOG);
+        return new List_1.List('Backlog', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.BACKLOG);
     }; // end generateList
     return BacklogList;
 }()); // end BacklogList
 exports.BacklogList = BacklogList;
 
-},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],25:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],26:[function(require,module,exports){
 "use strict";
 /**
  * complete_list.js
@@ -1752,13 +1788,13 @@ var CompleteList = /** @class */ (function () {
      * @return {List} a Complete List
      */
     CompleteList.prototype.generateList = function () {
-        return new List_1.List('Complete', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.COMPLETE);
+        return new List_1.List('Complete', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.COMPLETE);
     }; // end generateList
     return CompleteList;
 }()); // end CompleteList
 exports.CompleteList = CompleteList;
 
-},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],26:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],27:[function(require,module,exports){
 "use strict";
 /**
  * in_progress_list.js
@@ -1783,13 +1819,13 @@ var InProgressList = /** @class */ (function () {
      * @return {List} an In Progress List
      */
     InProgressList.prototype.generateList = function () {
-        return new List_1.List('In Progress', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.IN_PROGRESS);
+        return new List_1.List('In Progress', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.IN_PROGRESS);
     }; // end generateList
     return InProgressList;
 }()); // end InProgressList
 exports.InProgressList = InProgressList;
 
-},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],27:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],28:[function(require,module,exports){
 "use strict";
 /**
  * in_review_list.js
@@ -1814,13 +1850,13 @@ var InReviewList = /** @class */ (function () {
      * @return {List} an InReviewList
      */
     InReviewList.prototype.generateList = function () {
-        return new List_1.List('In Review', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.IN_REVIEW);
+        return new List_1.List('In Review', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.IN_REVIEW);
     }; // end generateList
     return InReviewList;
 }()); // end InReviewList
 exports.InReviewList = InReviewList;
 
-},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],28:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],29:[function(require,module,exports){
 "use strict";
 /**
  * view.js
@@ -2133,7 +2169,7 @@ var View = /** @class */ (function () {
 }()); // end View
 exports.View = View;
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 (function (global){
 /**
  * interact.js 1.7.0

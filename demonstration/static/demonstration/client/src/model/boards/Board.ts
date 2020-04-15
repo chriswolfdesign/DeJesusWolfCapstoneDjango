@@ -46,7 +46,7 @@ export class Board {
    * @param {Colors} color the optional color value for our list
    */
   addList(label: string) {
-    this.lists.push(new List(label, MoscowStatus.NONE, BacklogStatus.NONE));
+    this.lists.push(new List(label, MoscowStatus.UNASSIGNED, BacklogStatus.NONE));
   } // end addList
 
   /**

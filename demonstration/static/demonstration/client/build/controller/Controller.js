@@ -142,7 +142,7 @@ var Controller = /** @class */ (function () {
     Controller.prototype.moveTaskCard = function (newList, movedTaskCard) {
         var list = this.findList(newList.id);
         var task = this.findTask(movedTaskCard.id);
-        if (list.getMoscowStatus() != MoscowStatus_1.MoscowStatus.NONE) {
+        if (list.getMoscowStatus() != MoscowStatus_1.MoscowStatus.UNASSIGNED) {
             task.setMoscowStatus(list.getMoscowStatus());
         } // end if
         if (list.getBacklogStatus() != BacklogStatus_1.BacklogStatus.NONE) {

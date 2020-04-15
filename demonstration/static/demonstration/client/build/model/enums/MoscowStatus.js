@@ -15,6 +15,6 @@ var MoscowStatus;
     MoscowStatus["SHOULD"] = "SHOULD";
     MoscowStatus["COULD"] = "COULD";
     MoscowStatus["WONT"] = "WONT";
-    MoscowStatus["NONE"] = "NONE";
+    MoscowStatus["UNASSIGNED"] = "UNASSIGNED";
 })(MoscowStatus = exports.MoscowStatus || (exports.MoscowStatus = {}));
 ;
