@@ -121,6 +121,18 @@ function addClickListeners(controller: Controller): void {
       render(controller);
     });
 
+  // add functionality to the cos-remove-buttons in the editable task card
+  if (controller.getEditableTaskCard() !== null) {
+    for (let i = 0; i < controller.getEditableTaskCard().getConditionsOfSatisfaction().length; i++) {
+      document.getElementById('cos-delete-button' + i).
+        addEventListener('click', function(event) {
+          controller.getEditableTaskCard().removeConditionOfSatisfaction(i);
+          render(controller);
+      }); // end event listener
+    } // end for
+  }
+
+
   // when the enter button is clicked in the satisfaction enter text box
   document.getElementById('new-condition').addEventListener('keyup',
     function (event) {

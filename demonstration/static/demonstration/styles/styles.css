@@ -66,7 +66,7 @@ body {
     border-radius: 5px;
     min-height: 100vh;
     position: absolute;
-    left: 0px;
+    left: 0;
     /*margin-left: -8px;*/
     /*position: fixed;*/
 }
@@ -191,4 +191,13 @@ body {
     height: 8vh;
     width: 100%;
     font-size: 24px;
+}
+
+.cos-delete-button {
+    background-color: red;
+    height: 3vh;
+    width: 3vh; /* height and width are equal to make a square */
+    font-size: 6px;
+    color: white;
+    text-align: center;
 }

@@ -104,7 +104,16 @@ export class TaskCard {
    */
   addConditionOfSatisfaction(text: string) {
     this.conditionsOfSatisfaction.push(new ConditionOfSatisfaction(text));
-  }
+  } // end addConditionOfSatisfaction
+
+  /**
+   * Removes a condition of satisfaction from the task card
+   *
+   * @param index the index of the COS being removed
+   */
+  removeConditionOfSatisfaction(index: number) {
+    this.conditionsOfSatisfaction.splice(index, 1);
+  } // end removeConditionOfSatisfaction
 
   loadTaskCard(taskcard: TaskCard) {
     this.label = taskcard.label;

@@ -121,6 +121,7 @@ export class View {
         html += '<input id=condition' + i + ' type=checkbox></input>';
         html += this.editableTaskCard.getConditionsOfSatisfaction()[i].
           getText();
+        html += '<button class=cos-delete-button id=cos-delete-button' + i + '>X</button>';
         html += '</div>';
       } // end for
     } // end if
