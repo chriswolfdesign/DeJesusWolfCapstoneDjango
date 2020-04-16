@@ -116,13 +116,13 @@ var Project = /** @class */ (function () {
         // find the new moscowStatus and backlogStatus
         var moscowStatus = listToAddTo.getMoscowStatus();
         var backlogStatus = listToAddTo.getBacklogStatus();
-        // if on the backlogBoard, give a default of MUST
+        // // if on the backlogBoard, give a default of UNASSIGNED
         if (moscowStatus == MoscowStatus_1.MoscowStatus.NONE) {
-            moscowStatus = MoscowStatus_1.MoscowStatus.MUST;
+            moscowStatus = MoscowStatus_1.MoscowStatus.UNASSIGNED;
         } // end if
-        // if on the moscowBoard, give a default of BACKLOG
+        // if on the moscowBoard, give a default of UNASSIGNED
         if (backlogStatus == BacklogStatus_1.BacklogStatus.NONE) {
-            backlogStatus = BacklogStatus_1.BacklogStatus.BACKLOG;
+            backlogStatus = BacklogStatus_1.BacklogStatus.UNASSIGNED;
         } // end if
         this.taskCards.push(new TaskCard_1.TaskCard(label, text, moscowStatus, backlogStatus));
         // increment so the next card generated will be next on the list

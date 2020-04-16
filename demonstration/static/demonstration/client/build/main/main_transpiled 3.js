@@ -1495,7 +1495,6 @@ var View = /** @class */ (function () {
      */
     View.prototype.toggleBoardMenuVisibility = function () {
         this.isBoardMenuVisible = !this.isBoardMenuVisible;
-        console.log(this.isBoardMenuVisible);
     }; // end toggleBoardMenuVisibility
     /**
      * returns whether or not the board is currently visible

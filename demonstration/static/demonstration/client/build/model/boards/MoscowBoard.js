@@ -27,6 +27,7 @@ var MoscowBoard = /** @class */ (function () {
         board.addListTemplate(ListOptions_1.ListOptions.SHOULD);
         board.addListTemplate(ListOptions_1.ListOptions.COULD);
         board.addListTemplate(ListOptions_1.ListOptions.WONT);
+        board.addListTemplate(ListOptions_1.ListOptions.MOSCOW_UNASSIGNED);
         return board;
     }; // end generateBoard
     return MoscowBoard;

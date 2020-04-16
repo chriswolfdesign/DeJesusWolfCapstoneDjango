@@ -13,5 +13,7 @@ export enum SprintBacklogListOptions {
   BACKLOG = 'Backlog',
   INPROGRESS = 'InProgress',
   INREVIEW = 'InReview',
-  COMPLETE = 'Complete'
+  COMPLETE = 'Complete',
+  UNASSIGNED = 'Unassigned',
+  NONE = 'None'
 } // end SprintBacklogListOptions

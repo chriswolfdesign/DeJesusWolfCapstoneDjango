@@ -99,7 +99,6 @@ export class Model {
   /**
    * Generates a card within a board's list
    *
-   * @param {number} projectID -- the project to generate a card into
    * @param {number} boardID -- the board to generate a card into
    * @param {number} listID -- the list to generate a card into
    * @param {string} label -- the label for the card being generated
@@ -112,7 +111,7 @@ export class Model {
   /**
    * Sets the controller of this app.
    *
-   * @param {controller} Controller the controller that will send commands to this app.
+   * @param {Controller} controller the controller that will send commands to this app.
    */
   setController(controller: Controller): void {
     this.controller = controller;
@@ -128,7 +127,7 @@ export class Model {
     this.project = newProject; // end for
   } // end loadBoards
 
-  /*
+  /**
    * Getter for the project field
    *
    * @return {Project} -- the project we are currently working on

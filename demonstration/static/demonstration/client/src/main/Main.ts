@@ -27,7 +27,7 @@ window.onload = function (): void {
     while (decision === '') {
       decision = prompt('Please enter the name of your project: ');
     }
-    data.title = decision
+    data.title = decision;
   }
   controller.loadProject(data);
   render(controller);
@@ -70,7 +70,6 @@ function addClickListeners(controller: Controller): void {
   tasks.forEach(task => {
     let taskID: string = task.getLabel() + 'TextField';
     document.getElementById(taskID).addEventListener('click', function (event) {
-
       controller.setEditableTaskCard(task.getLabel());
       render(controller);
     }); // end eventListener
@@ -117,8 +116,6 @@ function addClickListeners(controller: Controller): void {
       } // end for
 
       controller.setConditions(completedArray);
-
-      console.log(controller.getEditableTaskCard());
 
       controller.removeEditableTaskCard();
       render(controller);
@@ -226,11 +223,12 @@ function setCurrentBoardSize(controller: Controller) {
   // Update styles
   if (controller.getView().getIsBoardMenuVisibile()) {
     document.getElementById('boardButtons').style.width = '20%';
-    document.getElementById('currentBoard').style.width = '75%';
+    document.getElementById('currentBoard').style.width = '79%';
+    document.getElementById('currentBoard').style.marginLeft = '21%';
   }  // end if
   else {
-    document.getElementById('boardButtons').style.width = '5%';
-    document.getElementById('currentBoard').style.width = '90%';
+    document.getElementById('boardButtons').style.width = '1%';
+    document.getElementById('currentBoard').style.width = '98%';
   } // end else
 } // end setCurrentBoardSize
 

@@ -27,6 +27,12 @@
                     "tasks": [],
                     "moscowStatus": "WONT",
                     "backlogStatus": "NONE"
+                },
+                {
+                    "label": "Unassigned",
+                    "tasks": [],
+                    "moscowStatus": "UNASSIGNED",
+                    "backlogStatus": "NONE"
                 }
             ],
             "listFactory": {
@@ -66,6 +72,12 @@
                     "tasks": [],
                     "moscowStatus": "NONE",
                     "backlogStatus": "COMPLETE"
+                },
+                {
+                    "label": "Unassigned",
+                    "tasks": [],
+                    "moscowStatus": "NONE",
+                    "backlogStatus": "UNASSIGNED"
                 }
             ],
             "listFactory": {

@@ -235,7 +235,7 @@ var Controller = /** @class */ (function () {
 }()); // end Controller
 exports.Controller = Controller;
 
-},{"../model/Model":4,"../model/enums/BacklogStatus":10,"../model/enums/MoscowStatus":13,"../view/view":28}],2:[function(require,module,exports){
+},{"../model/Model":4,"../model/enums/BacklogStatus":10,"../model/enums/MoscowStatus":13,"../view/view":30}],2:[function(require,module,exports){
 "use strict";
 /**
  * main.js
@@ -334,7 +334,6 @@ function addClickListeners(controller) {
             completedArray.push(document.getElementById('condition' + i).checked);
         } // end for
         controller.setConditions(completedArray);
-        console.log(controller.getEditableTaskCard());
         controller.removeEditableTaskCard();
         render(controller);
     });
@@ -431,11 +430,12 @@ function setCurrentBoardSize(controller) {
     // Update styles
     if (controller.getView().getIsBoardMenuVisibile()) {
         document.getElementById('boardButtons').style.width = '20%';
-        document.getElementById('currentBoard').style.width = '75%';
+        document.getElementById('currentBoard').style.width = '79%';
+        document.getElementById('currentBoard').style.marginLeft = '21%';
     } // end if
     else {
-        document.getElementById('boardButtons').style.width = '5%';
-        document.getElementById('currentBoard').style.width = '90%';
+        document.getElementById('boardButtons').style.width = '1%';
+        document.getElementById('currentBoard').style.width = '98%';
     } // end else
 } // end setCurrentBoardSize
 /**
@@ -512,7 +512,7 @@ function dropped() {
     render(controller);
 } // end dropped
 
-},{"../controller/Controller":1,"interactjs":29}],3:[function(require,module,exports){
+},{"../controller/Controller":1,"interactjs":31}],3:[function(require,module,exports){
 "use strict";
 /**
  * ConditionOfSatisfaction.ts
@@ -647,7 +647,6 @@ var Model = /** @class */ (function () {
     /**
      * Generates a card within a board's list
      *
-     * @param {number} projectID -- the project to generate a card into
      * @param {number} boardID -- the board to generate a card into
      * @param {number} listID -- the list to generate a card into
      * @param {string} label -- the label for the card being generated
@@ -659,7 +658,7 @@ var Model = /** @class */ (function () {
     /**
      * Sets the controller of this app.
      *
-     * @param {controller} Controller the controller that will send commands to this app.
+     * @param {Controller} controller the controller that will send commands to this app.
      */
     Model.prototype.setController = function (controller) {
         this.controller = controller;
@@ -673,7 +672,7 @@ var Model = /** @class */ (function () {
         newProject.loadProject(project);
         this.project = newProject; // end for
     }; // end loadBoards
-    /*
+    /**
      * Getter for the project field
      *
      * @return {Project} -- the project we are currently working on
@@ -804,13 +803,13 @@ var Project = /** @class */ (function () {
         // find the new moscowStatus and backlogStatus
         var moscowStatus = listToAddTo.getMoscowStatus();
         var backlogStatus = listToAddTo.getBacklogStatus();
-        // if on the backlogBoard, give a default of MUST
+        // // if on the backlogBoard, give a default of UNASSIGNED
         if (moscowStatus == MoscowStatus_1.MoscowStatus.NONE) {
-            moscowStatus = MoscowStatus_1.MoscowStatus.MUST;
+            moscowStatus = MoscowStatus_1.MoscowStatus.UNASSIGNED;
         } // end if
-        // if on the moscowBoard, give a default of BACKLOG
+        // if on the moscowBoard, give a default of UNASSIGNED
         if (backlogStatus == BacklogStatus_1.BacklogStatus.NONE) {
-            backlogStatus = BacklogStatus_1.BacklogStatus.BACKLOG;
+            backlogStatus = BacklogStatus_1.BacklogStatus.UNASSIGNED;
         } // end if
         this.taskCards.push(new TaskCard_1.TaskCard(label, text, moscowStatus, backlogStatus));
         // increment so the next card generated will be next on the list
@@ -1026,7 +1025,7 @@ var Board = /** @class */ (function () {
      * @param {Colors} color the optional color value for our list
      */
     Board.prototype.addList = function (label) {
-        this.lists.push(new List_1.List(label, MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.NONE));
+        this.lists.push(new List_1.List(label, MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.NONE));
     }; // end addList
     /**
      * Creates a task card within the specified list.
@@ -1117,6 +1116,7 @@ var MoscowBoard = /** @class */ (function () {
         board.addListTemplate(ListOptions_1.ListOptions.SHOULD);
         board.addListTemplate(ListOptions_1.ListOptions.COULD);
         board.addListTemplate(ListOptions_1.ListOptions.WONT);
+        board.addListTemplate(ListOptions_1.ListOptions.MOSCOW_UNASSIGNED);
         return board;
     }; // end generateBoard
     return MoscowBoard;
@@ -1153,6 +1153,7 @@ var SprintBacklogBoard = /** @class */ (function () {
         board.addListTemplate(ListOptions_1.ListOptions.INPROGRESS);
         board.addListTemplate(ListOptions_1.ListOptions.INREVIEW);
         board.addListTemplate(ListOptions_1.ListOptions.COMPLETE);
+        board.addListTemplate(ListOptions_1.ListOptions.SPRINT_BACKLOG_UNASSIGNED);
         return board;
     }; // end generateBoard
     return SprintBacklogBoard;
@@ -1178,6 +1179,7 @@ var BacklogStatus;
     BacklogStatus["IN_REVIEW"] = "IN_REVIEW";
     BacklogStatus["COMPLETE"] = "COMPLETE";
     BacklogStatus["NONE"] = "NONE";
+    BacklogStatus["UNASSIGNED"] = "UNASSIGNED";
 })(BacklogStatus = exports.BacklogStatus || (exports.BacklogStatus = {}));
 
 },{}],11:[function(require,module,exports){
@@ -1222,6 +1224,8 @@ var ListOptions;
     ListOptions["INPROGRESS"] = "InProgress";
     ListOptions["INREVIEW"] = "InReview";
     ListOptions["COMPLETE"] = "Complete";
+    ListOptions["MOSCOW_UNASSIGNED"] = "MoscowUnassigned";
+    ListOptions["SPRINT_BACKLOG_UNASSIGNED"] = "Sprint_Backlog_Unassigned";
 })(ListOptions = exports.ListOptions || (exports.ListOptions = {})); // end ListOptions
 
 },{}],13:[function(require,module,exports){
@@ -1242,6 +1246,7 @@ var MoscowStatus;
     MoscowStatus["SHOULD"] = "SHOULD";
     MoscowStatus["COULD"] = "COULD";
     MoscowStatus["WONT"] = "WONT";
+    MoscowStatus["UNASSIGNED"] = "UNASSIGNED";
     MoscowStatus["NONE"] = "NONE";
 })(MoscowStatus = exports.MoscowStatus || (exports.MoscowStatus = {}));
 ;
@@ -1313,6 +1318,8 @@ var InReviewList_1 = require("../lists/sprint_backlog_lists/InReviewList");
 var CompleteList_1 = require("../lists/sprint_backlog_lists/CompleteList");
 var MoscowStatus_1 = require("../enums/MoscowStatus");
 var BacklogStatus_1 = require("../enums/BacklogStatus");
+var UnassignedMoscowList_1 = require("../lists/moscow_lists/UnassignedMoscowList");
+var UnassignedSprintBacklogList_1 = require("../lists/sprint_backlog_lists/UnassignedSprintBacklogList");
 var ListFactory = /** @class */ (function () {
     function ListFactory() {
         this.mustList = new MustList_1.MustList();
@@ -1323,6 +1330,8 @@ var ListFactory = /** @class */ (function () {
         this.inProgressList = new InProgressList_1.InProgressList();
         this.inReviewList = new InReviewList_1.InReviewList();
         this.completeList = new CompleteList_1.CompleteList();
+        this.unassignedMoscowList = new UnassignedMoscowList_1.UnassignedMoscowList();
+        this.unassignedSprintBacklogList = new UnassignedSprintBacklogList_1.UnassignedSprintBacklogList();
     } // end constructor
     ListFactory.prototype.getMustList = function () {
         return this.mustList;
@@ -1373,15 +1382,19 @@ var ListFactory = /** @class */ (function () {
                 return this.inReviewList.generateList();
             case ListOptions_1.ListOptions.COMPLETE:
                 return this.completeList.generateList();
+            case ListOptions_1.ListOptions.MOSCOW_UNASSIGNED:
+                return this.unassignedMoscowList.generateList();
+            case ListOptions_1.ListOptions.SPRINT_BACKLOG_UNASSIGNED:
+                return this.unassignedSprintBacklogList.generateList();
             default:
-                return new List_1.List("", MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.NONE);
+                return new List_1.List("", MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.NONE);
         } // end switch
     }; // end generateList
     return ListFactory;
 }()); // end ListFactory
 exports.ListFactory = ListFactory;
 
-},{"../enums/BacklogStatus":10,"../enums/ListOptions":12,"../enums/MoscowStatus":13,"../lists/List":19,"../lists/moscow_lists/CouldList":20,"../lists/moscow_lists/MustList":21,"../lists/moscow_lists/ShouldList":22,"../lists/moscow_lists/WontList":23,"../lists/sprint_backlog_lists/BacklogList":24,"../lists/sprint_backlog_lists/CompleteList":25,"../lists/sprint_backlog_lists/InProgressList":26,"../lists/sprint_backlog_lists/InReviewList":27}],16:[function(require,module,exports){
+},{"../enums/BacklogStatus":10,"../enums/ListOptions":12,"../enums/MoscowStatus":13,"../lists/List":19,"../lists/moscow_lists/CouldList":20,"../lists/moscow_lists/MustList":21,"../lists/moscow_lists/ShouldList":22,"../lists/moscow_lists/UnassignedMoscowList":23,"../lists/moscow_lists/WontList":24,"../lists/sprint_backlog_lists/BacklogList":25,"../lists/sprint_backlog_lists/CompleteList":26,"../lists/sprint_backlog_lists/InProgressList":27,"../lists/sprint_backlog_lists/InReviewList":28,"../lists/sprint_backlog_lists/UnassignedSprintBacklogList":29}],16:[function(require,module,exports){
 "use strict";
 /**
  * moscow_list_factory.js
@@ -1668,6 +1681,37 @@ exports.ShouldList = ShouldList;
 },{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],23:[function(require,module,exports){
 "use strict";
 /**
+ * UnassignedMoscowList.ts
+ *
+ * A class that will generate a list for MoSCoW cards that have not yet been assigned.
+ *
+ * @author Ellery De Jesus
+ * @author Chris Wolf
+ * @version 2.0.0 (April 15, 2020)
+ */
+exports.__esModule = true;
+var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
+var UnassignedMoscowList = /** @class */ (function () {
+    function UnassignedMoscowList() {
+    }
+    // Constructor deliberately left out
+    /**
+     * generates an Unassigned List for MoSCoW board
+     *
+     * @return {List} a Must Have List
+     */
+    UnassignedMoscowList.prototype.generateList = function () {
+        return new List_1.List('Unassigned', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.NONE);
+    }; // end generateList
+    return UnassignedMoscowList;
+}()); // end MustList
+exports.UnassignedMoscowList = UnassignedMoscowList;
+
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],24:[function(require,module,exports){
+"use strict";
+/**
  * wont_list.js
  *
  * A class that will generate a Wont Have list for a MoSCoW board
@@ -1696,7 +1740,7 @@ var WontList = /** @class */ (function () {
 }()); // end WontList
 exports.WontList = WontList;
 
-},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],24:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],25:[function(require,module,exports){
 "use strict";
 /**
  * backlog_list.js
@@ -1727,7 +1771,7 @@ var BacklogList = /** @class */ (function () {
 }()); // end BacklogList
 exports.BacklogList = BacklogList;
 
-},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],25:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],26:[function(require,module,exports){
 "use strict";
 /**
  * complete_list.js
@@ -1758,7 +1802,7 @@ var CompleteList = /** @class */ (function () {
 }()); // end CompleteList
 exports.CompleteList = CompleteList;
 
-},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],26:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],27:[function(require,module,exports){
 "use strict";
 /**
  * in_progress_list.js
@@ -1789,7 +1833,7 @@ var InProgressList = /** @class */ (function () {
 }()); // end InProgressList
 exports.InProgressList = InProgressList;
 
-},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],27:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],28:[function(require,module,exports){
 "use strict";
 /**
  * in_review_list.js
@@ -1820,7 +1864,38 @@ var InReviewList = /** @class */ (function () {
 }()); // end InReviewList
 exports.InReviewList = InReviewList;
 
-},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],28:[function(require,module,exports){
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],29:[function(require,module,exports){
+"use strict";
+/**
+ * UnassignedSprintBacklogList.ts
+ *
+ * A class that will generate a list for cards that have not been assigned
+ *
+ * @author Ellery De Jesus
+ * @author Chris Wolf
+ * @version 2.0.0 (April 15, 2020)
+ */
+exports.__esModule = true;
+var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
+var UnassignedSprintBacklogList = /** @class */ (function () {
+    function UnassignedSprintBacklogList() {
+    }
+    // Constructor deliberately left out
+    /**
+     * generates a Backlog LIst for Sprint Backlog board
+     *
+     * @return {List} a Backlog List
+     */
+    UnassignedSprintBacklogList.prototype.generateList = function () {
+        return new List_1.List('Unassigned', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.UNASSIGNED);
+    }; // end generateList
+    return UnassignedSprintBacklogList;
+}()); // end BacklogList
+exports.UnassignedSprintBacklogList = UnassignedSprintBacklogList;
+
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],30:[function(require,module,exports){
 "use strict";
 /**
  * view.js
@@ -2133,7 +2208,7 @@ var View = /** @class */ (function () {
 }()); // end View
 exports.View = View;
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (global){
 /**
  * interact.js 1.7.0
