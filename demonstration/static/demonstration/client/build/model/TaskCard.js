@@ -80,7 +80,15 @@ var TaskCard = /** @class */ (function () {
      */
     TaskCard.prototype.addConditionOfSatisfaction = function (text) {
         this.conditionsOfSatisfaction.push(new ConditionOfSatisfaction_1.ConditionOfSatisfaction(text));
-    };
+    }; // end addConditionOfSatisfaction
+    /**
+     * Removes a condition of satisfaction from the task card
+     *
+     * @param index the index of the COS being removed
+     */
+    TaskCard.prototype.removeConditionOfSatisfaction = function (index) {
+        this.conditionsOfSatisfaction.splice(index, 1);
+    }; // end removeConditionOfSatisfaction
     TaskCard.prototype.loadTaskCard = function (taskcard) {
         this.label = taskcard.label;
         this.text = taskcard.text;

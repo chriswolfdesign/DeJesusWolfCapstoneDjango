@@ -337,6 +337,19 @@ function addClickListeners(controller) {
         controller.removeEditableTaskCard();
         render(controller);
     });
+    // add functionality to the cos-remove-buttons in the editable task card
+    if (controller.getEditableTaskCard() !== null) {
+        var _loop_2 = function (i) {
+            document.getElementById('cos-delete-button' + i).
+                addEventListener('click', function (event) {
+                controller.getEditableTaskCard().removeConditionOfSatisfaction(i);
+                render(controller);
+            }); // end event listener
+        };
+        for (var i = 0; i < controller.getEditableTaskCard().getConditionsOfSatisfaction().length; i++) {
+            _loop_2(i);
+        } // end for
+    }
     // when the enter button is clicked in the satisfaction enter text box
     document.getElementById('new-condition').addEventListener('keyup', function (event) {
         var newConditionText = document.getElementById('new-condition').value;
@@ -345,7 +358,7 @@ function addClickListeners(controller) {
             render(controller);
         } // end if
     }); // end for
-    var _loop_2 = function (i) {
+    var _loop_3 = function (i) {
         var boardID = 'board' + i.toString();
         document.getElementById(boardID).addEventListener('click', function (event) {
             controller.getModel().getProjects().setActiveBoardIndex(i);
@@ -354,7 +367,7 @@ function addClickListeners(controller) {
     };
     // allows us to change the active board based on user preference via click
     for (var i = 0; i < controller.getModel().getProjects().getBoards().length; i++) {
-        _loop_2(i);
+        _loop_3(i);
     } // end for
     // allows us to save the current instance of the project onto our local file system
     document.getElementById("save").addEventListener('click', function (event) {
@@ -964,7 +977,15 @@ var TaskCard = /** @class */ (function () {
      */
     TaskCard.prototype.addConditionOfSatisfaction = function (text) {
         this.conditionsOfSatisfaction.push(new ConditionOfSatisfaction_1.ConditionOfSatisfaction(text));
-    };
+    }; // end addConditionOfSatisfaction
+    /**
+     * Removes a condition of satisfaction from the task card
+     *
+     * @param index the index of the COS being removed
+     */
+    TaskCard.prototype.removeConditionOfSatisfaction = function (index) {
+        this.conditionsOfSatisfaction.splice(index, 1);
+    }; // end removeConditionOfSatisfaction
     TaskCard.prototype.loadTaskCard = function (taskcard) {
         this.label = taskcard.label;
         this.text = taskcard.text;
@@ -1995,6 +2016,7 @@ var View = /** @class */ (function () {
                 html += '<input id=condition' + i + ' type=checkbox></input>';
                 html += this.editableTaskCard.getConditionsOfSatisfaction()[i].
                     getText();
+                html += '<button class=cos-delete-button id=cos-delete-button' + i + '>X</button>';
                 html += '</div>';
             } // end for
         } // end if
