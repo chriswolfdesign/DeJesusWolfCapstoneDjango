@@ -235,7 +235,7 @@ var Controller = /** @class */ (function () {
 }()); // end Controller
 exports.Controller = Controller;
 
-},{"../model/Model":4,"../model/enums/BacklogStatus":10,"../model/enums/MoscowStatus":13,"../view/view":29}],2:[function(require,module,exports){
+},{"../model/Model":4,"../model/enums/BacklogStatus":10,"../model/enums/MoscowStatus":13,"../view/view":30}],2:[function(require,module,exports){
 "use strict";
 /**
  * main.js
@@ -512,7 +512,7 @@ function dropped() {
     render(controller);
 } // end dropped
 
-},{"../controller/Controller":1,"interactjs":30}],3:[function(require,module,exports){
+},{"../controller/Controller":1,"interactjs":31}],3:[function(require,module,exports){
 "use strict";
 /**
  * ConditionOfSatisfaction.ts
@@ -803,13 +803,13 @@ var Project = /** @class */ (function () {
         // find the new moscowStatus and backlogStatus
         var moscowStatus = listToAddTo.getMoscowStatus();
         var backlogStatus = listToAddTo.getBacklogStatus();
-        // // if on the backlogBoard, give a default of MUST
-        // if (moscowStatus == MoscowStatus.UNASSIGNED) {
-        //   moscowStatus = MoscowStatus.UNASSIGNED;
-        // } // end if
-        // if on the moscowBoard, give a default of BACKLOG
+        // // if on the backlogBoard, give a default of UNASSIGNED
+        if (moscowStatus == MoscowStatus_1.MoscowStatus.NONE) {
+            moscowStatus = MoscowStatus_1.MoscowStatus.UNASSIGNED;
+        } // end if
+        // if on the moscowBoard, give a default of UNASSIGNED
         if (backlogStatus == BacklogStatus_1.BacklogStatus.NONE) {
-            backlogStatus = BacklogStatus_1.BacklogStatus.BACKLOG;
+            backlogStatus = BacklogStatus_1.BacklogStatus.UNASSIGNED;
         } // end if
         this.taskCards.push(new TaskCard_1.TaskCard(label, text, moscowStatus, backlogStatus));
         // increment so the next card generated will be next on the list
@@ -1153,6 +1153,7 @@ var SprintBacklogBoard = /** @class */ (function () {
         board.addListTemplate(ListOptions_1.ListOptions.INPROGRESS);
         board.addListTemplate(ListOptions_1.ListOptions.INREVIEW);
         board.addListTemplate(ListOptions_1.ListOptions.COMPLETE);
+        board.addListTemplate(ListOptions_1.ListOptions.SPRINT_BACKLOG_UNASSIGNED);
         return board;
     }; // end generateBoard
     return SprintBacklogBoard;
@@ -1178,6 +1179,7 @@ var BacklogStatus;
     BacklogStatus["IN_REVIEW"] = "IN_REVIEW";
     BacklogStatus["COMPLETE"] = "COMPLETE";
     BacklogStatus["NONE"] = "NONE";
+    BacklogStatus["UNASSIGNED"] = "UNASSIGNED";
 })(BacklogStatus = exports.BacklogStatus || (exports.BacklogStatus = {}));
 
 },{}],11:[function(require,module,exports){
@@ -1223,6 +1225,7 @@ var ListOptions;
     ListOptions["INREVIEW"] = "InReview";
     ListOptions["COMPLETE"] = "Complete";
     ListOptions["MOSCOW_UNASSIGNED"] = "MoscowUnassigned";
+    ListOptions["SPRINT_BACKLOG_UNASSIGNED"] = "Sprint_Backlog_Unassigned";
 })(ListOptions = exports.ListOptions || (exports.ListOptions = {})); // end ListOptions
 
 },{}],13:[function(require,module,exports){
@@ -1316,6 +1319,7 @@ var CompleteList_1 = require("../lists/sprint_backlog_lists/CompleteList");
 var MoscowStatus_1 = require("../enums/MoscowStatus");
 var BacklogStatus_1 = require("../enums/BacklogStatus");
 var UnassignedMoscowList_1 = require("../lists/moscow_lists/UnassignedMoscowList");
+var UnassignedSprintBacklogList_1 = require("../lists/sprint_backlog_lists/UnassignedSprintBacklogList");
 var ListFactory = /** @class */ (function () {
     function ListFactory() {
         this.mustList = new MustList_1.MustList();
@@ -1327,6 +1331,7 @@ var ListFactory = /** @class */ (function () {
         this.inReviewList = new InReviewList_1.InReviewList();
         this.completeList = new CompleteList_1.CompleteList();
         this.unassignedMoscowList = new UnassignedMoscowList_1.UnassignedMoscowList();
+        this.unassignedSprintBacklogList = new UnassignedSprintBacklogList_1.UnassignedSprintBacklogList();
     } // end constructor
     ListFactory.prototype.getMustList = function () {
         return this.mustList;
@@ -1379,6 +1384,8 @@ var ListFactory = /** @class */ (function () {
                 return this.completeList.generateList();
             case ListOptions_1.ListOptions.MOSCOW_UNASSIGNED:
                 return this.unassignedMoscowList.generateList();
+            case ListOptions_1.ListOptions.SPRINT_BACKLOG_UNASSIGNED:
+                return this.unassignedSprintBacklogList.generateList();
             default:
                 return new List_1.List("", MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.NONE);
         } // end switch
@@ -1387,7 +1394,7 @@ var ListFactory = /** @class */ (function () {
 }()); // end ListFactory
 exports.ListFactory = ListFactory;
 
-},{"../enums/BacklogStatus":10,"../enums/ListOptions":12,"../enums/MoscowStatus":13,"../lists/List":19,"../lists/moscow_lists/CouldList":20,"../lists/moscow_lists/MustList":21,"../lists/moscow_lists/ShouldList":22,"../lists/moscow_lists/UnassignedMoscowList":23,"../lists/moscow_lists/WontList":24,"../lists/sprint_backlog_lists/BacklogList":25,"../lists/sprint_backlog_lists/CompleteList":26,"../lists/sprint_backlog_lists/InProgressList":27,"../lists/sprint_backlog_lists/InReviewList":28}],16:[function(require,module,exports){
+},{"../enums/BacklogStatus":10,"../enums/ListOptions":12,"../enums/MoscowStatus":13,"../lists/List":19,"../lists/moscow_lists/CouldList":20,"../lists/moscow_lists/MustList":21,"../lists/moscow_lists/ShouldList":22,"../lists/moscow_lists/UnassignedMoscowList":23,"../lists/moscow_lists/WontList":24,"../lists/sprint_backlog_lists/BacklogList":25,"../lists/sprint_backlog_lists/CompleteList":26,"../lists/sprint_backlog_lists/InProgressList":27,"../lists/sprint_backlog_lists/InReviewList":28,"../lists/sprint_backlog_lists/UnassignedSprintBacklogList":29}],16:[function(require,module,exports){
 "use strict";
 /**
  * moscow_list_factory.js
@@ -1696,7 +1703,7 @@ var UnassignedMoscowList = /** @class */ (function () {
      * @return {List} a Must Have List
      */
     UnassignedMoscowList.prototype.generateList = function () {
-        return new List_1.List('Unassigned', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.BACKLOG);
+        return new List_1.List('Unassigned', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.NONE);
     }; // end generateList
     return UnassignedMoscowList;
 }()); // end MustList
@@ -1858,6 +1865,37 @@ var InReviewList = /** @class */ (function () {
 exports.InReviewList = InReviewList;
 
 },{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],29:[function(require,module,exports){
+"use strict";
+/**
+ * UnassignedSprintBacklogList.ts
+ *
+ * A class that will generate a list for cards that have not been assigned
+ *
+ * @author Ellery De Jesus
+ * @author Chris Wolf
+ * @version 2.0.0 (April 15, 2020)
+ */
+exports.__esModule = true;
+var List_1 = require("../List");
+var MoscowStatus_1 = require("../../enums/MoscowStatus");
+var BacklogStatus_1 = require("../../enums/BacklogStatus");
+var UnassignedSprintBacklogList = /** @class */ (function () {
+    function UnassignedSprintBacklogList() {
+    }
+    // Constructor deliberately left out
+    /**
+     * generates a Backlog LIst for Sprint Backlog board
+     *
+     * @return {List} a Backlog List
+     */
+    UnassignedSprintBacklogList.prototype.generateList = function () {
+        return new List_1.List('Unassigned', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.UNASSIGNED);
+    }; // end generateList
+    return UnassignedSprintBacklogList;
+}()); // end BacklogList
+exports.UnassignedSprintBacklogList = UnassignedSprintBacklogList;
+
+},{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],30:[function(require,module,exports){
 "use strict";
 /**
  * view.js
@@ -2170,7 +2208,7 @@ var View = /** @class */ (function () {
 }()); // end View
 exports.View = View;
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (global){
 /**
  * interact.js 1.7.0

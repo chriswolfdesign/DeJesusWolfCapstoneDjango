@@ -1,7 +1,7 @@
 /**
- * UnassignedMoscowList.ts
+ * UnassignedSprintBacklogList.ts
  *
- * A class that will generate a list for MoSCoW cards that have not yet been assigned.
+ * A class that will generate a list for cards that have not been assigned
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
@@ -12,15 +12,15 @@ import {List} from '../List';
 import { MoscowStatus } from '../../enums/MoscowStatus';
 import { BacklogStatus } from '../../enums/BacklogStatus';
 
-export class UnassignedMoscowList {
+export class UnassignedSprintBacklogList {
   // Constructor deliberately left out
 
   /**
-   * generates an Unassigned List for MoSCoW board
+   * generates a Backlog LIst for Sprint Backlog board
    *
-   * @return {List} a Must Have List
+   * @return {List} a Backlog List
    */
   generateList(): List {
-    return new List('Unassigned', MoscowStatus.UNASSIGNED, BacklogStatus.NONE);
+    return new List('Unassigned', MoscowStatus.NONE, BacklogStatus.UNASSIGNED);
   } // end generateList
-} // end MustList
+} // end BacklogList

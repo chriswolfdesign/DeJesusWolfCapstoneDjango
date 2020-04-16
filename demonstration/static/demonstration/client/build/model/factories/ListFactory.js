@@ -23,6 +23,7 @@ var CompleteList_1 = require("../lists/sprint_backlog_lists/CompleteList");
 var MoscowStatus_1 = require("../enums/MoscowStatus");
 var BacklogStatus_1 = require("../enums/BacklogStatus");
 var UnassignedMoscowList_1 = require("../lists/moscow_lists/UnassignedMoscowList");
+var UnassignedSprintBacklogList_1 = require("../lists/sprint_backlog_lists/UnassignedSprintBacklogList");
 var ListFactory = /** @class */ (function () {
     function ListFactory() {
         this.mustList = new MustList_1.MustList();
@@ -34,6 +35,7 @@ var ListFactory = /** @class */ (function () {
         this.inReviewList = new InReviewList_1.InReviewList();
         this.completeList = new CompleteList_1.CompleteList();
         this.unassignedMoscowList = new UnassignedMoscowList_1.UnassignedMoscowList();
+        this.unassignedSprintBacklogList = new UnassignedSprintBacklogList_1.UnassignedSprintBacklogList();
     } // end constructor
     ListFactory.prototype.getMustList = function () {
         return this.mustList;
@@ -86,6 +88,8 @@ var ListFactory = /** @class */ (function () {
                 return this.completeList.generateList();
             case ListOptions_1.ListOptions.MOSCOW_UNASSIGNED:
                 return this.unassignedMoscowList.generateList();
+            case ListOptions_1.ListOptions.SPRINT_BACKLOG_UNASSIGNED:
+                return this.unassignedSprintBacklogList.generateList();
             default:
                 return new List_1.List("", MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.NONE);
         } // end switch

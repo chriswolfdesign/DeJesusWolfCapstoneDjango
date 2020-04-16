@@ -141,14 +141,14 @@ export class Project {
     let moscowStatus: MoscowStatus = listToAddTo.getMoscowStatus();
     let backlogStatus: BacklogStatus = listToAddTo.getBacklogStatus();
 
-    // // if on the backlogBoard, give a default of MUST
-    // if (moscowStatus == MoscowStatus.UNASSIGNED) {
-    //   moscowStatus = MoscowStatus.UNASSIGNED;
-    // } // end if
+    // // if on the backlogBoard, give a default of UNASSIGNED
+    if (moscowStatus == MoscowStatus.NONE) {
+      moscowStatus = MoscowStatus.UNASSIGNED;
+    } // end if
 
-    // if on the moscowBoard, give a default of BACKLOG
+    // if on the moscowBoard, give a default of UNASSIGNED
     if (backlogStatus == BacklogStatus.NONE) {
-      backlogStatus = BacklogStatus.BACKLOG;
+      backlogStatus = BacklogStatus.UNASSIGNED;
     } // end if
 
     this.taskCards.push(new TaskCard(label, text, moscowStatus, backlogStatus));

@@ -27,6 +27,7 @@ export class SprintBacklogBoard {
     board.addListTemplate(ListOptions.INPROGRESS);
     board.addListTemplate(ListOptions.INREVIEW);
     board.addListTemplate(ListOptions.COMPLETE);
+    board.addListTemplate(ListOptions.SPRINT_BACKLOG_UNASSIGNED);
 
     return board;
   } // end generateBoard

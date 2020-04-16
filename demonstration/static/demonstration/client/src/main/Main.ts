@@ -70,7 +70,6 @@ function addClickListeners(controller: Controller): void {
   tasks.forEach(task => {
     let taskID: string = task.getLabel() + 'TextField';
     document.getElementById(taskID).addEventListener('click', function (event) {
-
       controller.setEditableTaskCard(task.getLabel());
       render(controller);
     }); // end eventListener

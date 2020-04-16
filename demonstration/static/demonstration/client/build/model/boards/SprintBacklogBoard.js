@@ -27,6 +27,7 @@ var SprintBacklogBoard = /** @class */ (function () {
         board.addListTemplate(ListOptions_1.ListOptions.INPROGRESS);
         board.addListTemplate(ListOptions_1.ListOptions.INREVIEW);
         board.addListTemplate(ListOptions_1.ListOptions.COMPLETE);
+        board.addListTemplate(ListOptions_1.ListOptions.SPRINT_BACKLOG_UNASSIGNED);
         return board;
     }; // end generateBoard
     return SprintBacklogBoard;

@@ -21,4 +21,5 @@ var ListOptions;
     ListOptions["INREVIEW"] = "InReview";
     ListOptions["COMPLETE"] = "Complete";
     ListOptions["MOSCOW_UNASSIGNED"] = "MoscowUnassigned";
+    ListOptions["SPRINT_BACKLOG_UNASSIGNED"] = "Sprint_Backlog_Unassigned";
 })(ListOptions = exports.ListOptions || (exports.ListOptions = {})); // end ListOptions

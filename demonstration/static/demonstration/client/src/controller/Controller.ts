@@ -176,8 +176,6 @@ export class Controller {
     if (list.getBacklogStatus() != BacklogStatus.NONE) {
       task.setBacklogStatus(list.getBacklogStatus());
     } // end if
-
-    console.log(task);
   } // end moveTaskCard
 
   /**

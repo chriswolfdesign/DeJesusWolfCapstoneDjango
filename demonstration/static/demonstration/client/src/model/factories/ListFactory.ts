@@ -22,6 +22,7 @@ import { CompleteList } from '../lists/sprint_backlog_lists/CompleteList';
 import { MoscowStatus } from '../enums/MoscowStatus';
 import { BacklogStatus } from '../enums/BacklogStatus';
 import {UnassignedMoscowList} from "../lists/moscow_lists/UnassignedMoscowList";
+import {UnassignedSprintBacklogList} from "../lists/sprint_backlog_lists/UnassignedSprintBacklogList";
 
 export class ListFactory {
   private mustList: MustList;
@@ -33,6 +34,7 @@ export class ListFactory {
   private inReviewList: InReviewList;
   private completeList: CompleteList;
   private unassignedMoscowList: UnassignedMoscowList;
+  private unassignedSprintBacklogList: UnassignedSprintBacklogList;
 
   constructor() {
     this.mustList = new MustList();
@@ -44,6 +46,7 @@ export class ListFactory {
     this.inReviewList = new InReviewList();
     this.completeList = new CompleteList();
     this.unassignedMoscowList = new UnassignedMoscowList();
+    this.unassignedSprintBacklogList = new UnassignedSprintBacklogList();
   } // end constructor
 
   getMustList(): MustList {
@@ -105,6 +108,8 @@ export class ListFactory {
         return this.completeList.generateList();
       case ListOptions.MOSCOW_UNASSIGNED:
         return this.unassignedMoscowList.generateList();
+      case ListOptions.SPRINT_BACKLOG_UNASSIGNED:
+        return this.unassignedSprintBacklogList.generateList();
       default:
         return new List("", MoscowStatus.UNASSIGNED, BacklogStatus.NONE);
     } // end switch

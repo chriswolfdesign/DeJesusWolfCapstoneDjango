@@ -16,4 +16,6 @@ var SprintBacklogListOptions;
     SprintBacklogListOptions["INPROGRESS"] = "InProgress";
     SprintBacklogListOptions["INREVIEW"] = "InReview";
     SprintBacklogListOptions["COMPLETE"] = "Complete";
+    SprintBacklogListOptions["UNASSIGNED"] = "Unassigned";
+    SprintBacklogListOptions["NONE"] = "None";
 })(SprintBacklogListOptions = exports.SprintBacklogListOptions || (exports.SprintBacklogListOptions = {})); // end SprintBacklogListOptions

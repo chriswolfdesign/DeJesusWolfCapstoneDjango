@@ -16,4 +16,5 @@ var BacklogStatus;
     BacklogStatus["IN_REVIEW"] = "IN_REVIEW";
     BacklogStatus["COMPLETE"] = "COMPLETE";
     BacklogStatus["NONE"] = "NONE";
+    BacklogStatus["UNASSIGNED"] = "UNASSIGNED";
 })(BacklogStatus = exports.BacklogStatus || (exports.BacklogStatus = {}));
