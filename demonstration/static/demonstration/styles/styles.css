@@ -111,6 +111,10 @@ body {
     text-decoration: underline;
 }
 
+#new-condition {
+    width: 99%;
+}
+
  /***********
   * CLASSES *
   ***********/
@@ -131,7 +135,9 @@ body {
 
 .task-card-text {
     text-align: center;
-    font-size: 14pt;
+    font-size: 12pt;
+    width: 100%;
+    overflow: auto;
 }
 
 .task-card-label {
