@@ -199,6 +199,13 @@ body {
     font-size: 24px;
 }
 
+.save-vc-button {
+    color: black;
+    height: 4vh;
+    width: 100%;
+    font-size: 18px;
+}
+
 .cos-delete-button {
     background-color: red;
     height: 3vh;
@@ -206,4 +213,15 @@ body {
     font-size: 6px;
     color: white;
     text-align: center;
+}
+
+#cloud-vc {
+    position: absolute;
+    width: 100%;
+    bottom: 10px;
+}
+
+#vc {
+    display: flex;
+    align-items: flex-start;
 }

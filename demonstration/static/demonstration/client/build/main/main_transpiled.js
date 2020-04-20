@@ -2130,9 +2130,13 @@ var View = /** @class */ (function () {
             html += '</button>';
             html += '</br>';
         } // end for
-        html += '<button class=boardButton id=save-cloud>Save</button>';
-        html += '<button class=boardButton id=go-forward>></button>';
-        html += '<button class=boardButton id=go-back><</button>';
+        html += '<div id=cloud-vc>';
+        html += '<button class=save-vc-button id=save-cloud>Save</button>';
+        html += '<div id=vc>';
+        html += '<button class=save-vc-button id=go-back><</button>';
+        html += '<button class=save-vc-button id=go-forward>></button>';
+        html += '</div>';
+        html += '</div>';
         html += '</div>';
         return html;
     }; // end generateBoardButtons
