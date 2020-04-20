@@ -191,18 +191,16 @@ def vc(request):
 
     module_dir = os.path.dirname(__file__)
     dirpath = module_dir + '\\static\\demonstration\\users\\' + username
+    saves = open(dirpath + '\saves', 'r')
+    array = json.load(saves)
 
     states = int(version)
     if(req == 'f'):
-        states += 1
+        if(int(version) != (len(array)-1)):
+            states += 1
     else:
         if(int(version) > 1):
             states -= 1
-
-    module_dir = os.path.dirname(__file__)
-    dirpath = module_dir + '\\static\\demonstration\\users\\' + username
-    saves = open(dirpath + '\saves', 'r')
-    array = json.load(saves)
 
     state = open(dirpath + '\\' + array[states])
     data = json.dumps(json.load(state))

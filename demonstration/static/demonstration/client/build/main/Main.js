@@ -131,7 +131,13 @@ function addClickListeners(controller) {
     for (var i = 0; i < controller.getModel().getProjects().getBoards().length; i++) {
         _loop_3(i);
     } // end for
+    document.getElementById("go-forward").addEventListener('click', function (event) {
+        versionControl('f');
+    });
     document.getElementById("go-back").addEventListener('click', function (event) {
+        versionControl('b');
+    });
+    function versionControl(option) {
         var username = document.getElementById('username').value;
         var version = document.getElementById('version').value;
         $.ajax({
@@ -140,7 +146,7 @@ function addClickListeners(controller) {
             data: {
                 username: username,
                 version: version,
-                request: 'b'
+                request: option
             },
             success: function (response) {
                 var old_project = JSON.parse(response.data);
@@ -150,10 +156,17 @@ function addClickListeners(controller) {
                 $("#version").val(response.version);
             },
             error: function (xhr) {
-                alert("Was unable to retrieve previous version");
+                var version;
+                if (option == 'f') {
+                    version = 'next';
+                }
+                else {
+                    version = 'previous';
+                }
+                alert("Was unable to retrieve " + version + " version");
             }
         });
-    });
+    }
     // allows us to save unto the cloud
     document.getElementById("save-cloud").addEventListener('click', function (event) {
         var data = JSON.stringify(controller.getModel().getProjects());

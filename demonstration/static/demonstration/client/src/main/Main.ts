@@ -155,17 +155,26 @@ function addClickListeners(controller: Controller): void {
     });
   } // end for
 
+
+  document.getElementById("go-forward").addEventListener('click', function (event) {
+    versionControl('f');
+  });
+
   document.getElementById("go-back").addEventListener('click', function (event) {
+    versionControl('b');
+
+  });
+
+  function versionControl(option: string) {
     let username = (<HTMLInputElement>document.getElementById('username')).value;
     let version = (<HTMLInputElement>document.getElementById('version')).value;
-
     $.ajax({
       url: "vc",
       type: "get",
       data: {
         username: username,
         version: version,
-        request: 'b'
+        request: option
       },
       success: function (response) {
         var old_project: Project = <Project>JSON.parse((<string>response.data));
@@ -175,10 +184,16 @@ function addClickListeners(controller: Controller): void {
         $("#version").val(response.version);
       },
       error: function (xhr) {
-        alert("Was unable to retrieve previous version");
+        let version: string;
+        if (option == 'f') {
+          version = 'next';
+        } else {
+          version = 'previous';
+        }
+        alert("Was unable to retrieve " + version + " version");
       }
     });
-  });
+  }
 
 
   // allows us to save unto the cloud

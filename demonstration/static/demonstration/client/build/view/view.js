@@ -177,7 +177,8 @@ var View = /** @class */ (function () {
             html += '</br>';
         } // end for
         html += '<button class=boardButton id=save-cloud>Save</button>';
-        html += '<button class=boardButton id=go-back>Back</button>';
+        html += '<button class=boardButton id=go-forward>></button>';
+        html += '<button class=boardButton id=go-back><</button>';
         html += '</div>';
         return html;
     }; // end generateBoardButtons

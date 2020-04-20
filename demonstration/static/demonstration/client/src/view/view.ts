@@ -213,7 +213,8 @@ export class View {
     } // end for
 
     html += '<button class=boardButton id=save-cloud>Save</button>';
-    html += '<button class=boardButton id=go-back>Back</button>';
+    html += '<button class=boardButton id=go-forward>></button>'
+    html += '<button class=boardButton id=go-back><</button>';
 
     html += '</div>';
 
