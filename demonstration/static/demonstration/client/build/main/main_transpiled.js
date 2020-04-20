@@ -369,41 +369,63 @@ function addClickListeners(controller) {
     for (var i = 0; i < controller.getModel().getProjects().getBoards().length; i++) {
         _loop_3(i);
     } // end for
-    // allows us to save the current instance of the project onto our local file system
-    document.getElementById("save").addEventListener('click', function (event) {
-        /*
-            var temp = controller;
-            var name = prompt("Enter the file name:");
-            var data = JSON.stringify(controller.getModel().getProjects());
-            var blob = new Blob([data], { type: 'text/plain' });
-            var e = document.createEvent('MouseEvents'), a = document.createElement('a');
-            a.download = name + ".json";
-            a.href = window.URL.createObjectURL(blob);
-            a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
-            e.initEvent('click', true, false);
-            a.dispatchEvent(e);
-        */
+    document.getElementById("go-back").addEventListener('click', function (event) {
+        var username = document.getElementById('username').value;
+        var version = document.getElementById('version').value;
+        $.ajax({
+            url: "vc",
+            type: "get",
+            data: {
+                username: username,
+                version: version,
+                request: 'b'
+            },
+            success: function (response) {
+                var old_project = JSON.parse(response.data);
+                controller.loadProject(old_project);
+                render(controller);
+                $("userdata").val(response.data);
+                $("#version").val(response.version);
+            },
+            error: function (xhr) {
+                alert("Was unable to retrieve previous version");
+            }
+        });
+    });
+    // allows us to save unto the cloud
+    document.getElementById("save-cloud").addEventListener('click', function (event) {
         var data = JSON.stringify(controller.getModel().getProjects());
         document.getElementById("userdata").value = data;
         $("#userdata").trigger('change');
     });
+    // allows us to save the current instance of the project onto our local file system
+    document.getElementById("save").addEventListener('click', function (event) {
+        var temp = controller;
+        var name = prompt("Enter the file name:");
+        var data = JSON.stringify(controller.getModel().getProjects());
+        var blob = new Blob([data], { type: 'text/plain' });
+        var e = document.createEvent('MouseEvents'), a = document.createElement('a');
+        a.download = name + ".json";
+        a.href = window.URL.createObjectURL(blob);
+        a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+        e.initEvent('click', true, false);
+        a.dispatchEvent(e);
+    });
     // allows us to load an instance of the project from our local file system
     document.getElementById("submit").addEventListener('click', function (event) {
-        /*
-        let file = (<HTMLInputElement>document.getElementById("file-input")).files[0];
+        var file = document.getElementById("file-input").files[0];
         if (file) {
-          var reader = new FileReader();
-          reader.readAsText(file, "UTF-8");
-          reader.onload = function (event) {
-            var new_project: Project = <Project>JSON.parse((<string>event.target.result));
-            controller.loadProject(new_project);
-            render(controller);
-          };
-          reader.onerror = function (event) {
-            alert("Error reading file.");
-          };
+            var reader = new FileReader();
+            reader.readAsText(file, "UTF-8");
+            reader.onload = function (event) {
+                var new_project = JSON.parse(event.target.result);
+                controller.loadProject(new_project);
+                render(controller);
+            };
+            reader.onerror = function (event) {
+                alert("Error reading file.");
+            };
         }
-        */
     });
     // toggle the visibility of the board menu
     document.getElementById('boardMenuToggleButton').addEventListener('click', function (event) {
@@ -2095,6 +2117,8 @@ var View = /** @class */ (function () {
             html += '</button>';
             html += '</br>';
         } // end for
+        html += '<button class=boardButton id=save-cloud>Save</button>';
+        html += '<button class=boardButton id=go-back>Back</button>';
         html += '</div>';
         return html;
     }; // end generateBoardButtons
