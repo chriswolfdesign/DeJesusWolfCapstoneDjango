@@ -42,15 +42,21 @@
   <script>
     $(document).ready(function() {
       $("#userdata").change(function() {
+          var title = '';
+          while(title===''){
+            title = prompt("Please enter title for save");
+          }
           $.ajax({
             url: 'save',
             data: {
               'data': $(this).val(),
-              'username': "{{ username }}"
+              'username': "{{ username }}",
+              'title': title
+
             },
             dataType: 'json',
             success: function (data) {
-              alert("Project has been saved");
+              alert('"' + title + '"'+ " has been saved");
             }
           });
       });

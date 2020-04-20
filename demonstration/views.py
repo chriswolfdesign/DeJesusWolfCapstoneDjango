@@ -15,6 +15,7 @@ from .models import *
 from .forms import *
 import json
 import os
+import datetime
 
 '''
 entry(request)
@@ -45,7 +46,6 @@ that will be handling the application.
 
 
 def index(request):
-    data = request.user.userprofile.data
     username = request.user.username
 
     module_dir = os.path.dirname(__file__)
@@ -53,7 +53,10 @@ def index(request):
 
     saves = open(dirpath + '\saves', 'r')
     array = json.load(saves)
-    print(array[0])
+    latest_save = array.pop()
+
+    latest_save = open(dirpath + '\\' + latest_save)
+    data = json.dumps(json.load(latest_save))
 
     context = {'data': data, 'username': username}
     return render(request, 'demonstration/index.html', context)
@@ -129,11 +132,6 @@ def registerPage(request):
                 saves = ['initial']
                 myFile.write(json.dumps(saves))
 
-            UserProfile.objects.create(
-                user=user,
-                data=userdata
-            )
-
             user = authenticate(username=username, password=password)
             login(request, user)
             return redirect('login')
@@ -159,11 +157,22 @@ field in the User model with the username given.
 def save(request):
     userdata = request.GET.get('data', None)
     username = request.GET.get('username', None)
+    title = request.GET.get('title', None)
 
-    u = User.objects.get(username=username)
-    u.userprofile.data = userdata
-    u.userprofile.save()
-    u.save()
+    save_name = datetime.datetime.now().strftime("%I%M%S%p-%d-%B-%Y") + '-' + title
+
+    module_dir = os.path.dirname(__file__)
+    dirpath = module_dir + '\\static\\demonstration\\users\\' + username
+
+    with open(dirpath + '\saves', 'r') as f:
+        array = json.load(f)
+        array.append(save_name)
+        saveFile = open(dirpath + '\saves', 'w+')
+        saveFile.write(json.dumps(array))
+
+    with open(dirpath + '\\' + save_name, 'w') as file:
+        myFile = File(file)
+        myFile.write(userdata)
 
     data = {
         # OK Status : Request has been received and was successful
