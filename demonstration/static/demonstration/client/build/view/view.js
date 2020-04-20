@@ -176,7 +176,8 @@ var View = /** @class */ (function () {
             html += '</button>';
             html += '</br>';
         } // end for
-        html += '<button class=boardButton id=save-local>Save</button>';
+        html += '<button class=boardButton id=save-cloud>Save</button>';
+        html += '<button class=boardButton id=go-back>Back</button>';
         html += '</div>';
         return html;
     }; // end generateBoardButtons

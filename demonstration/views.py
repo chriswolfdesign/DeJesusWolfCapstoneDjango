@@ -58,7 +58,7 @@ def index(request):
     latest_save = open(dirpath + '\\' + latest_save)
     data = json.dumps(json.load(latest_save))
 
-    context = {'data': data, 'username': username}
+    context = {'data': data, 'username': username, 'state': len(array), }
     return render(request, 'demonstration/index.html', context)
 
 
@@ -164,6 +164,7 @@ def save(request):
     module_dir = os.path.dirname(__file__)
     dirpath = module_dir + '\\static\\demonstration\\users\\' + username
 
+    array = []
     with open(dirpath + '\saves', 'r') as f:
         array = json.load(f)
         array.append(save_name)
@@ -174,8 +175,42 @@ def save(request):
         myFile = File(file)
         myFile.write(userdata)
 
+    version_num = len(array) - 1
     data = {
         # OK Status : Request has been received and was successful
         'status': 200,
+        'version': version_num
     }
+    return JsonResponse(data)
+
+
+def vc(request):
+    username = request.GET.get('username', None)
+    version = request.GET.get('version', None)
+    req = request.GET.get('request', None)
+
+    module_dir = os.path.dirname(__file__)
+    dirpath = module_dir + '\\static\\demonstration\\users\\' + username
+
+    states = int(version)
+    if(req == 'f'):
+        states += 1
+    else:
+        if(int(version) > 1):
+            states -= 1
+
+    module_dir = os.path.dirname(__file__)
+    dirpath = module_dir + '\\static\\demonstration\\users\\' + username
+    saves = open(dirpath + '\saves', 'r')
+    array = json.load(saves)
+
+    state = open(dirpath + '\\' + array[states])
+    data = json.dumps(json.load(state))
+
+    data = {
+        'status': 200,
+        'data': data,
+        'version': states
+    }
+
     return JsonResponse(data)

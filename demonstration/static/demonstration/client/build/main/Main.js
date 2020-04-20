@@ -131,7 +131,31 @@ function addClickListeners(controller) {
     for (var i = 0; i < controller.getModel().getProjects().getBoards().length; i++) {
         _loop_3(i);
     } // end for
-    document.getElementById("save-local").addEventListener('click', function (event) {
+    document.getElementById("go-back").addEventListener('click', function (event) {
+        var username = document.getElementById('username').value;
+        var version = document.getElementById('version').value;
+        $.ajax({
+            url: "vc",
+            type: "get",
+            data: {
+                username: username,
+                version: version,
+                request: 'b'
+            },
+            success: function (response) {
+                var old_project = JSON.parse(response.data);
+                controller.loadProject(old_project);
+                render(controller);
+                $("userdata").val(response.data);
+                $("#version").val(response.version);
+            },
+            error: function (xhr) {
+                alert("Was unable to retrieve previous version");
+            }
+        });
+    });
+    // allows us to save unto the cloud
+    document.getElementById("save-cloud").addEventListener('click', function (event) {
         var data = JSON.stringify(controller.getModel().getProjects());
         document.getElementById("userdata").value = data;
         $("#userdata").trigger('change');

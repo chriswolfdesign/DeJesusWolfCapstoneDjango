@@ -34,6 +34,13 @@
   <!-- User data being injected into the script -->
   <input type="hidden" id="userdata" name="data" value="{{ data }}">
 
+  <!-- Version Number -->
+  <input type="hidden" id="version" name="version" value={{ state }}>
+
+  <!-- Username -->
+  <input type="hidden" id="username" name="username" value={{ username }}>
+
+
   <!-- JQuery -->
   <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 
@@ -52,11 +59,11 @@
               'data': $(this).val(),
               'username': "{{ username }}",
               'title': title
-
             },
             dataType: 'json',
             success: function (data) {
               alert('"' + title + '"'+ " has been saved");
+              $("#version").val(data.version);
             }
           });
       });

@@ -155,12 +155,39 @@ function addClickListeners(controller: Controller): void {
     });
   } // end for
 
+  document.getElementById("go-back").addEventListener('click', function (event) {
+    let username = (<HTMLInputElement>document.getElementById('username')).value;
+    let version = (<HTMLInputElement>document.getElementById('version')).value;
+
+    $.ajax({
+      url: "vc",
+      type: "get",
+      data: {
+        username: username,
+        version: version,
+        request: 'b'
+      },
+      success: function (response) {
+        var old_project: Project = <Project>JSON.parse((<string>response.data));
+        controller.loadProject(old_project);
+        render(controller);
+        $("userdata").val(response.data);
+        $("#version").val(response.version);
+      },
+      error: function (xhr) {
+        alert("Was unable to retrieve previous version");
+      }
+    });
+  });
+
+
   // allows us to save unto the cloud
   document.getElementById("save-cloud").addEventListener('click', function (event) {
     var data = JSON.stringify(controller.getModel().getProjects());
     (<HTMLInputElement>document.getElementById("userdata")).value = data;
     $("#userdata").trigger('change');
   });
+
 
   // allows us to save the current instance of the project onto our local file system
   document.getElementById("save").addEventListener('click', function (event) {
