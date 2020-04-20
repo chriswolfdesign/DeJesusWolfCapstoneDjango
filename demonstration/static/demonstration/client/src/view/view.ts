@@ -75,9 +75,9 @@ export class View {
     }
 
     html += '<div id=editable-task-card>'
-    html += '<div id=editable-task-card-header>' + 
+    html += '<div id=editable-task-card-header>' +
       label + '</div>';
-    
+
     html += '<textarea id=editable-task-card-description placeholder="'
       + text + '"></textarea>';
     html += '<br/>';
@@ -86,10 +86,10 @@ export class View {
 
     html += '<br/>';
 
-    html += '<button id=editable-task-card-cancel-button type=button' +         
+    html += '<button id=editable-task-card-cancel-button type=button' +
       '>Cancel</button>';
 
-    html += '<button id=editable-task-card-submit-button type=button' + 
+    html += '<button id=editable-task-card-submit-button type=button' +
       '>Submit</button>';
 
     html += '</div>';
@@ -183,7 +183,7 @@ export class View {
    *
    * @return {string} -- the HTML for the body of the application
    */
-  generateBodyHTML(model : Model): string {
+  generateBodyHTML(model: Model): string {
     let html: string = '<div id=appBody>';
     html += this.generateBoardButtons(model);
     html += this.generateCurrentBoard(model);
@@ -208,9 +208,11 @@ export class View {
     for (let i = 0; i < boards.length; i++) {
       html += '<button class=boardButton id=board' + i + '>';
       html += boards[i].getTitle();
-      html += '</button>'; 
+      html += '</button>';
       html += '</br>';
     } // end for
+
+    html += '<button class=boardButton id=save-cloud>Save</button>'
 
     html += '</div>';
 
@@ -245,14 +247,14 @@ export class View {
     // for every list, generate the HTML
     for (let i = 0; i < model.getProjects().getActiveBoard().getLists().length; i++) {
       html += '<div id=\'' + model.getProjects().getActiveBoard().getLists()[i].
-        getLabel() + '\' class=\'dropzone list\'>' + 
-        '<div class=list-header>' + 
+        getLabel() + '\' class=\'dropzone list\'>' +
+        '<div class=list-header>' +
         '<div class=list-label><u>' +
-        model.getProjects().getActiveBoard().getLists()[i].getLabel() + 
+        model.getProjects().getActiveBoard().getLists()[i].getLabel() +
         '</u></div>' +
         this.generateAddButtonHTML(model.getProjects().getActiveBoard().getLists
-          ()[i].getLabel()) + 
-        '</div>' + 
+          ()[i].getLabel()) +
+        '</div>' +
         this.generateIndividualListHTML(model.getProjects().getActiveBoard().
           getLists()[i], model) +
         '</div>';
@@ -289,8 +291,8 @@ export class View {
     model.getProjects().getTasks().forEach(task => {
       if (task.getMoscowStatus() == list.getMoscowStatus() ||
         task.getBacklogStatus() == list.getBacklogStatus()) {
-          html += this.generateIndividualTaskCardHTML(task);
-        }
+        html += this.generateIndividualTaskCardHTML(task);
+      }
     });
 
     html += '</div>';
@@ -359,7 +361,7 @@ export class View {
    *
    * @return {string} -- the HTML for the Board Menu Toggle button
    */
-  private static generateBoardMenuToggleButton() : string {
+  private static generateBoardMenuToggleButton(): string {
     return '<button id=boardMenuToggleButton>Board Menu</button>';
   } // end generateBoardMenuToggleButton
 } // end View

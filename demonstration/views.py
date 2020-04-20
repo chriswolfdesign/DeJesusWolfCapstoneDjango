@@ -6,6 +6,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.http import JsonResponse
 
+from django.core.files.storage import default_storage
+from django.core.files import File
+
 # Create your views here.
 
 from .models import *
@@ -44,6 +47,14 @@ that will be handling the application.
 def index(request):
     data = request.user.userprofile.data
     username = request.user.username
+
+    module_dir = os.path.dirname(__file__)
+    dirpath = module_dir + '\\static\\demonstration\\users\\' + username
+
+    saves = open(dirpath + '\saves', 'r')
+    array = json.load(saves)
+    print(array[0])
+
     context = {'data': data, 'username': username}
     return render(request, 'demonstration/index.html', context)
 
@@ -80,7 +91,7 @@ def loginPage(request):
 
 
 '''
-loginPage(request)
+registerPage(request)
 
 Handles the registration process for our application. Asks for the user to provide credentials which
 will be used in authenticating the user when they attempt to use the application. It also ensures
@@ -106,10 +117,23 @@ def registerPage(request):
             f = open(file_path, 'r')
             userdata = json.dumps(json.load(f))
 
+            dirpath = module_dir + '\\static\\demonstration\\users\\' + username
+            os.mkdir(dirpath)
+
+            with open(dirpath + '\initial', 'w') as file:
+                myFile = File(file)
+                myFile.write(userdata)
+
+            with open(dirpath + '\saves', 'w') as file:
+                myFile = File(file)
+                saves = ['initial']
+                myFile.write(json.dumps(saves))
+
             UserProfile.objects.create(
                 user=user,
                 data=userdata
             )
+
             user = authenticate(username=username, password=password)
             login(request, user)
             return redirect('login')

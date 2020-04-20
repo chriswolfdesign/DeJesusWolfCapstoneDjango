@@ -131,41 +131,39 @@ function addClickListeners(controller) {
     for (var i = 0; i < controller.getModel().getProjects().getBoards().length; i++) {
         _loop_3(i);
     } // end for
-    // allows us to save the current instance of the project onto our local file system
-    document.getElementById("save").addEventListener('click', function (event) {
-        /*
-            var temp = controller;
-            var name = prompt("Enter the file name:");
-            var data = JSON.stringify(controller.getModel().getProjects());
-            var blob = new Blob([data], { type: 'text/plain' });
-            var e = document.createEvent('MouseEvents'), a = document.createElement('a');
-            a.download = name + ".json";
-            a.href = window.URL.createObjectURL(blob);
-            a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
-            e.initEvent('click', true, false);
-            a.dispatchEvent(e);
-        */
+    document.getElementById("save-local").addEventListener('click', function (event) {
         var data = JSON.stringify(controller.getModel().getProjects());
         document.getElementById("userdata").value = data;
         $("#userdata").trigger('change');
     });
+    // allows us to save the current instance of the project onto our local file system
+    document.getElementById("save").addEventListener('click', function (event) {
+        var temp = controller;
+        var name = prompt("Enter the file name:");
+        var data = JSON.stringify(controller.getModel().getProjects());
+        var blob = new Blob([data], { type: 'text/plain' });
+        var e = document.createEvent('MouseEvents'), a = document.createElement('a');
+        a.download = name + ".json";
+        a.href = window.URL.createObjectURL(blob);
+        a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+        e.initEvent('click', true, false);
+        a.dispatchEvent(e);
+    });
     // allows us to load an instance of the project from our local file system
     document.getElementById("submit").addEventListener('click', function (event) {
-        /*
-        let file = (<HTMLInputElement>document.getElementById("file-input")).files[0];
+        var file = document.getElementById("file-input").files[0];
         if (file) {
-          var reader = new FileReader();
-          reader.readAsText(file, "UTF-8");
-          reader.onload = function (event) {
-            var new_project: Project = <Project>JSON.parse((<string>event.target.result));
-            controller.loadProject(new_project);
-            render(controller);
-          };
-          reader.onerror = function (event) {
-            alert("Error reading file.");
-          };
+            var reader = new FileReader();
+            reader.readAsText(file, "UTF-8");
+            reader.onload = function (event) {
+                var new_project = JSON.parse(event.target.result);
+                controller.loadProject(new_project);
+                render(controller);
+            };
+            reader.onerror = function (event) {
+                alert("Error reading file.");
+            };
         }
-        */
     });
     // toggle the visibility of the board menu
     document.getElementById('boardMenuToggleButton').addEventListener('click', function (event) {
