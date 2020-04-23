@@ -35,6 +35,7 @@ function highlightCurrentBoard(controller) {
     var boardID = 'board' + controller.getModel().getProjects().getActiveBoardIndex().toString();
     document.getElementById(boardID).style.color = 'white';
     document.getElementById(boardID).style.backgroundColor = 'black';
+    document.getElementById(boardID).style.textDecoration = 'underline';
 } // end highlightCurrentBoard
 /**
  * Adds the event listener to each of the buttons as they are rendered
