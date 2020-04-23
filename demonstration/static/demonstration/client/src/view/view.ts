@@ -139,7 +139,7 @@ export class View {
   generateToolbar(model: Model): string {
     let html = '<div id=toolbar>';
     html += this.generateSaveLoadButtons();
-    html += '<div id=toolbar-text>Agility</div>';
+    html += '<div id=toolbar-text>' + model.getProjects().getActiveBoard().getTitle() + '</div>';
     html += '</div>';
     return html;
   } // end generateToolbar
@@ -238,7 +238,6 @@ export class View {
   generateCurrentBoard(model): string {
     let html = '<div id=currentBoard>';
     html += View.generateBoardMenuToggleButtonShow();
-    html += this.generateHeaderHTML(model);
     html += this.generateListsHTML(model);
     html += '</div>';
     return html;
