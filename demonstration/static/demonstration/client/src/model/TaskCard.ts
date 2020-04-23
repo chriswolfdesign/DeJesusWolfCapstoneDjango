@@ -16,6 +16,7 @@ import { ConditionOfSatisfaction } from "./ConditionOfSatisfaction";
 export class TaskCard {
 
   private label: string;
+  private title: string;
   private text: string;
   private conditionsOfSatisfaction: ConditionOfSatisfaction[];
   private moscowStatus: MoscowStatus;
@@ -29,10 +30,11 @@ export class TaskCard {
    * @param {MoscowStatus} moscowStats the card's Moscow status
    * @param {BacklogStatus} backlogStatus the card's Backlog status
    */
-  constructor(label: string, text: string, moscowStatus: MoscowStatus,
+  constructor(label: string, title: string, moscowStatus: MoscowStatus,
     backlogStatus: BacklogStatus) {
     this.label = label;
-    this.text = text;
+    this.title = title;
+    this.text = 'Enter description here';
     this.conditionsOfSatisfaction = [];
     this.moscowStatus = moscowStatus;
     this.backlogStatus = backlogStatus;
@@ -49,6 +51,10 @@ export class TaskCard {
   getText(): string {
     return this.text;
   } // end getText
+
+  getTitle(): string {
+    return this.title;
+  }
 
   getNumberOfConditions(): number {
     return this.conditionsOfSatisfaction.length;
@@ -117,6 +123,7 @@ export class TaskCard {
 
   loadTaskCard(taskcard: TaskCard) {
     this.label = taskcard.label;
+    this.title = taskcard.title;
     this.text = taskcard.text;
     this.moscowStatus = taskcard.moscowStatus;
     this.backlogStatus = taskcard.backlogStatus;
