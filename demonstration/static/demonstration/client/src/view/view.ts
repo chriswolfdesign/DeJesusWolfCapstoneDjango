@@ -139,7 +139,6 @@ export class View {
   generateToolbar(model: Model): string {
     let html = '<div id=toolbar>';
     html += this.generateSaveLoadButtons();
-    html += View.generateBoardMenuToggleButton();
     html += '<div id=toolbar-text>Agility</div>';
     html += '</div>';
     return html;
@@ -201,6 +200,9 @@ export class View {
   generateBoardButtons(model): string {
     let html: string = '<div id=boardButtons>';
 
+    html += View.generateBoardMenuToggleButtonHide();
+
+
     html += '<div id=boardMenuTitle>' + model.getProjects().getTitle() + '</div>';
 
     let boards = model.getProjects().getBoards();
@@ -235,6 +237,7 @@ export class View {
    */
   generateCurrentBoard(model): string {
     let html = '<div id=currentBoard>';
+    html += View.generateBoardMenuToggleButtonShow();
     html += this.generateHeaderHTML(model);
     html += this.generateListsHTML(model);
     html += '</div>';
@@ -362,13 +365,17 @@ export class View {
     return '<button id=\'' + thisID + '\' class=add-button>+</button>';
   } // end generateAddButtonHTML
 
+  private static generateBoardMenuToggleButtonShow() {
+    return '<button id=boardMenuToggleButtonShow>\></button>';
+  }
+
   /**
    * Generates the button that will allow us to toggle the visibility of the
    * Board Menu
    *
    * @return {string} -- the HTML for the Board Menu Toggle button
    */
-  private static generateBoardMenuToggleButton(): string {
-    return '<button id=boardMenuToggleButton>Board Menu</button>';
+  private static generateBoardMenuToggleButtonHide(): string {
+    return '<button id=boardMenuToggleButtonHide>\<</button>';
   } // end generateBoardMenuToggleButton
 } // end View

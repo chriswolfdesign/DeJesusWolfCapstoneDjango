@@ -444,9 +444,15 @@ function addClickListeners(controller) {
         }
     });
     // toggle the visibility of the board menu
-    document.getElementById('boardMenuToggleButton').addEventListener('click', function (event) {
+    document.getElementById('boardMenuToggleButtonHide').addEventListener('click', function (event) {
         controller.getView().toggleBoardMenuVisibility();
         render(controller);
+        document.getElementById('boardMenuToggleButtonShow').style.visibility = 'visible';
+    });
+    document.getElementById('boardMenuToggleButtonShow').addEventListener('click', function (event) {
+        controller.getView().toggleBoardMenuVisibility();
+        render(controller);
+        document.getElementById('boardMenuToggleButtonShow').style.visibility = 'hidden';
     });
 } // end addClickListeners
 /**
@@ -2074,7 +2080,6 @@ var View = /** @class */ (function () {
     View.prototype.generateToolbar = function (model) {
         var html = '<div id=toolbar>';
         html += this.generateSaveLoadButtons();
-        html += View.generateBoardMenuToggleButton();
         html += '<div id=toolbar-text>Agility</div>';
         html += '</div>';
         return html;
@@ -2130,6 +2135,7 @@ var View = /** @class */ (function () {
      */
     View.prototype.generateBoardButtons = function (model) {
         var html = '<div id=boardButtons>';
+        html += View.generateBoardMenuToggleButtonHide();
         html += '<div id=boardMenuTitle>' + model.getProjects().getTitle() + '</div>';
         var boards = model.getProjects().getBoards();
         for (var i = 0; i < boards.length; i++) {
@@ -2157,6 +2163,7 @@ var View = /** @class */ (function () {
      */
     View.prototype.generateCurrentBoard = function (model) {
         var html = '<div id=currentBoard>';
+        html += View.generateBoardMenuToggleButtonShow();
         html += this.generateHeaderHTML(model);
         html += this.generateListsHTML(model);
         html += '</div>';
@@ -2267,14 +2274,17 @@ var View = /** @class */ (function () {
         var thisID = parentID + 'AddButton';
         return '<button id=\'' + thisID + '\' class=add-button>+</button>';
     }; // end generateAddButtonHTML
+    View.generateBoardMenuToggleButtonShow = function () {
+        return '<button id=boardMenuToggleButtonShow>\></button>';
+    };
     /**
      * Generates the button that will allow us to toggle the visibility of the
      * Board Menu
      *
      * @return {string} -- the HTML for the Board Menu Toggle button
      */
-    View.generateBoardMenuToggleButton = function () {
-        return '<button id=boardMenuToggleButton>Board Menu</button>';
+    View.generateBoardMenuToggleButtonHide = function () {
+        return '<button id=boardMenuToggleButtonHide>\<</button>';
     }; // end generateBoardMenuToggleButton
     return View;
 }()); // end View
