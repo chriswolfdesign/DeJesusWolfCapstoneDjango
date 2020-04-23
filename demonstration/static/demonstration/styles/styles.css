@@ -115,6 +115,22 @@ body {
     width: 99%;
 }
 
+#Must {
+    background-color: #85e385;
+}
+
+#Should {
+    background-color: #f3f386;
+}
+
+#Could {
+    background-color: #ecc57e;
+}
+
+#Wont {
+    background-color: #e37474;
+}
+
  /***********
   * CLASSES *
   ***********/
