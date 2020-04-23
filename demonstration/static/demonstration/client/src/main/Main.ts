@@ -241,11 +241,17 @@ function addClickListeners(controller: Controller): void {
   });
 
   // toggle the visibility of the board menu
-  document.getElementById('boardMenuToggleButton').addEventListener('click', function (event) {
+  document.getElementById('boardMenuToggleButtonHide').addEventListener('click', function (event) {
     controller.getView().toggleBoardMenuVisibility();
-
     render(controller);
+    document.getElementById('boardMenuToggleButtonShow').style.visibility = 'visible';
   });
+
+  document.getElementById('boardMenuToggleButtonShow').addEventListener('click', function (event) {
+    controller.getView().toggleBoardMenuVisibility();
+    render(controller);
+    document.getElementById('boardMenuToggleButtonShow').style.visibility = 'hidden';
+  })
 } // end addClickListeners
 
 /**

@@ -46,6 +46,19 @@ body {
     font-size: 24px;
 }
 
+#boardMenuToggleButtonHide {
+    position: absolute;
+    right: 0;
+    width: 25px; /* width and height are equal to make a square */
+    height: 25px;
+}
+
+#boardMenuToggleButtonShow {
+    width: 25px; /* width and height are equal to make a square */
+    height: 25px;
+    visibility: hidden;
+}
+
 #appBody {
     display: inline;
     /*overflow-x: scroll;*/
