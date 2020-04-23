@@ -4,6 +4,7 @@
 body {
     background: #C8A2C8;
     color: white;
+    font-family: sans-serif;
 }
 
 /*******
@@ -148,7 +149,6 @@ body {
   * CLASSES *
   ***********/
 .task-card {
-    font-family: arial, serif;
     background-color: #FFFF88;
     width: 80%;
     min-height: 15vh;
