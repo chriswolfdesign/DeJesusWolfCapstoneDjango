@@ -239,7 +239,7 @@ body {
     background-color: red;
     height: 3vh;
     width: 3vh; /* height and width are equal to make a square */
-    font-size: 6px;
+    font-size: 10px;
     color: white;
     text-align: center;
 }
