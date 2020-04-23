@@ -20,9 +20,10 @@ var TaskCard = /** @class */ (function () {
      * @param {MoscowStatus} moscowStats the card's Moscow status
      * @param {BacklogStatus} backlogStatus the card's Backlog status
      */
-    function TaskCard(label, text, moscowStatus, backlogStatus) {
+    function TaskCard(label, title, moscowStatus, backlogStatus) {
         this.label = label;
-        this.text = text;
+        this.title = title;
+        this.text = 'Enter description here';
         this.conditionsOfSatisfaction = [];
         this.moscowStatus = moscowStatus;
         this.backlogStatus = backlogStatus;
@@ -36,6 +37,9 @@ var TaskCard = /** @class */ (function () {
     TaskCard.prototype.getText = function () {
         return this.text;
     }; // end getText
+    TaskCard.prototype.getTitle = function () {
+        return this.title;
+    };
     TaskCard.prototype.getNumberOfConditions = function () {
         return this.conditionsOfSatisfaction.length;
     }; // end getNumberOfConditions
@@ -91,6 +95,7 @@ var TaskCard = /** @class */ (function () {
     }; // end removeConditionOfSatisfaction
     TaskCard.prototype.loadTaskCard = function (taskcard) {
         this.label = taskcard.label;
+        this.title = taskcard.title;
         this.text = taskcard.text;
         this.moscowStatus = taskcard.moscowStatus;
         this.backlogStatus = taskcard.backlogStatus;

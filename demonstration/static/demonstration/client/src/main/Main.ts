@@ -59,8 +59,13 @@ function addClickListeners(controller: Controller): void {
     let buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getLabel() + 'AddButton';
     document.getElementById(buttonID).addEventListener('click', function
       (event) {
-      let newTaskText = 'Enter description here';
-      controller.getModel().getProjects().generateTaskCard(i, newTaskText);
+      let newTaskTitle = '';
+
+      while (newTaskTitle === '') {
+        newTaskTitle = prompt('New task text');
+      }
+
+      controller.getModel().getProjects().generateTaskCard(i, newTaskTitle);
       controller.setEditableTaskCard(controller.getNewestTaskCard().getLabel());
       render(controller);
     }); // end Event Listener

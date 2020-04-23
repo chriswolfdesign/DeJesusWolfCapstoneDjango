@@ -58,7 +58,7 @@ var View = /** @class */ (function () {
         var label = '';
         var text = '';
         if (this.editableTaskCard !== null) {
-            label = this.editableTaskCard.getLabel();
+            label = this.editableTaskCard.getTitle();
             text = this.editableTaskCard.getText();
         }
         html += '<div id=editable-task-card>';
@@ -272,7 +272,7 @@ var View = /** @class */ (function () {
         html += '<div class="task-card-label"><u>' + task.getLabel() + '</u></div>';
         html += this.generateRemoveButtonHTML(task);
         html += '</div>';
-        html += '<div class=task-card-text id=' + task.getLabel() + 'TextField>' + task.getText() + '</div>';
+        html += '<div class=task-card-text id=' + task.getLabel() + 'TextField>' + task.getTitle() + '</div>';
         html += '</div>';
         html += '<div class=task-card-statuses>';
         html += '<div><b>' + task.getMoscowStatus() + '</b></div>';

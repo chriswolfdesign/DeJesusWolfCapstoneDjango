@@ -284,8 +284,11 @@ function addClickListeners(controller) {
     var _loop_1 = function (i) {
         var buttonID = controller.getModel().getProjects().getActiveBoard().getLists()[i].getLabel() + 'AddButton';
         document.getElementById(buttonID).addEventListener('click', function (event) {
-            var newTaskText = 'Enter description here';
-            controller.getModel().getProjects().generateTaskCard(i, newTaskText);
+            var newTaskTitle = '';
+            while (newTaskTitle === '') {
+                newTaskTitle = prompt('New task text');
+            }
+            controller.getModel().getProjects().generateTaskCard(i, newTaskTitle);
             controller.setEditableTaskCard(controller.getNewestTaskCard().getLabel());
             render(controller);
         }); // end Event Listener
@@ -952,9 +955,10 @@ var TaskCard = /** @class */ (function () {
      * @param {MoscowStatus} moscowStats the card's Moscow status
      * @param {BacklogStatus} backlogStatus the card's Backlog status
      */
-    function TaskCard(label, text, moscowStatus, backlogStatus) {
+    function TaskCard(label, title, moscowStatus, backlogStatus) {
         this.label = label;
-        this.text = text;
+        this.title = title;
+        this.text = 'Enter description here';
         this.conditionsOfSatisfaction = [];
         this.moscowStatus = moscowStatus;
         this.backlogStatus = backlogStatus;
@@ -968,6 +972,9 @@ var TaskCard = /** @class */ (function () {
     TaskCard.prototype.getText = function () {
         return this.text;
     }; // end getText
+    TaskCard.prototype.getTitle = function () {
+        return this.title;
+    };
     TaskCard.prototype.getNumberOfConditions = function () {
         return this.conditionsOfSatisfaction.length;
     }; // end getNumberOfConditions
@@ -1023,6 +1030,7 @@ var TaskCard = /** @class */ (function () {
     }; // end removeConditionOfSatisfaction
     TaskCard.prototype.loadTaskCard = function (taskcard) {
         this.label = taskcard.label;
+        this.title = taskcard.title;
         this.text = taskcard.text;
         this.moscowStatus = taskcard.moscowStatus;
         this.backlogStatus = taskcard.backlogStatus;
@@ -2012,7 +2020,7 @@ var View = /** @class */ (function () {
         var label = '';
         var text = '';
         if (this.editableTaskCard !== null) {
-            label = this.editableTaskCard.getLabel();
+            label = this.editableTaskCard.getTitle();
             text = this.editableTaskCard.getText();
         }
         html += '<div id=editable-task-card>';
@@ -2226,7 +2234,7 @@ var View = /** @class */ (function () {
         html += '<div class="task-card-label"><u>' + task.getLabel() + '</u></div>';
         html += this.generateRemoveButtonHTML(task);
         html += '</div>';
-        html += '<div class=task-card-text id=' + task.getLabel() + 'TextField>' + task.getText() + '</div>';
+        html += '<div class=task-card-text id=' + task.getLabel() + 'TextField>' + task.getTitle() + '</div>';
         html += '</div>';
         html += '<div class=task-card-statuses>';
         html += '<div><b>' + task.getMoscowStatus() + '</b></div>';

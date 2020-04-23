@@ -70,7 +70,7 @@ export class View {
     let label: string = '';
     let text: string = '';
     if (this.editableTaskCard !== null) {
-      label = this.editableTaskCard.getLabel();
+      label = this.editableTaskCard.getTitle();
       text = this.editableTaskCard.getText();
     }
 
@@ -322,7 +322,7 @@ export class View {
     html += '<div class="task-card-label"><u>' + task.getLabel() + '</u></div>';
     html += this.generateRemoveButtonHTML(task);
     html += '</div>';
-    html += '<div class=task-card-text id=' + task.getLabel() + 'TextField>' + task.getText() + '</div>';
+    html += '<div class=task-card-text id=' + task.getLabel() + 'TextField>' + task.getTitle() + '</div>';
 
     html += '</div>';
 
