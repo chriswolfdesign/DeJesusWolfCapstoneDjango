@@ -149,14 +149,14 @@ body {
   ***********/
 .task-card {
     font-family: arial, serif;
-    background-color: #AAAAAA;
+    background-color: #FFFF88;
     width: 80%;
     min-height: 15vh;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 10px;
     padding: 5px;
-    border-radius: 5px;
+    box-shadow: 5px 5px #555555;
     text-align: left;
     font-size: 14px;
     border: black 2px solid;
