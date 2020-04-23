@@ -44,6 +44,7 @@ function highlightCurrentBoard(controller: Controller): void {
 
   document.getElementById(boardID).style.color = 'white';
   document.getElementById(boardID).style.backgroundColor = 'black';
+  document.getElementById(boardID).style.textDecoration = 'underline';
 } // end highlightCurrentBoard
 
 /**
