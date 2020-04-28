@@ -1,6 +1,6 @@
 "use strict";
 /**
- * complete_list.js
+ * CompleteList.ts
  *
  * A class that will generate a Complete List for a Sprint Backlog board
  *
@@ -18,8 +18,7 @@ var CompleteList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates a Complete List for Sprint Backlog board
-     *
-     * @return {List} a Complete List
+     * @return a Complete List
      */
     CompleteList.prototype.generateList = function () {
         return new List_1.List('Complete', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.COMPLETE);

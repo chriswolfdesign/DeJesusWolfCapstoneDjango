@@ -1,6 +1,6 @@
 "use strict";
 /**
- * moscow_board.js
+ * MoscowBoard.ts
  *
  * A class that will generate a MoSCoW board
  *
@@ -17,8 +17,7 @@ var MoscowBoard = /** @class */ (function () {
     }
     /**
      * generates a MoSCoW Board
-     *
-     * @return {Board} a MoSCoW Board
+     * @return a MoSCoW Board
      */
     MoscowBoard.prototype.generateBoard = function () {
         var board = new Board_1.Board('MoSCoW Board');

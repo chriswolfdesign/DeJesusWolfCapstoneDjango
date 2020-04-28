@@ -1,5 +1,7 @@
 /**
- * Holds and allows for the manipulation of Boards.
+ * Project.ts
+ *
+ * A class responsible for holding and allowing for the manipulation of Boards.
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
@@ -16,17 +18,31 @@ import { MoscowStatus } from './enums/MoscowStatus';
 import { BacklogStatus } from './enums/BacklogStatus';
 
 export class Project {
+
+  /**********
+   * Fields *
+   **********/
+
+  /** The title of this project */
   private title: string;
+  /** The boards held in this project */
   private boards: Board[];
+  /** The task cards held in this board */
   private taskCards: TaskCard[];
+  /** Allows convenient generation of boards */
   private boardFactory: BoardFactory;
+  /** The index of the board that is currently being worked on */
   private activeBoardIndex: number;
+  /** The index of the next task card that should be generated */
   private nextCardNumber: number;
+
+  /****************
+   * Constructors *
+   ****************/
 
   /**
    * Generates the foundation for the app
-   *
-   * @param {String} title -- the title of this board
+   * @param title the title of this board
    */
   constructor(title) {
     this.title = title;
@@ -39,17 +55,29 @@ export class Project {
     this.nextCardNumber = 1;
   } // end constructor
 
-  getTitle(): string {
-    return this.title;
-  }
-
-  getBoardTitle(boardID: number) {
-    return this.boards[boardID].getTitle();
-  }
+  /***********
+   * Getters *
+   ***********/
 
   /**
-   * gets the board that should be currently shown on the user's browser
-   * 
+   * Gets the title of this project
+   * @return the title of this project
+   */
+  getTitle(): string {
+    return this.title;
+  } // end getTitle
+
+  /**
+   * Gets the title of a specific board
+   *
+   * @param boardID the title of the requested board
+   */
+  getBoardTitle(boardID: number) {
+    return this.boards[boardID].getTitle();
+  } // end getBoardTitle
+
+  /**
+   * Gets the board that should be currently shown on the user's browser
    * @return the current board on screen
    */
   getActiveBoard(): Board {
@@ -57,8 +85,7 @@ export class Project {
   } // end getActiveBoard
 
   /**
-   * gets the index of the board that be currently shown on the user's browser
-   * 
+   * Gets the index of the board that be currently shown on the user's browser
    * @return the index for the current board on screen
    */
   getActiveBoardIndex(): number {
@@ -66,22 +93,40 @@ export class Project {
   } // end getActiveBoardIndex
 
   /**
-   * change the board that is currently displayed on the user's browser
-   * 
+   * Gets the task cards for this project
+   * @return a list of task cards in this project
+   */
+  getTasks(): TaskCard[] {
+    return this.taskCards;
+  } // end getTasks
+
+  /**
+   * Gets the boards in this project
+   * @return a list of the boards in this project
+   */
+  getBoards(): Board[] {
+    return this.boards;
+  } // end getBoards
+
+  /***********
+   * Setters *
+   ***********/
+
+  /**
+   * Change the board that is currently displayed on the user's browser
    * @param index the index for the board we wish to display on screen
    */
   setActiveBoardIndex(index: number): void {
     this.activeBoardIndex = index;
   } // end setActiveBoardIndex
 
-  getTasks(): TaskCard[] {
-    return this.taskCards;
-  } // end getTasks
+  /**********************
+   * Additional methods *
+   **********************/
 
   /**
    * Generates a board from a template based on user preference
-   *
-   * @param option
+   * @param option the template to build a board off of
    */
   generateBoardTemplate(option: BoardOptions): void {
     this.boards.push(this.boardFactory.generateBoard(option));
@@ -89,8 +134,7 @@ export class Project {
 
   /**
    * Removes a board from the list of boards.
-   *
-   * @param {number} boardID the id of the to be removed
+   * @param boardID the id of the to be removed
    */
   removeBoard(boardID: number): void {
     this.boards.splice(boardID, 1);
@@ -98,9 +142,8 @@ export class Project {
 
   /**
    * Generates a list with the title and color provided in the board specified by the Controller.
-   *
-   * @param {number} boardID the id of the board we are trying to add a list into.
-   * @param {string} label the name of the list being generated
+   * @param boardID the id of the board we are trying to add a list into.
+   * @param label the name of the list being generated
    */
   generateList(boardID: number, label: string): void {
     this.boards[boardID].addList(label);
@@ -108,9 +151,8 @@ export class Project {
 
   /**
    * Generates a list based on the template given, to the specified board
-   *
-   * @param {number} boardID the id of the baord we are trying to add a list into
-   * @param {option} option the type of list we are trying to create
+   * @param boardID the id of the board we are trying to add a list into
+   * @param option the type of list we are trying to create
    */
   generateListTemplate(boardID: number, option: ListOptions): void {
     this.boards[boardID].addListTemplate(option);
@@ -118,8 +160,8 @@ export class Project {
 
   /**
    * Removes a list from a specified board.
-   * @param {number} boardID the ID of the board from whom we want to remove a list from
-   * @param {number} listID the ID of the list we are removing
+   * @param boardID the ID of the board from whom we want to remove a list from
+   * @param listID the ID of the list we are removing
    */
   removeList(boardID: number, listID: number): void {
     this.boards[boardID].removeList(listID);
@@ -127,10 +169,8 @@ export class Project {
 
   /**
    * Generates a card within a board's list
-   *
-   * @param {number} listID the index of the list the task card will be added to
-   * @param {string} text the text for the task card once it is generated
-   *
+   * @param listID the index of the list the task card will be added to
+   * @param text the text for the task card once it is generated
    */
   generateTaskCard(listID: number, text: string)
     : void {
@@ -159,8 +199,7 @@ export class Project {
 
   /**
    * Generates the label for the next card to be created
-   *
-   * @return {string} -- the label of the card being created
+   * @return the label of the card being created
    */
   generateNextCardLabel(): string {
     return this.makeProjectAcronym() + this.nextCardNumber;
@@ -168,8 +207,7 @@ export class Project {
 
   /**
    * Creates an acronym for the project
-   *
-   * @return {string} -- the acronym for the project
+   * @return the acronym for the project
    */
   makeProjectAcronym(): string {
     let words: string[] = this.title.split(' ');
@@ -183,7 +221,6 @@ export class Project {
 
   /**
    * Remove a task card from the specified list from a specified board.
-   * 
    * @string taskLabel the label of the task card to be removed
    */
   removeTaskCard(taskLabel: string) {
@@ -197,7 +234,7 @@ export class Project {
 
   /**
    * Loads a board given to it by the controller.
-   * @param {Project} project project to be loaded
+   * @param project project to be loaded
    */
   loadProject(project: Project) {
     this.title = project.title;
@@ -220,7 +257,4 @@ export class Project {
     } // end for
   } // end loadBoards
 
-  getBoards(): Board[] {
-    return this.boards;
-  } // end getBoards
 }//end of Project

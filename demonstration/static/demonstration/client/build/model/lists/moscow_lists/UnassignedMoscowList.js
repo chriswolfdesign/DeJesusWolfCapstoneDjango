@@ -18,8 +18,7 @@ var UnassignedMoscowList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates an Unassigned List for MoSCoW board
-     *
-     * @return {List} a Must Have List
+     * @return an UnassignedMoscow list
      */
     UnassignedMoscowList.prototype.generateList = function () {
         return new List_1.List('Unassigned', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.NONE);

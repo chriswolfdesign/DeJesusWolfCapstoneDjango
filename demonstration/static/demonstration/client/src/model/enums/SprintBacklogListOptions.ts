@@ -1,8 +1,7 @@
 /**
  * SprintBacklogListOptions.ts
  *
- * A JavaScript object to act as an enumeration for list choices for our
- * Sprint Backlog
+ * An enumeration for list choices for our Sprint Backlog
  *
  * @author Ellery De Jesus
  * @author Chris Wolf

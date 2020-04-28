@@ -2,27 +2,31 @@
 /**
  * ProjectFactory.ts
  *
- * Generates Projects
+ * A class responsible for generating projects
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
  *
- * @version 0.0.0
+ * @version 1.0.0 (April 1, 2020)
  */
 exports.__esModule = true;
 var Project_1 = require("../Project");
 var ProjectFactory = /** @class */ (function () {
+    /**
+     * Generates a ProjectFactory
+     */
     function ProjectFactory() {
-    }
+        // Constructor delibrately left blank
+    } // end constructor
     /**
      * Generates a Project for model.
      *
-     * @param title: Name of the Project
-     * @returns A Project
+     * @param name of the project
+     * @returns a project
      */
     ProjectFactory.prototype.generateProject = function (title) {
         return new Project_1.Project(title);
-    }; //end of generateProject
+    }; //end generateProject
     return ProjectFactory;
-}()); //end of ProjectFactory
+}()); //end ProjectFactory
 exports.ProjectFactory = ProjectFactory;

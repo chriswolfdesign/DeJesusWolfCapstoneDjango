@@ -1,6 +1,6 @@
 "use strict";
 /**
- * should_list.js
+ * ShouldList.ts
  *
  * A class that will generate a Should Have list for a MoSCoW board
  *
@@ -18,8 +18,7 @@ var ShouldList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates a Should Have List for MoSCoW board
-     *
-     * @return {List} a Should Have List
+     * @return a ShouldHave list
      */
     ShouldList.prototype.generateList = function () {
         return new List_1.List('Should', MoscowStatus_1.MoscowStatus.SHOULD, BacklogStatus_1.BacklogStatus.NONE);

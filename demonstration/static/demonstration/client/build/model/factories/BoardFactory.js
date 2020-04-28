@@ -1,8 +1,8 @@
 "use strict";
 /**
- * board_factory.js
+ * BoardFactory.ts
  *
- * The JavaScript class that will allow us to easily autogenerate template
+ * The class that will allow us to easily autogenerate template
  * boards for our Agile Development Board.
  *
  * @author Ellery De Jesus
@@ -14,16 +14,17 @@ var BoardOptions_1 = require("../enums/BoardOptions");
 var MoscowBoard_1 = require("../boards/MoscowBoard");
 var SprintBacklogBoard_1 = require("../boards/SprintBacklogBoard");
 var BoardFactory = /** @class */ (function () {
+    /**
+     * Generates a BoardFactory
+     */
     function BoardFactory() {
         this.moscowBoard = new MoscowBoard_1.MoscowBoard();
         this.sprintBoard = new SprintBacklogBoard_1.SprintBacklogBoard();
     } // end constructor
     /**
      * generates a board based on the parameter passed in
-     *
-     * @param {BoardOptions} option the type of the board the user wants generated
-     *
-     * @return {Board} a board based on user preference
+     * @param option the type of the board the user wants generated
+     * @return a board based on user preference
      */
     BoardFactory.prototype.generateBoard = function (option) {
         switch (option) {

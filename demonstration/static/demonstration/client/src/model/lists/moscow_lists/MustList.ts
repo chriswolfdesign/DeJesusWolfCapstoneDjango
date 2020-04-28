@@ -1,5 +1,5 @@
 /**
- * must_list.js
+ * MustList.ts
  *
  * A class that will generate a Must Have List for a MoSCoW board
  *
@@ -17,8 +17,7 @@ export class MustList {
 
   /**
    * generates a Must Have List for MoSCoW board
-   *
-   * @return {List} a Must Have List
+   * @return a MustHave list
    */
   generateList(): List {
     return new List('Must', MoscowStatus.MUST, BacklogStatus.NONE);

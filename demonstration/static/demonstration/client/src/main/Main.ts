@@ -8,9 +8,7 @@
  * @version 2.0.0 (November 3, 2019)
  */
 
-import { BoardOptions } from '../model/enums/BoardOptions';
 import { Controller } from '../controller/Controller';
-import { Model } from '../model/Model';
 import interact from 'interactjs';
 import { Project } from '../model/Project';
 import { TaskCard } from '../model/TaskCard';
@@ -21,8 +19,8 @@ let controller: Controller;  // I really don't like that this is global, let's l
 // Behavior when the application is started
 window.onload = function (): void {
   controller = new Controller('');
-  var data = JSON.parse((<HTMLInputElement>document.getElementById("userdata")).value);
-  var decision = '';
+  let data = JSON.parse((<HTMLInputElement>document.getElementById("userdata")).value);
+  let decision = '';
   if (data.title === '') {
     while (decision === '') {
       decision = prompt('Please enter the name of your project: ');
@@ -36,8 +34,7 @@ window.onload = function (): void {
 
 /**
  * Highlights the button for the board that is current open
- *
- * @param {Controller} controller -- the controller of the application
+ * @param controller the controller of the application
  */
 function highlightCurrentBoard(controller: Controller): void {
   let boardID = 'board' + controller.getModel().getProjects().getActiveBoardIndex().toString();
@@ -49,8 +46,7 @@ function highlightCurrentBoard(controller: Controller): void {
 
 /**
  * Adds the event listener to each of the buttons as they are rendered
- *
- * @param {Controller} controller -- the controller holding each of the buttons
+ * @param controller the controller holding each of the buttons
  */
 function addClickListeners(controller: Controller): void {
   let tasks: TaskCard[] = controller.getModel().getProjects().getTasks();
@@ -168,9 +164,12 @@ function addClickListeners(controller: Controller): void {
 
   document.getElementById("go-back").addEventListener('click', function (event) {
     versionControl('b');
-
   });
 
+  /**
+   * Controls which version is current being displayed to the user
+   * @param option name of the "version" the user would like displayed
+   */
   function versionControl(option: string) {
     let username = (<HTMLInputElement>document.getElementById('username')).value;
     let version = (<HTMLInputElement>document.getElementById('version')).value;
@@ -183,7 +182,7 @@ function addClickListeners(controller: Controller): void {
         request: option
       },
       success: function (response) {
-        var old_project: Project = <Project>JSON.parse((<string>response.data));
+        let old_project: Project = <Project>JSON.parse((<string>response.data));
         controller.loadProject(old_project);
         render(controller);
         $("userdata").val(response.data);
@@ -204,7 +203,7 @@ function addClickListeners(controller: Controller): void {
 
   // allows us to save unto the cloud
   document.getElementById("save-cloud").addEventListener('click', function (event) {
-    var data = JSON.stringify(controller.getModel().getProjects());
+    let data = JSON.stringify(controller.getModel().getProjects());
     (<HTMLInputElement>document.getElementById("userdata")).value = data;
     $("#userdata").trigger('change');
   });
@@ -212,11 +211,11 @@ function addClickListeners(controller: Controller): void {
 
   // allows us to save the current instance of the project onto our local file system
   document.getElementById("save").addEventListener('click', function (event) {
-    var temp = controller;
-    var name = prompt("Enter the file name:");
-    var data = JSON.stringify(controller.getModel().getProjects());
-    var blob = new Blob([data], { type: 'text/plain' });
-    var e = document.createEvent('MouseEvents'), a = document.createElement('a');
+    let temp = controller;
+    let name = prompt("Enter the file name:");
+    let data = JSON.stringify(controller.getModel().getProjects());
+    let blob = new Blob([data], { type: 'text/plain' });
+    let e = document.createEvent('MouseEvents'), a = document.createElement('a');
     a.download = name + ".json";
     a.href = window.URL.createObjectURL(blob);
     a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
@@ -228,10 +227,10 @@ function addClickListeners(controller: Controller): void {
   document.getElementById("submit").addEventListener('click', function (event) {
     let file = (<HTMLInputElement>document.getElementById("file-input")).files[0];
     if (file) {
-      var reader = new FileReader();
+      let reader = new FileReader();
       reader.readAsText(file, "UTF-8");
       reader.onload = function (event) {
-        var new_project: Project = <Project>JSON.parse((<string>event.target.result));
+        let new_project: Project = <Project>JSON.parse((<string>event.target.result));
         controller.loadProject(new_project);
         render(controller);
       };
@@ -257,11 +256,10 @@ function addClickListeners(controller: Controller): void {
 
 /**
  * Allows us to toggle the visibility of the Board Menu
- *
- * @param {Controller} controller -- controller for the application
+ * @param controller controller for the application
  */
 function changeBoardMenuVisibility(controller: Controller) {
-  if (controller.getView().getIsBoardMenuVisibile()) {
+  if (controller.getView().getIsBoardMenuVisible()) {
     document.getElementById('boardButtons').style.visibility = 'visible';
   } // end if
   else {
@@ -270,24 +268,28 @@ function changeBoardMenuVisibility(controller: Controller) {
 } // end changeBoardMenuVisibility
 
 
+/**
+ * Toggles whether or not the edittable task card is displayed to the user
+ * @param controller the controller responsible for the project
+ */
 function changeEditableTaskCardVisibility(controller) {
   if (controller.getEditableTaskCard() !== null) {
     document.getElementById('editable-task-card').style.visibility = 'visible';
     document.getElementById('editable-task-card-description').focus();
     setConditionsChecked(controller);
-  } else {
+  } // end if
+  else {
     document.getElementById('editable-task-card').style.visibility = 'hidden';
-  }
+  } // end if-else
 } // end changeEditableTaskCardVisibility
 
 /**
  * Updates the size based on whether or not the board menu is visible
- * 
- * @param {Controller} controller -- the controller holding the current board
+ * @param controller the controller holding the current board
  */
 function setCurrentBoardSize(controller: Controller) {
   // Update styles
-  if (controller.getView().getIsBoardMenuVisibile()) {
+  if (controller.getView().getIsBoardMenuVisible()) {
     document.getElementById('boardButtons').style.width = '20%';
     document.getElementById('currentBoard').style.width = '79%';
     document.getElementById('currentBoard').style.marginLeft = '21%';
@@ -299,8 +301,8 @@ function setCurrentBoardSize(controller: Controller) {
 } // end setCurrentBoardSize
 
 /**
- * 
- * 
+ * sets all of the conditions of satisfaction be able to be toggled between comple
+ * and incomplete
  * @param controller the controller in charge of editting the model
  */
 function setConditionsChecked(controller: Controller) {
@@ -311,17 +313,17 @@ function setConditionsChecked(controller: Controller) {
     if (conditions[i].isComplete()) {
       (<HTMLInputElement>document.getElementById('condition' + i)).checked =
         true;
-    } else {
+    } // end if
+    else {
       (<HTMLInputElement>document.getElementById('condition' + i)).checked =
         false;
-    }
-  }
-}
+    } // end else
+  } // end for
+} // end setConditionsChecked
 
 /**
  * Causes the HTML to be drawn, or redrawn, to the screen
- *
- * @param {Controller} controller responsible for generating the HTML
+ * @param controller responsible for generating the HTML
  */
 function render(controller: Controller): void {
   document.getElementById('main').innerHTML = controller.generateHTML();
@@ -332,7 +334,7 @@ function render(controller: Controller): void {
   setCurrentBoardSize(controller);
 } // end render
 
-// Set up interact
+// Set up interact draggables (task cards)
 interact('.draggable').draggable({
   inertia: true,
   autoscroll: true,
@@ -340,6 +342,7 @@ interact('.draggable').draggable({
   onend: dropped
 }); // end interact-draggable
 
+// set up interact dropzones (lists)
 interact('.dropzone').dropzone({
   accept: '.draggable',
   overlap: 0.5,
@@ -357,8 +360,7 @@ interact('.dropzone').dropzone({
 
 /**
  * Describes what to do when a task card is being dragged
- *
- * @param {event} event -- the drag motion we are using to define movement
+ * @param event the drag motion we are using to define movement
  */
 function dragMoveListener(event) {
   let target = event.target;

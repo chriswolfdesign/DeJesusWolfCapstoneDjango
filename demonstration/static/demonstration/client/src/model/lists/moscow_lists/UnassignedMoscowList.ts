@@ -17,8 +17,7 @@ export class UnassignedMoscowList {
 
   /**
    * generates an Unassigned List for MoSCoW board
-   *
-   * @return {List} a Must Have List
+   * @return an UnassignedMoscow list
    */
   generateList(): List {
     return new List('Unassigned', MoscowStatus.UNASSIGNED, BacklogStatus.NONE);

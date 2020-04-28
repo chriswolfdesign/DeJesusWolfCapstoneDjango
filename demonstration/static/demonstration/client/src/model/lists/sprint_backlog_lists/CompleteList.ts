@@ -1,5 +1,5 @@
 /**
- * complete_list.js
+ * CompleteList.ts
  *
  * A class that will generate a Complete List for a Sprint Backlog board
  *
@@ -17,8 +17,7 @@ export class CompleteList {
 
   /**
    * generates a Complete List for Sprint Backlog board
-   *
-   * @return {List} a Complete List
+   * @return a Complete List
    */
   generateList(): List {
     return new List('Complete', MoscowStatus.NONE, BacklogStatus.COMPLETE);

@@ -1,8 +1,7 @@
 /**
- * board_options.js
+ * BoardOptions.ts
  *
- * A JavaScript object to act as an enumeration for board choices in our
- * BoardFactory
+ * An enumeration for board choices in our BoardFactory
  *
  * @author Ellery De Jesus
  * @author Chris Wolf

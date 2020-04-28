@@ -1,28 +1,33 @@
 /**
  * ProjectFactory.ts
- * 
- * Generates Projects
- * 
+ *
+ * A class responsible for generating projects
+ *
  * @author Ellery De Jesus
  * @author Chris Wolf
- * 
- * @version 0.0.0
+ *
+ * @version 1.0.0 (April 1, 2020)
  */
 
 import { Project } from "../Project";
 
 export class ProjectFactory {
 
-    constructor() { }
+  /**
+   * Generates a ProjectFactory
+   */
+  constructor() {
+    // Constructor delibrately left blank
+  } // end constructor
 
-    /**
-     * Generates a Project for model.
-     * 
-     * @param title: Name of the Project
-     * @returns A Project
-     */
-    generateProject(title: string): Project {
-        return new Project(title);
-    } //end of generateProject
+  /**
+   * Generates a Project for model.
+   *
+   * @param name of the project
+   * @returns a project
+   */
+  generateProject(title: string): Project {
+    return new Project(title);
+  } //end generateProject
 
-}//end of ProjectFactory
+}//end ProjectFactory

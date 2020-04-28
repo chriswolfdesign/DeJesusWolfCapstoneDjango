@@ -1,9 +1,8 @@
 import { Model } from '../model/Model';
-import { View } from '../view/view';
+import { View } from '../view/View';
 import { ListOptions } from '../model/enums/ListOptions';
 import { Project } from '../model/Project';
 import { BoardOptions } from '../model/enums/BoardOptions';
-import {Board} from "../model/boards/Board";
 import { List } from '../model/lists/List';
 import { MoscowStatus } from '../model/enums/MoscowStatus';
 import { BacklogStatus } from '../model/enums/BacklogStatus';
@@ -20,16 +19,36 @@ import { TaskCard } from '../model/TaskCard';
  */
 
 export class Controller {
+
+  /**********
+   * Fields *
+   **********/
+
+  /** The model that will be storing the data */
   private model: Model;
+  /** The class that will be displaying the User Interface */
   private view: View;
+  /** The name of our project */
   private projectName: string;
 
+  /****************
+   * Constructors *
+   ****************/
+
+  /**
+   * Builds a new controller
+   * @param projectName the name of the project
+   */
   constructor(projectName: string) {
     this.projectName = projectName;
     this.model = new Model(this, this.projectName);
     this.model.setController(this);
     this.view = new View();
   } // end constructor
+
+  /***********
+   * Getters *
+   ***********/
 
   /**
    * getter for the view field
@@ -40,22 +59,71 @@ export class Controller {
     return this.view;
   } // end getView
 
-  setEditableTaskCard(taskLabel: string) {
-    this.view.setEditableTaskCard(this.findTask(taskLabel));
-  } // end setEditableTaskCard
-
-  removeEditableTaskCard() {
-    this.view.setEditableTaskCard(null);
-  } // end removeEditableTaskCard
-
+  /**
+   * getter for the edittable task card
+   * @return the current edittable task card
+   */
   getEditableTaskCard(): TaskCard {
     return this.view.getEditableTaskCard();
   } // end getEditableTaskCard
 
+  /**
+   * Asks the model what the most recent task card created was
+   * @return the most recently created task card
+   */
   getNewestTaskCard(): TaskCard {
     let tasks = this.model.getProjects().getTasks();
     return tasks[tasks.length - 1];
   } // end getNewestTaskCard
+
+  /**
+   * sets the conditions of satisfaction for the current editable task card
+   * @param completedArray the COS array to set the edittable task card's COS to
+   */
+  setConditions(completedArray: boolean[]) {
+    for (let i = 0; i < this.getEditableTaskCard().getNumberOfConditions();
+         i++) {
+      if (completedArray[i]) {
+        this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
+        setComplete();
+      } else {
+        this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
+        setIncomplete();
+      } // end else
+    } // end for
+  } // end setConditions
+
+  /**
+   * getter for model
+   * @return {Model} the model this controller controls
+   */
+  getModel(): Model {
+    return this.model;
+  } // end getModel
+
+  /***********
+   * Setters *
+   ***********/
+
+  /**
+   * setter for the edittable task card
+   * @param taskLabel the label of the task card we would like to be
+   *                  the edittable task card
+   */
+  setEditableTaskCard(taskLabel: string) {
+    this.view.setEditableTaskCard(this.findTask(taskLabel));
+  } // end setEditableTaskCard
+
+  /**********************
+   * Additional methods *
+   **********************/
+
+  /**
+   * Sets our application to not have an active edittable task card
+   */
+  removeEditableTaskCard() {
+    this.view.setEditableTaskCard(null);
+  } // end removeEditableTaskCard
 
   /**
    * calls on the model to create a new board from a template
@@ -69,9 +137,8 @@ export class Controller {
   /**
    * Changes the text in a task card
    *
-   * @param listIndex which list the task card is in
-   * @param taskIndex which task card we are changing
-   * @param newTaskText the text to change the task card to
+   * @param taskLabel the label of the task card we are attempting to change
+   * @param newText the new text for the task card
    */
   editTaskText(taskLabel: string, newText: string) {
     let tasks = this.model.getProjects().getTasks();
@@ -84,22 +151,8 @@ export class Controller {
     }); // end forEach
   } // end editTaskText
 
-  setConditions(completedArray: boolean[]) {
-    for (let i = 0; i < this.getEditableTaskCard().getNumberOfConditions();
-     i++) {
-      if (completedArray[i]) {
-        this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
-          setComplete();
-      } else {
-        this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
-          setIncomplete();
-      }
-    }
-  }
-
   /**
    * removes a board from our model
-   *
    * @param {string} boardID the id for the board we are removing
    */
   removeBoard(boardID: number) {
@@ -108,10 +161,8 @@ export class Controller {
 
   /**
    * generates a list with the specific credentials
-   *
-   * @param {string} boardID the board to add the list to
-   * @param {string} label the label for the new list
-   * @param color
+   * @param boardID the board to add the list to
+   * @param label the label for the new list
    */
   generateList(boardID: number, label: string) {
     this.model.generateList(boardID, label);
@@ -119,9 +170,8 @@ export class Controller {
 
   /**
    * removes a list from a board
-   *
-   * @param {string} boardID the board we are removing a list from
-   * @param {string} listID the list we are removing
+   * @param boardID the board we are removing a list from
+   * @param listID the list we are removing
    */
   removeList(boardID: number, listID: number) {
     this.model.removeList(boardID, listID);
@@ -129,9 +179,8 @@ export class Controller {
 
   /**
    * generates a list from a template
-   *
-   * @param {string} boardID the board we are adding a list to
-   * @param {ListOption} option the template we would like to src a list from
+   * @param boardID the board we are adding a list to
+   * @param option the template we would like to src a list from
    */
   generateListTemplate(boardID: number, option: ListOptions) {
     this.model.generateListTemplate(boardID, option);
@@ -139,11 +188,10 @@ export class Controller {
 
   /**
    * generates a task card with the given credentials
-   *
-   * @param {number} boardID the board we are adding a task card to
-   * @param {number} listID the list we are adding a task card to
-   * @param {string} label the label for the new task card
-   * @param {string} text the text for the new task card
+   * @param boardID the board we are adding a task card to
+   * @param listID the list we are adding a task card to
+   * @param label the label for the new task card
+   * @param text the text for the new task card
    */
   generateTaskCard(boardID: number, listID: number, label: string, text: string) {
     this.model.generateTaskCard(boardID, listID, label, text);
@@ -151,19 +199,16 @@ export class Controller {
 
   /**
    * removes a task card from a list
-   *
-   * @param {number} listID the list from which we are removing a task card
-   * @param {number} taskID -- the ID of the task card we are removing
+   * @param taskLabel the label of the task card we are trying to remove
    */
   removeTaskCard(taskLabel: string) {
     this.getModel().getProjects().removeTaskCard(taskLabel);
-  }
+  } // end removeTaskCard
 
   /**
    * Moves a task card from one list to another
-   *
-   * @param {HTML} newList -- the HTML representation of the new list we're moving the task card to
-   * @param {HTML} movedTaskCard -- the HTML representation of the task card we're moving
+   * @param newList the HTML representation of the new list we're moving the task card to
+   * @param movedTaskCard the HTML representation of the task card we're moving
    */
   moveTaskCard(newList: any, movedTaskCard: any) {
     let list = this.findList(newList.id);
@@ -180,9 +225,7 @@ export class Controller {
 
   /**
    * Finds a list in the current board given the list's label
-   * 
    * @param listLabel the label for the list we're looking for
-   * 
    * @return the list we're looking for
    */
   findList(listLabel: string): List {
@@ -197,9 +240,7 @@ export class Controller {
 
   /**
    * Finds a task card in the project by its id
-   * 
-   * @param taskID the id of the task we're looking for
-   * 
+   * @param taskLabel the id of the task we're looking for
    * @return the task card we're looking for
    */
   findTask(taskLabel: string): TaskCard {
@@ -214,10 +255,8 @@ export class Controller {
 
   /**
    * Gets the board indices of the task card we are looking for
-   *
-   * @param {string} taskID -- the label of the task card we are looking for
-   *
-   * @return {list} -- [the list index of the task card, the task index of the task card]
+   * @param taskID the label of the task card we are looking for
+   * @return [the list index of the task card, the task index of the task card]
    */
   getTaskIndices(taskID: string) {
     for (let i = 0; i < this.model.getProjects().getActiveBoard().getLists().length; i++) {
@@ -231,10 +270,9 @@ export class Controller {
 
   /**
    * Gets the data held inside the task card
-   * @param listIndex -- the list index we are looking for
-   * @param taskIndex -- the task index we are looking for
-   *
-   * @return {list} -- [task card's label, task card's text]
+   * @param listIndex the list index we are looking for
+   * @param taskIndex the task index we are looking for
+   * @return [task card's label, task card's text]
    */
   getTaskData(listIndex: number, taskIndex: number) {
     return [this.model.getProjects().getActiveBoard().getLists()[listIndex].getTasks()[taskIndex].getLabel(),
@@ -242,17 +280,7 @@ export class Controller {
   } // end getTaskData
 
   /**
-   * getter for model
-   *
-   * @return {Model} the model this controller controls
-   */
-  getModel(): Model {
-    return this.model;
-  } // end getModel
-
-  /**
    * Calls the view class to generate HTML based on the given model
-   *
    * @return {String} html based off of model
    */
   generateHTML(): string {
@@ -260,9 +288,8 @@ export class Controller {
   } // end generateHTML
 
   /**
-   * Sets the values within model to the values loaded from a JSON file. 
-   * 
-   * @param {Model} model the board we are trying to load into model
+   * Sets the values within model to the values loaded from a JSON file.
+   * @param project the project we are trying to load into model
    */
   loadProject(project: Project) {
     this.model.loadProject(project);

@@ -1,8 +1,8 @@
 "use strict";
 /**
- * list_factory.js
+ * ListFactory.ts
  *
- * The JavaScript class that will allow us to easily autogenerate template
+ * The class that will allow us to easily autogenerate template
  * lists for our Agile Development Board.
  *
  * @author Ellery De Jesus
@@ -25,6 +25,12 @@ var BacklogStatus_1 = require("../enums/BacklogStatus");
 var UnassignedMoscowList_1 = require("../lists/moscow_lists/UnassignedMoscowList");
 var UnassignedSprintBacklogList_1 = require("../lists/sprint_backlog_lists/UnassignedSprintBacklogList");
 var ListFactory = /** @class */ (function () {
+    /****************
+     * Constructors *
+     ****************/
+    /**
+     * Generates a ListFactory
+     */
     function ListFactory() {
         this.mustList = new MustList_1.MustList();
         this.shouldList = new ShouldList_1.ShouldList();
@@ -37,36 +43,69 @@ var ListFactory = /** @class */ (function () {
         this.unassignedMoscowList = new UnassignedMoscowList_1.UnassignedMoscowList();
         this.unassignedSprintBacklogList = new UnassignedSprintBacklogList_1.UnassignedSprintBacklogList();
     } // end constructor
+    /***********
+     * Getters *
+     ***********/
+    /**
+     * Getter for MustList
+     * @return the MustList
+     */
     ListFactory.prototype.getMustList = function () {
         return this.mustList;
     }; // end getMustList
+    /**
+     * Getter for the ShouldList
+     * @return the ShouldList
+     */
     ListFactory.prototype.getShouldList = function () {
         return this.shouldList;
     }; // end getShouldList
+    /**
+     * Getter for the CouldList
+     * @return the CouldList
+     */
     ListFactory.prototype.getCouldList = function () {
         return this.couldList;
     }; // end getCouldList
+    /**
+     * Getter for the WontList
+     * @return the WontList
+     */
     ListFactory.prototype.getWontList = function () {
         return this.wontList;
     }; // end getWontList
+    /**
+     * Getter for the BacklogList
+     * @return the BacklogList
+     */
     ListFactory.prototype.getBacklogList = function () {
         return this.backlogList;
     }; // end getBacklogList
+    /**
+     * Getter for the InProgressList
+     * @return the InProgressList
+     */
     ListFactory.prototype.getInProgressList = function () {
         return this.inProgressList;
     }; // end getInProgressList
+    /**
+     * Getter for the InReviewList
+     * @return the InReviewList
+     */
     ListFactory.prototype.getInReviewList = function () {
         return this.inReviewList;
     }; // end getInReviewList
+    /**
+     * Getter for the CompleteList
+     * @return the CompleteList
+     */
     ListFactory.prototype.getCompleteList = function () {
         return this.completeList;
     }; // end getCompleteList
     /**
      * generates a list based on the parameter passed in
-     *
-     * @param {ListOptions} option the type of list the user wants generated
-     *
-     * @return {List} a list set up based on user preference
+     * @param option the type of list the user wants generated
+     * @return a list set up based on user preference
      */
     ListFactory.prototype.generateList = function (option) {
         switch (option) {

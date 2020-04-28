@@ -1,8 +1,7 @@
 /**
  * ListOptions.ts
  *
- * A JavaScript object to act as an enumeration for list choices in our
- * ListFactory
+ * An enumeration for list choices in our ListFactory
  *
  * @author Ellery De Jesus
  * @author Chris Wolf

@@ -1,6 +1,6 @@
 "use strict";
 /**
- * must_list.js
+ * MustList.ts
  *
  * A class that will generate a Must Have List for a MoSCoW board
  *
@@ -18,8 +18,7 @@ var MustList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates a Must Have List for MoSCoW board
-     *
-     * @return {List} a Must Have List
+     * @return a MustHave list
      */
     MustList.prototype.generateList = function () {
         return new List_1.List('Must', MoscowStatus_1.MoscowStatus.MUST, BacklogStatus_1.BacklogStatus.NONE);

@@ -1,8 +1,11 @@
 /**
- * sprint_backlog_list_factory.js
+ * SprintBacklogListFactory.ts
  *
- * The JavaScript class that will allow us to easily autogenerate template
+ * The class that will allow us to easily autogenerate template
  * lists for a Sprint Backlog Board
+ *
+ * NOTE: This file currently is not used.  It is still here in case
+ *       any future capstone students may find it useful
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
@@ -19,16 +22,15 @@ import {ListFactory} from './ListFactory';
 
 export class SprintBacklogListFactory extends ListFactory {
 
+  // Generates a SprintBacklogListFactory
   constructor() {
     super();
   } // end constructor
 
   /**
    * generates a list based on the parameter passed in
-   *
-   * @param {SprintBacklogListOptions} option the type of list the user wants generated
-   *
-   * @return {List} a list set up based on the user's preferences
+   * @param option the type of list the user wants generated
+   * @return a list set up based on the user's preferences
    */
 //   generateList(option: SprintBacklogListOptions): List {
 //     switch (option) {

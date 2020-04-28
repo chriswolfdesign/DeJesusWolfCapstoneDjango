@@ -24,7 +24,7 @@ var View = /** @class */ (function () {
      *
      * @return {boolean} -- true if the board is visible, false otherwise
      */
-    View.prototype.getIsBoardMenuVisibile = function () {
+    View.prototype.getIsBoardMenuVisible = function () {
         return this.isBoardMenuVisible;
     }; // end getIsBoardMenuVisibile
     /**

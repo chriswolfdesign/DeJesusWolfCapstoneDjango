@@ -2,7 +2,7 @@
 "use strict";
 exports.__esModule = true;
 var Model_1 = require("../model/Model");
-var view_1 = require("../view/view");
+var View_1 = require("../view/View");
 var MoscowStatus_1 = require("../model/enums/MoscowStatus");
 var BacklogStatus_1 = require("../model/enums/BacklogStatus");
 /**
@@ -15,12 +15,22 @@ var BacklogStatus_1 = require("../model/enums/BacklogStatus");
  * @version 1.0.0 (March 30, 2020)
  */
 var Controller = /** @class */ (function () {
+    /****************
+     * Constructors *
+     ****************/
+    /**
+     * Builds a new controller
+     * @param projectName the name of the project
+     */
     function Controller(projectName) {
         this.projectName = projectName;
         this.model = new Model_1.Model(this, this.projectName);
         this.model.setController(this);
-        this.view = new view_1.View();
+        this.view = new View_1.View();
     } // end constructor
+    /***********
+     * Getters *
+     ***********/
     /**
      * getter for the view field
      *
@@ -29,19 +39,64 @@ var Controller = /** @class */ (function () {
     Controller.prototype.getView = function () {
         return this.view;
     }; // end getView
-    Controller.prototype.setEditableTaskCard = function (taskLabel) {
-        this.view.setEditableTaskCard(this.findTask(taskLabel));
-    }; // end setEditableTaskCard
-    Controller.prototype.removeEditableTaskCard = function () {
-        this.view.setEditableTaskCard(null);
-    }; // end removeEditableTaskCard
+    /**
+     * getter for the edittable task card
+     * @return the current edittable task card
+     */
     Controller.prototype.getEditableTaskCard = function () {
         return this.view.getEditableTaskCard();
     }; // end getEditableTaskCard
+    /**
+     * Asks the model what the most recent task card created was
+     * @return the most recently created task card
+     */
     Controller.prototype.getNewestTaskCard = function () {
         var tasks = this.model.getProjects().getTasks();
         return tasks[tasks.length - 1];
     }; // end getNewestTaskCard
+    /**
+     * sets the conditions of satisfaction for the current editable task card
+     * @param completedArray the COS array to set the edittable task card's COS to
+     */
+    Controller.prototype.setConditions = function (completedArray) {
+        for (var i = 0; i < this.getEditableTaskCard().getNumberOfConditions(); i++) {
+            if (completedArray[i]) {
+                this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
+                    setComplete();
+            }
+            else {
+                this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
+                    setIncomplete();
+            } // end else
+        } // end for
+    }; // end setConditions
+    /**
+     * getter for model
+     * @return {Model} the model this controller controls
+     */
+    Controller.prototype.getModel = function () {
+        return this.model;
+    }; // end getModel
+    /***********
+     * Setters *
+     ***********/
+    /**
+     * setter for the edittable task card
+     * @param taskLabel the label of the task card we would like to be
+     *                  the edittable task card
+     */
+    Controller.prototype.setEditableTaskCard = function (taskLabel) {
+        this.view.setEditableTaskCard(this.findTask(taskLabel));
+    }; // end setEditableTaskCard
+    /**********************
+     * Additional methods *
+     **********************/
+    /**
+     * Sets our application to not have an active edittable task card
+     */
+    Controller.prototype.removeEditableTaskCard = function () {
+        this.view.setEditableTaskCard(null);
+    }; // end removeEditableTaskCard
     /**
      * calls on the model to create a new board from a template
      *
@@ -53,9 +108,8 @@ var Controller = /** @class */ (function () {
     /**
      * Changes the text in a task card
      *
-     * @param listIndex which list the task card is in
-     * @param taskIndex which task card we are changing
-     * @param newTaskText the text to change the task card to
+     * @param taskLabel the label of the task card we are attempting to change
+     * @param newText the new text for the task card
      */
     Controller.prototype.editTaskText = function (taskLabel, newText) {
         var tasks = this.model.getProjects().getTasks();
@@ -66,21 +120,8 @@ var Controller = /** @class */ (function () {
             } // end if
         }); // end forEach
     }; // end editTaskText
-    Controller.prototype.setConditions = function (completedArray) {
-        for (var i = 0; i < this.getEditableTaskCard().getNumberOfConditions(); i++) {
-            if (completedArray[i]) {
-                this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
-                    setComplete();
-            }
-            else {
-                this.getEditableTaskCard().getConditionsOfSatisfaction()[i].
-                    setIncomplete();
-            }
-        }
-    };
     /**
      * removes a board from our model
-     *
      * @param {string} boardID the id for the board we are removing
      */
     Controller.prototype.removeBoard = function (boardID) {
@@ -88,57 +129,49 @@ var Controller = /** @class */ (function () {
     }; // end removeBoard
     /**
      * generates a list with the specific credentials
-     *
-     * @param {string} boardID the board to add the list to
-     * @param {string} label the label for the new list
-     * @param color
+     * @param boardID the board to add the list to
+     * @param label the label for the new list
      */
     Controller.prototype.generateList = function (boardID, label) {
         this.model.generateList(boardID, label);
     }; // end generateList
     /**
      * removes a list from a board
-     *
-     * @param {string} boardID the board we are removing a list from
-     * @param {string} listID the list we are removing
+     * @param boardID the board we are removing a list from
+     * @param listID the list we are removing
      */
     Controller.prototype.removeList = function (boardID, listID) {
         this.model.removeList(boardID, listID);
     }; // end removeList
     /**
      * generates a list from a template
-     *
-     * @param {string} boardID the board we are adding a list to
-     * @param {ListOption} option the template we would like to src a list from
+     * @param boardID the board we are adding a list to
+     * @param option the template we would like to src a list from
      */
     Controller.prototype.generateListTemplate = function (boardID, option) {
         this.model.generateListTemplate(boardID, option);
     }; // end generateListTemplate
     /**
      * generates a task card with the given credentials
-     *
-     * @param {number} boardID the board we are adding a task card to
-     * @param {number} listID the list we are adding a task card to
-     * @param {string} label the label for the new task card
-     * @param {string} text the text for the new task card
+     * @param boardID the board we are adding a task card to
+     * @param listID the list we are adding a task card to
+     * @param label the label for the new task card
+     * @param text the text for the new task card
      */
     Controller.prototype.generateTaskCard = function (boardID, listID, label, text) {
         this.model.generateTaskCard(boardID, listID, label, text);
     }; // end generateTaskCard
     /**
      * removes a task card from a list
-     *
-     * @param {number} listID the list from which we are removing a task card
-     * @param {number} taskID -- the ID of the task card we are removing
+     * @param taskLabel the label of the task card we are trying to remove
      */
     Controller.prototype.removeTaskCard = function (taskLabel) {
         this.getModel().getProjects().removeTaskCard(taskLabel);
-    };
+    }; // end removeTaskCard
     /**
      * Moves a task card from one list to another
-     *
-     * @param {HTML} newList -- the HTML representation of the new list we're moving the task card to
-     * @param {HTML} movedTaskCard -- the HTML representation of the task card we're moving
+     * @param newList the HTML representation of the new list we're moving the task card to
+     * @param movedTaskCard the HTML representation of the task card we're moving
      */
     Controller.prototype.moveTaskCard = function (newList, movedTaskCard) {
         var list = this.findList(newList.id);
@@ -152,9 +185,7 @@ var Controller = /** @class */ (function () {
     }; // end moveTaskCard
     /**
      * Finds a list in the current board given the list's label
-     *
      * @param listLabel the label for the list we're looking for
-     *
      * @return the list we're looking for
      */
     Controller.prototype.findList = function (listLabel) {
@@ -167,9 +198,7 @@ var Controller = /** @class */ (function () {
     }; // end findList
     /**
      * Finds a task card in the project by its id
-     *
-     * @param taskID the id of the task we're looking for
-     *
+     * @param taskLabel the id of the task we're looking for
      * @return the task card we're looking for
      */
     Controller.prototype.findTask = function (taskLabel) {
@@ -182,10 +211,8 @@ var Controller = /** @class */ (function () {
     }; // end findTask
     /**
      * Gets the board indices of the task card we are looking for
-     *
-     * @param {string} taskID -- the label of the task card we are looking for
-     *
-     * @return {list} -- [the list index of the task card, the task index of the task card]
+     * @param taskID the label of the task card we are looking for
+     * @return [the list index of the task card, the task index of the task card]
      */
     Controller.prototype.getTaskIndices = function (taskID) {
         for (var i = 0; i < this.model.getProjects().getActiveBoard().getLists().length; i++) {
@@ -198,26 +225,16 @@ var Controller = /** @class */ (function () {
     }; // end getTaskIndices
     /**
      * Gets the data held inside the task card
-     * @param listIndex -- the list index we are looking for
-     * @param taskIndex -- the task index we are looking for
-     *
-     * @return {list} -- [task card's label, task card's text]
+     * @param listIndex the list index we are looking for
+     * @param taskIndex the task index we are looking for
+     * @return [task card's label, task card's text]
      */
     Controller.prototype.getTaskData = function (listIndex, taskIndex) {
         return [this.model.getProjects().getActiveBoard().getLists()[listIndex].getTasks()[taskIndex].getLabel(),
             this.model.getProjects().getActiveBoard().getLists()[listIndex].getTasks()[taskIndex].getText()];
     }; // end getTaskData
     /**
-     * getter for model
-     *
-     * @return {Model} the model this controller controls
-     */
-    Controller.prototype.getModel = function () {
-        return this.model;
-    }; // end getModel
-    /**
      * Calls the view class to generate HTML based on the given model
-     *
      * @return {String} html based off of model
      */
     Controller.prototype.generateHTML = function () {
@@ -225,8 +242,7 @@ var Controller = /** @class */ (function () {
     }; // end generateHTML
     /**
      * Sets the values within model to the values loaded from a JSON file.
-     *
-     * @param {Model} model the board we are trying to load into model
+     * @param project the project we are trying to load into model
      */
     Controller.prototype.loadProject = function (project) {
         this.model.loadProject(project);
@@ -235,7 +251,7 @@ var Controller = /** @class */ (function () {
 }()); // end Controller
 exports.Controller = Controller;
 
-},{"../model/Model":4,"../model/enums/BacklogStatus":10,"../model/enums/MoscowStatus":13,"../view/view":30}],2:[function(require,module,exports){
+},{"../model/Model":4,"../model/enums/BacklogStatus":10,"../model/enums/MoscowStatus":13,"../view/View":30}],2:[function(require,module,exports){
 "use strict";
 /**
  * main.js
@@ -266,8 +282,7 @@ window.onload = function () {
 }; // end window.onload
 /**
  * Highlights the button for the board that is current open
- *
- * @param {Controller} controller -- the controller of the application
+ * @param controller the controller of the application
  */
 function highlightCurrentBoard(controller) {
     var boardID = 'board' + controller.getModel().getProjects().getActiveBoardIndex().toString();
@@ -277,8 +292,7 @@ function highlightCurrentBoard(controller) {
 } // end highlightCurrentBoard
 /**
  * Adds the event listener to each of the buttons as they are rendered
- *
- * @param {Controller} controller -- the controller holding each of the buttons
+ * @param controller the controller holding each of the buttons
  */
 function addClickListeners(controller) {
     var tasks = controller.getModel().getProjects().getTasks();
@@ -379,6 +393,10 @@ function addClickListeners(controller) {
     document.getElementById("go-back").addEventListener('click', function (event) {
         versionControl('b');
     });
+    /**
+     * Controls which version is current being displayed to the user
+     * @param option name of the "version" the user would like displayed
+     */
     function versionControl(option) {
         var username = document.getElementById('username').value;
         var version = document.getElementById('version').value;
@@ -458,35 +476,37 @@ function addClickListeners(controller) {
 } // end addClickListeners
 /**
  * Allows us to toggle the visibility of the Board Menu
- *
- * @param {Controller} controller -- controller for the application
+ * @param controller controller for the application
  */
 function changeBoardMenuVisibility(controller) {
-    if (controller.getView().getIsBoardMenuVisibile()) {
+    if (controller.getView().getIsBoardMenuVisible()) {
         document.getElementById('boardButtons').style.visibility = 'visible';
     } // end if
     else {
         document.getElementById('boardButtons').style.visibility = 'hidden';
     } // end else
 } // end changeBoardMenuVisibility
+/**
+ * Toggles whether or not the edittable task card is displayed to the user
+ * @param controller the controller responsible for the project
+ */
 function changeEditableTaskCardVisibility(controller) {
     if (controller.getEditableTaskCard() !== null) {
         document.getElementById('editable-task-card').style.visibility = 'visible';
         document.getElementById('editable-task-card-description').focus();
         setConditionsChecked(controller);
-    }
+    } // end if
     else {
         document.getElementById('editable-task-card').style.visibility = 'hidden';
-    }
+    } // end if-else
 } // end changeEditableTaskCardVisibility
 /**
  * Updates the size based on whether or not the board menu is visible
- *
- * @param {Controller} controller -- the controller holding the current board
+ * @param controller the controller holding the current board
  */
 function setCurrentBoardSize(controller) {
     // Update styles
-    if (controller.getView().getIsBoardMenuVisibile()) {
+    if (controller.getView().getIsBoardMenuVisible()) {
         document.getElementById('boardButtons').style.width = '20%';
         document.getElementById('currentBoard').style.width = '79%';
         document.getElementById('currentBoard').style.marginLeft = '21%';
@@ -497,8 +517,8 @@ function setCurrentBoardSize(controller) {
     } // end else
 } // end setCurrentBoardSize
 /**
- *
- *
+ * sets all of the conditions of satisfaction be able to be toggled between comple
+ * and incomplete
  * @param controller the controller in charge of editting the model
  */
 function setConditionsChecked(controller) {
@@ -508,17 +528,16 @@ function setConditionsChecked(controller) {
         if (conditions[i].isComplete()) {
             document.getElementById('condition' + i).checked =
                 true;
-        }
+        } // end if
         else {
             document.getElementById('condition' + i).checked =
                 false;
-        }
-    }
-}
+        } // end else
+    } // end for
+} // end setConditionsChecked
 /**
  * Causes the HTML to be drawn, or redrawn, to the screen
- *
- * @param {Controller} controller responsible for generating the HTML
+ * @param controller responsible for generating the HTML
  */
 function render(controller) {
     document.getElementById('main').innerHTML = controller.generateHTML();
@@ -528,13 +547,14 @@ function render(controller) {
     changeEditableTaskCardVisibility(controller);
     setCurrentBoardSize(controller);
 } // end render
-// Set up interact
+// Set up interact draggables (task cards)
 interactjs_1["default"]('.draggable').draggable({
     inertia: true,
     autoscroll: true,
     onmove: dragMoveListener,
     onend: dropped
 }); // end interact-draggable
+// set up interact dropzones (lists)
 interactjs_1["default"]('.dropzone').dropzone({
     accept: '.draggable',
     overlap: 0.5,
@@ -551,8 +571,7 @@ interactjs_1["default"]('.dropzone').dropzone({
 }); // end interact-dropzone
 /**
  * Describes what to do when a task card is being dragged
- *
- * @param {event} event -- the drag motion we are using to define movement
+ * @param event the drag motion we are using to define movement
  */
 function dragMoveListener(event) {
     var target = event.target;
@@ -583,10 +602,37 @@ function dropped() {
  */
 exports.__esModule = true;
 var ConditionOfSatisfaction = /** @class */ (function () {
+    /****************
+     * Constructors *
+     ****************/
+    /**
+     * Generates a new Condition of Satisfaction
+     * @param text the text for this COS
+     */
     function ConditionOfSatisfaction(text) {
         this.text = text;
         this.complete = false;
     } // end constructor
+    /***********
+     * Getters *
+     ***********/
+    /**
+     * Gets the text for this COS
+     * @return the text for this COS
+     */
+    ConditionOfSatisfaction.prototype.getText = function () {
+        return this.text;
+    }; // end getText
+    /**
+     * Getter for this COS
+     * @return true if COS is completed, false otherwise
+     */
+    ConditionOfSatisfaction.prototype.isComplete = function () {
+        return this.complete;
+    }; // end isComplete
+    /***********
+     * Setters *
+     ***********/
     /**
      * Sets this condition of satisfaction to complete
      */
@@ -599,17 +645,13 @@ var ConditionOfSatisfaction = /** @class */ (function () {
     ConditionOfSatisfaction.prototype.setIncomplete = function () {
         this.complete = false;
     }; // setIncomplete
-    ConditionOfSatisfaction.prototype.getText = function () {
-        return this.text;
-    }; // end getText
+    /**********************
+     * Additional methods *
+     **********************/
     /**
-     * Returns whether or not this condition of satisfaction is complete
-     *
-     * @return true if completed, false otherwise
+     * loads this condition of satisfaction to the board
+     * @param condition the COS to be loaded into the board
      */
-    ConditionOfSatisfaction.prototype.isComplete = function () {
-        return this.complete;
-    }; // end isComplete
     ConditionOfSatisfaction.prototype.load = function (condition) {
         this.text = condition.text;
         this.complete = condition.complete;
@@ -621,123 +663,115 @@ exports.ConditionOfSatisfaction = ConditionOfSatisfaction;
 },{}],4:[function(require,module,exports){
 "use strict";
 /**
- * model.js
+ * Model.ts
  *
- * The JavaScript class that will wrap the entirity of our Agile Development
- * Board
+ * A class responsible for holding and handling projects
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
- * @version 2.0.0 (October 7, 2019)
- * Model.ts holds and handles Boards
  * @version 3.0.0 (February 19, 2020)
- * Moved all of the fields and methods to Project.ts due to the functionality
- * of Model changing from holding and handling Boards to holding and handling
- * Projects.
  */
 exports.__esModule = true;
 var Project_1 = require("./Project");
 var ProjectFactory_1 = require("./factories/ProjectFactory");
 var Model = /** @class */ (function () {
+    /****************
+     * Constructors *
+     ****************/
     function Model(controller, projectName) {
         this.projectName = projectName;
         this.project = new Project_1.Project(this.projectName);
         this.projectFactory = new ProjectFactory_1.ProjectFactory();
         this.controller = controller;
     } // end constructor
+    /***********
+     * Getters *
+     ***********/
     /**
      * Returns the title of a board
-     *
-     * @param {number} boardID -- the index of the board we are searching for
-     *
-     * @return {string} -- the title of the board
+     * @param boardID the index of the board we are searching for
+     * @return the title of the board
      */
     Model.prototype.getBoardTitle = function (boardID) {
         return this.project.getBoardTitle(boardID);
     }; // end getBoardTitle
     /**
+     * Getter for the project field
+     * @return the project we are currently working on
+     */
+    Model.prototype.getProjects = function () {
+        return this.project;
+    }; // end getBoards
+    /***********
+     * Setters *
+     ***********/
+    /**
+     * Sets the controller of this app.
+     * @param controller the controller that will send commands to this app.
+     */
+    Model.prototype.setController = function (controller) {
+        this.controller = controller;
+    }; // end setController
+    /**********************
+     * Additional methods *
+     **********************/
+    /**
      * Generates a board from a template based on user preference
-     *
-     * @param {BoardOptions} option -- the type of board the user would like
+     * @param option the type of board the user would like
      */
     Model.prototype.generateBoardTemplate = function (option) {
         this.project.generateBoardTemplate(option);
     }; // end generateBoardTemplate
     /**
      * Removes a board from the list of boards.
-     *
-     * @param {number} boardID the id of the board to be removed
+     * @param boardID the id of the board to be removed
      */
     Model.prototype.removeBoard = function (boardID) {
         this.project.removeBoard(boardID);
     }; // end removeBoard
     /**
      * Generates a list with the title and color provided in the board specified by the Controller.
-     *
-     * @param {number} projectID the id of the board's Project
-     * @param {number} boardID the id of the board we are trying to add a list into.
-     * @param {string} label the name of the list being generated
-     * @param {colors} color the color of the list being generated
+     * @param boardID the id of the board we are trying to add a list into.
+     * @param label the name of the list being generated
      */
     Model.prototype.generateList = function (boardID, label) {
         this.project.generateList(boardID, label);
     }; // end generateList
     /**
      * Generates a list based on the template given, to the specified board
-     *
-     * @param {number} projectID -- the id of the board's project
-     * @param {number} boardID -- the id of the baord we are trying to add a list into
-     * @param {option} option -- the type of list we are trying to create
+     * @param boardID the id of the board we are trying to add a list into
+     * @param option the type of list we are trying to create
      */
     Model.prototype.generateListTemplate = function (boardID, option) {
         this.project.generateListTemplate(boardID, option);
     }; // end generateListTemplate
     /**
      * Removes a list from a specified board.
-     *
-     * @param {number} projectID -- the ID of the board's project
-     * @param {number} boardID -- the ID of the board from whom we want to remove a list from
-     * @param {number} listID -- the ID of the list we are removing
+     * @param boardID the ID of the board from whom we want to remove a list from
+     * @param listID the ID of the list we are removing
      */
     Model.prototype.removeList = function (boardID, listID) {
         this.project.removeList(boardID, listID);
     }; // end removeList
     /**
      * Generates a card within a board's list
-     *
-     * @param {number} boardID -- the board to generate a card into
-     * @param {number} listID -- the list to generate a card into
-     * @param {string} label -- the label for the card being generated
-     * @param {string} text -- the text for the card being generated
+     * @param boardID the board to generate a card into
+     * @param listID the list to generate a card into
+     * @param label the label for the card being generated
+     * @param text the text for the card being generated
      */
     Model.prototype.generateTaskCard = function (boardID, listID, label, text) {
         this.project.generateTaskCard(listID, text);
     }; // end generateTaskCard
     /**
-     * Sets the controller of this app.
-     *
-     * @param {Controller} controller the controller that will send commands to this app.
-     */
-    Model.prototype.setController = function (controller) {
-        this.controller = controller;
-    }; // end setController
-    /**
      * Loads a board given to it by the controller.
-     * @param {model} model -- the board to be loaded
+     * @param model the board to be loaded
      */
     Model.prototype.loadProject = function (project) {
         var newProject = new Project_1.Project("");
         newProject.loadProject(project);
         this.project = newProject; // end for
     }; // end loadBoards
-    /**
-     * Getter for the project field
-     *
-     * @return {Project} -- the project we are currently working on
-     */
-    Model.prototype.getProjects = function () {
-        return this.project;
-    }; // end getBoards
     return Model;
 }()); // end App
 exports.Model = Model;
@@ -745,7 +779,9 @@ exports.Model = Model;
 },{"./Project":5,"./factories/ProjectFactory":17}],5:[function(require,module,exports){
 "use strict";
 /**
- * Holds and allows for the manipulation of Boards.
+ * Project.ts
+ *
+ * A class responsible for holding and allowing for the manipulation of Boards.
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
@@ -758,10 +794,12 @@ var TaskCard_1 = require("./TaskCard");
 var MoscowStatus_1 = require("./enums/MoscowStatus");
 var BacklogStatus_1 = require("./enums/BacklogStatus");
 var Project = /** @class */ (function () {
+    /****************
+     * Constructors *
+     ****************/
     /**
      * Generates the foundation for the app
-     *
-     * @param {String} title -- the title of this board
+     * @param title the title of this board
      */
     function Project(title) {
         this.title = title;
@@ -773,87 +811,107 @@ var Project = /** @class */ (function () {
         this.activeBoardIndex = 0; // which board should display upon opening the project
         this.nextCardNumber = 1;
     } // end constructor
+    /***********
+     * Getters *
+     ***********/
+    /**
+     * Gets the title of this project
+     * @return the title of this project
+     */
     Project.prototype.getTitle = function () {
         return this.title;
-    };
+    }; // end getTitle
+    /**
+     * Gets the title of a specific board
+     *
+     * @param boardID the title of the requested board
+     */
     Project.prototype.getBoardTitle = function (boardID) {
         return this.boards[boardID].getTitle();
-    };
+    }; // end getBoardTitle
     /**
-     * gets the board that should be currently shown on the user's browser
-     *
+     * Gets the board that should be currently shown on the user's browser
      * @return the current board on screen
      */
     Project.prototype.getActiveBoard = function () {
         return this.boards[this.activeBoardIndex];
     }; // end getActiveBoard
     /**
-     * gets the index of the board that be currently shown on the user's browser
-     *
+     * Gets the index of the board that be currently shown on the user's browser
      * @return the index for the current board on screen
      */
     Project.prototype.getActiveBoardIndex = function () {
         return this.activeBoardIndex;
     }; // end getActiveBoardIndex
     /**
-     * change the board that is currently displayed on the user's browser
-     *
+     * Gets the task cards for this project
+     * @return a list of task cards in this project
+     */
+    Project.prototype.getTasks = function () {
+        return this.taskCards;
+    }; // end getTasks
+    /**
+     * Gets the boards in this project
+     * @return a list of the boards in this project
+     */
+    Project.prototype.getBoards = function () {
+        return this.boards;
+    }; // end getBoards
+    /***********
+     * Setters *
+     ***********/
+    /**
+     * Change the board that is currently displayed on the user's browser
      * @param index the index for the board we wish to display on screen
      */
     Project.prototype.setActiveBoardIndex = function (index) {
         this.activeBoardIndex = index;
     }; // end setActiveBoardIndex
-    Project.prototype.getTasks = function () {
-        return this.taskCards;
-    }; // end getTasks
+    /**********************
+     * Additional methods *
+     **********************/
     /**
      * Generates a board from a template based on user preference
-     *
-     * @param option
+     * @param option the template to build a board off of
      */
     Project.prototype.generateBoardTemplate = function (option) {
         this.boards.push(this.boardFactory.generateBoard(option));
     }; // end generateBoardTemplate
     /**
      * Removes a board from the list of boards.
-     *
-     * @param {number} boardID the id of the to be removed
+     * @param boardID the id of the to be removed
      */
     Project.prototype.removeBoard = function (boardID) {
         this.boards.splice(boardID, 1);
     }; // end removeBoard
     /**
      * Generates a list with the title and color provided in the board specified by the Controller.
-     *
-     * @param {number} boardID the id of the board we are trying to add a list into.
-     * @param {string} label the name of the list being generated
+     * @param boardID the id of the board we are trying to add a list into.
+     * @param label the name of the list being generated
      */
     Project.prototype.generateList = function (boardID, label) {
         this.boards[boardID].addList(label);
     }; // end generateList
     /**
      * Generates a list based on the template given, to the specified board
-     *
-     * @param {number} boardID the id of the baord we are trying to add a list into
-     * @param {option} option the type of list we are trying to create
+     * @param boardID the id of the board we are trying to add a list into
+     * @param option the type of list we are trying to create
      */
     Project.prototype.generateListTemplate = function (boardID, option) {
         this.boards[boardID].addListTemplate(option);
     }; // end generateListTemplate
     /**
      * Removes a list from a specified board.
-     * @param {number} boardID the ID of the board from whom we want to remove a list from
-     * @param {number} listID the ID of the list we are removing
+     * @param boardID the ID of the board from whom we want to remove a list from
+     * @param listID the ID of the list we are removing
      */
     Project.prototype.removeList = function (boardID, listID) {
         this.boards[boardID].removeList(listID);
     }; // end removeList
     /**
      * Generates a card within a board's list
-     *
-     * @param {number} listID the index of the list the task card will be added to
-     * @param {string} text the text for the task card once it is generated
-     *
+     * @param listID the index of the list the task card will be added to
+     * @param text the text for the task card once it is generated
      */
     Project.prototype.generateTaskCard = function (listID, text) {
         var label = this.generateNextCardLabel();
@@ -875,16 +933,14 @@ var Project = /** @class */ (function () {
     }; // end generateTaskCard
     /**
      * Generates the label for the next card to be created
-     *
-     * @return {string} -- the label of the card being created
+     * @return the label of the card being created
      */
     Project.prototype.generateNextCardLabel = function () {
         return this.makeProjectAcronym() + this.nextCardNumber;
     }; // end generateNextCardLabel
     /**
      * Creates an acronym for the project
-     *
-     * @return {string} -- the acronym for the project
+     * @return the acronym for the project
      */
     Project.prototype.makeProjectAcronym = function () {
         var words = this.title.split(' ');
@@ -896,7 +952,6 @@ var Project = /** @class */ (function () {
     }; // end makeProjectAcronym
     /**
      * Remove a task card from the specified list from a specified board.
-     *
      * @string taskLabel the label of the task card to be removed
      */
     Project.prototype.removeTaskCard = function (taskLabel) {
@@ -909,7 +964,7 @@ var Project = /** @class */ (function () {
     }; // end removeTaskCard
     /**
      * Loads a board given to it by the controller.
-     * @param {Project} project project to be loaded
+     * @param project project to be loaded
      */
     Project.prototype.loadProject = function (project) {
         this.title = project.title;
@@ -932,9 +987,6 @@ var Project = /** @class */ (function () {
             this.taskCards.push(ntaskCard);
         } // end for
     }; // end loadBoards
-    Project.prototype.getBoards = function () {
-        return this.boards;
-    }; // end getBoards
     return Project;
 }()); //end of Project
 exports.Project = Project;
@@ -942,10 +994,9 @@ exports.Project = Project;
 },{"./TaskCard":6,"./enums/BacklogStatus":10,"./enums/BoardOptions":11,"./enums/MoscowStatus":13,"./factories/BoardFactory":14}],6:[function(require,module,exports){
 "use strict";
 /**
- * task_card.js
+ * TaskCard.ts
  *
- * The JavaScript class that represents a Task Card in our Agile Development
- * Board.
+ * The class that represents a Task Card in our Agile Development Board.
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
@@ -954,13 +1005,14 @@ exports.Project = Project;
 exports.__esModule = true;
 var ConditionOfSatisfaction_1 = require("./ConditionOfSatisfaction");
 var TaskCard = /** @class */ (function () {
+    /****************
+     * Constructors  *
+     ****************/
     /**
      * Generates the TaskCard object
-     *
-     * @param {string} label the label representing this task card
-     * @param {string} text the text this task card should display
-     * @param {MoscowStatus} moscowStats the card's Moscow status
-     * @param {BacklogStatus} backlogStatus the card's Backlog status
+     * @param label the label representing this task card
+     * @param moscowStatus the card's Moscow status
+     * @param backlogStatus the card's Backlog status
      */
     function TaskCard(label, title, moscowStatus, backlogStatus) {
         this.label = label;
@@ -970,25 +1022,47 @@ var TaskCard = /** @class */ (function () {
         this.moscowStatus = moscowStatus;
         this.backlogStatus = backlogStatus;
     } // end constructor
-    TaskCard.prototype.setText = function (text) {
-        this.text = text;
-    }; // end setText
+    /***********
+     * Getters *
+     ***********/
+    /**
+     * Gets the label for this task card
+     * @return the label for this task card
+     */
     TaskCard.prototype.getLabel = function () {
         return this.label;
     }; // end getLabel
+    /**
+     * Sets the text of this task card
+     * @param text the next text for this task card
+     */
+    TaskCard.prototype.setText = function (text) {
+        this.text = text;
+    }; // end setText
+    /**
+     * Gets the description of this task card
+     * @return the description of this task card
+     */
     TaskCard.prototype.getText = function () {
         return this.text;
     }; // end getText
+    /**
+     * Gets the title of this task card
+     * @return the title of this task card
+     */
     TaskCard.prototype.getTitle = function () {
         return this.title;
-    };
+    }; // end getTitle
+    /**
+     * Gets the number of COS for this task card
+     * @return the number of COS for this task card
+     */
     TaskCard.prototype.getNumberOfConditions = function () {
         return this.conditionsOfSatisfaction.length;
     }; // end getNumberOfConditions
     /**
      * Gets the number of conditions of satisfaction that have been completed
      * for this card
-     *
      * @return the number of conditions of satisfaction that have been completed
      */
     TaskCard.prototype.getNumberOfCompletedConditions = function () {
@@ -1000,28 +1074,57 @@ var TaskCard = /** @class */ (function () {
         } // end for
         return completed;
     }; // end getNumberOfCompletedConditions
+    /**
+     * Gets the ratio of complete to total COS
+     * @return the ratio of complete to total COS
+     */
     TaskCard.prototype.getConditionsStats = function () {
         return this.getNumberOfCompletedConditions() + '/' +
             this.getNumberOfConditions();
     }; // end getConditionsStats
+    /**
+     * Gets the MoscowStatus of this task card
+     * @return the MoscowStatus of this task card
+     */
     TaskCard.prototype.getMoscowStatus = function () {
         return this.moscowStatus;
     }; // end getMoscowStatus
-    TaskCard.prototype.setMoscowStatus = function (moscowStatus) {
-        this.moscowStatus = moscowStatus;
-    }; // end setMoscowStatus
+    /**
+     * Gets the BacklogStatus of this task card
+     * @return the BacklogStatus of this task card
+     */
     TaskCard.prototype.getBacklogStatus = function () {
         return this.backlogStatus;
     }; // end getBacklogStatus
-    TaskCard.prototype.setBacklogStatus = function (backlogStatus) {
-        this.backlogStatus = backlogStatus;
-    }; // end setBacklogStatus
+    /**
+     * Gets the COS for this task card
+     * @return the COS for this task card
+     */
     TaskCard.prototype.getConditionsOfSatisfaction = function () {
         return this.conditionsOfSatisfaction;
     }; // end getConditionsOfSatisfaction
+    /***********
+     * Setters *
+     ***********/
+    /**
+     * Sets the MoscowStatus of this task card
+     * @param moscowStatus the new MoscowStatus of this task card
+     */
+    TaskCard.prototype.setMoscowStatus = function (moscowStatus) {
+        this.moscowStatus = moscowStatus;
+    }; // end setMoscowStatus
+    /**
+     * Sets the BacklogStatus of this task card
+     * @param backlogStatus the new BacklogStatus of this task card
+     */
+    TaskCard.prototype.setBacklogStatus = function (backlogStatus) {
+        this.backlogStatus = backlogStatus;
+    }; // end setBacklogStatus
+    /**********************
+     * Additional methods *
+     **********************/
     /**
      * Adds a condition of satisfaction to the task card
-     *
      * @param text the text for the condition of satisfaction
      */
     TaskCard.prototype.addConditionOfSatisfaction = function (text) {
@@ -1029,26 +1132,29 @@ var TaskCard = /** @class */ (function () {
     }; // end addConditionOfSatisfaction
     /**
      * Removes a condition of satisfaction from the task card
-     *
      * @param index the index of the COS being removed
      */
     TaskCard.prototype.removeConditionOfSatisfaction = function (index) {
         this.conditionsOfSatisfaction.splice(index, 1);
     }; // end removeConditionOfSatisfaction
-    TaskCard.prototype.loadTaskCard = function (taskcard) {
-        this.label = taskcard.label;
-        this.title = taskcard.title;
-        this.text = taskcard.text;
-        this.moscowStatus = taskcard.moscowStatus;
-        this.backlogStatus = taskcard.backlogStatus;
+    /**
+     * Loads a task card into the board
+     * @param taskCard the task card to load into the board
+     */
+    TaskCard.prototype.loadTaskCard = function (taskCard) {
+        this.label = taskCard.label;
+        this.title = taskCard.title;
+        this.text = taskCard.text;
+        this.moscowStatus = taskCard.moscowStatus;
+        this.backlogStatus = taskCard.backlogStatus;
         this.conditionsOfSatisfaction = [];
         var cond;
-        for (var _i = 0, _a = taskcard.conditionsOfSatisfaction; _i < _a.length; _i++) {
+        for (var _i = 0, _a = taskCard.conditionsOfSatisfaction; _i < _a.length; _i++) {
             var condition = _a[_i];
             cond = new ConditionOfSatisfaction_1.ConditionOfSatisfaction("");
             cond.load(condition);
             this.conditionsOfSatisfaction.push(cond);
-        }
+        } // end loadTaskCard
     }; // end loadTaskCard
     return TaskCard;
 }()); // end class
@@ -1057,9 +1163,9 @@ exports.TaskCard = TaskCard;
 },{"./ConditionOfSatisfaction":3}],7:[function(require,module,exports){
 "use strict";
 /**
- * board.js
+ * Board.ts
  *
- * A JavaScript class to represent a board in our Agile Development Board.
+ * A class to represent a board in our Agile Development Board.
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
@@ -1071,55 +1177,76 @@ var ListFactory_1 = require("../factories/ListFactory");
 var MoscowStatus_1 = require("../enums/MoscowStatus");
 var BacklogStatus_1 = require("../enums/BacklogStatus");
 var Board = /** @class */ (function () {
+    /****************
+     * Constructors *
+     ****************/
     /**
      * Generates the board object
-     *
-     * @param {string} title the title of the board
+     * @param title the title of the board
      */
     function Board(title) {
         this.title = title;
         this.lists = [];
         this.listFactory = new ListFactory_1.ListFactory();
     } // end constructor
+    /***********
+     * Getters *
+     ***********/
+    /**
+     * Getter for the board's title
+     * @return the title of this board
+     */
+    Board.prototype.getTitle = function () {
+        return this.title;
+    }; // end getTitle
+    /**
+     * Getter for the board's lists
+     * @return this board's lists
+     */
+    Board.prototype.getLists = function () {
+        return this.lists;
+    }; // end getLists
+    /***********
+     * Setters *
+     ***********/
     /**
      * sets listFactory to something more specific
-     *
-     * @param {ListFactory} factory the new factory
+     * @param factory the new factory
      */
     Board.prototype.setListFactory = function (factory) {
         this.listFactory = factory;
     }; // end setListFactory
+    /**********************
+     * Additional methods *
+     **********************/
     /**
      * adds a new list to our board
-     *
-     * @param {string} label the label for our new list
-     * @param {Colors} color the optional color value for our list
+     * @param label the label for our new list
+     * @param color the optional color value for our list
      */
     Board.prototype.addList = function (label) {
         this.lists.push(new List_1.List(label, MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.NONE));
     }; // end addList
     /**
      * Creates a task card within the specified list.
-     *
-     * @param {number} listID the list of we are trying to add a card to
-     * @param {string} label the label of the new task card
-     * @param {string} text the text in the new task card
+     * @param listID the list of we are trying to add a card to
+     * @param label the label of the new task card
+     * @param text the text in the new task card
      */
     Board.prototype.generateTaskCard = function (listID, label, text) {
         this.lists[listID].addTask(label, text);
     }; // end generateTaskCard
     /**
      * Removes a task card from a specified list.
-     * @param {number} listID the ID we are removing a card from.
-     * @param {number} cardID the ID of the card we are removing.
+     * @param listID the ID we are removing a card from.
+     * @param cardID the ID of the card we are removing.
      */
     Board.prototype.removeTaskCard = function (listID, cardID) {
         this.lists[listID].removeTaskCard(cardID);
     }; // end removeTaskCard
     /**
      * Removes the specified list.
-     *
-     * @param {number} listID the ID of a list we are trying to remove
+     * @param listID the ID of a list we are trying to remove
      */
     Board.prototype.removeList = function (listID) {
         this.lists.splice(listID, 1);
@@ -1134,7 +1261,7 @@ var Board = /** @class */ (function () {
     }; // end addListTemplate
     /**
      * Loads in a list of lists into the 'lists' attribute in board.
-     * @param {lists[]} lists an array of lists to load into board.
+     * @param board the board to be loaded into the screen
      */
     Board.prototype.loadBoard = function (board) {
         var nlist;
@@ -1147,12 +1274,6 @@ var Board = /** @class */ (function () {
             this.lists.push(nlist);
         } // end for
     }; // end loadLists
-    Board.prototype.getTitle = function () {
-        return this.title;
-    }; // end getTitle
-    Board.prototype.getLists = function () {
-        return this.lists;
-    }; // end getLists
     return Board;
 }()); // end Board
 exports.Board = Board;
@@ -1160,7 +1281,7 @@ exports.Board = Board;
 },{"../enums/BacklogStatus":10,"../enums/MoscowStatus":13,"../factories/ListFactory":15,"../lists/List":19}],8:[function(require,module,exports){
 "use strict";
 /**
- * moscow_board.js
+ * MoscowBoard.ts
  *
  * A class that will generate a MoSCoW board
  *
@@ -1177,8 +1298,7 @@ var MoscowBoard = /** @class */ (function () {
     }
     /**
      * generates a MoSCoW Board
-     *
-     * @return {Board} a MoSCoW Board
+     * @return a MoSCoW Board
      */
     MoscowBoard.prototype.generateBoard = function () {
         var board = new Board_1.Board('MoSCoW Board');
@@ -1197,7 +1317,7 @@ exports.MoscowBoard = MoscowBoard;
 },{"../enums/ListOptions":12,"../factories/MoscowListFactory":16,"./Board":7}],9:[function(require,module,exports){
 "use strict";
 /**
- * sprint_backlog_board.js
+ * SprintBacklogBoard.ts
  *
  * Allows us to easily generate a board that manages a Sprint Backlog
  *
@@ -1214,8 +1334,7 @@ var SprintBacklogBoard = /** @class */ (function () {
     }
     /**
      * generates a Sprint Backlog Board
-     *
-     * @return {Board} a SprintBacklogBoard
+     * @return a SprintBacklogBoard
      */
     SprintBacklogBoard.prototype.generateBoard = function () {
         var board = new Board_1.Board('Project Backlog');
@@ -1256,10 +1375,9 @@ var BacklogStatus;
 },{}],11:[function(require,module,exports){
 "use strict";
 /**
- * board_options.js
+ * BoardOptions.ts
  *
- * A JavaScript object to act as an enumeration for board choices in our
- * BoardFactory
+ * An enumeration for board choices in our BoardFactory
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
@@ -1277,8 +1395,7 @@ var BoardOptions;
 /**
  * ListOptions.ts
  *
- * A JavaScript object to act as an enumeration for list choices in our
- * ListFactory
+ * An enumeration for list choices in our ListFactory
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
@@ -1319,15 +1436,14 @@ var MoscowStatus;
     MoscowStatus["WONT"] = "WONT";
     MoscowStatus["UNASSIGNED"] = "UNASSIGNED";
     MoscowStatus["NONE"] = "NONE";
-})(MoscowStatus = exports.MoscowStatus || (exports.MoscowStatus = {}));
-;
+})(MoscowStatus = exports.MoscowStatus || (exports.MoscowStatus = {})); // end MoscowStatus
 
 },{}],14:[function(require,module,exports){
 "use strict";
 /**
- * board_factory.js
+ * BoardFactory.ts
  *
- * The JavaScript class that will allow us to easily autogenerate template
+ * The class that will allow us to easily autogenerate template
  * boards for our Agile Development Board.
  *
  * @author Ellery De Jesus
@@ -1339,16 +1455,17 @@ var BoardOptions_1 = require("../enums/BoardOptions");
 var MoscowBoard_1 = require("../boards/MoscowBoard");
 var SprintBacklogBoard_1 = require("../boards/SprintBacklogBoard");
 var BoardFactory = /** @class */ (function () {
+    /**
+     * Generates a BoardFactory
+     */
     function BoardFactory() {
         this.moscowBoard = new MoscowBoard_1.MoscowBoard();
         this.sprintBoard = new SprintBacklogBoard_1.SprintBacklogBoard();
     } // end constructor
     /**
      * generates a board based on the parameter passed in
-     *
-     * @param {BoardOptions} option the type of the board the user wants generated
-     *
-     * @return {Board} a board based on user preference
+     * @param option the type of the board the user wants generated
+     * @return a board based on user preference
      */
     BoardFactory.prototype.generateBoard = function (option) {
         switch (option) {
@@ -1367,9 +1484,9 @@ exports.BoardFactory = BoardFactory;
 },{"../boards/MoscowBoard":8,"../boards/SprintBacklogBoard":9,"../enums/BoardOptions":11}],15:[function(require,module,exports){
 "use strict";
 /**
- * list_factory.js
+ * ListFactory.ts
  *
- * The JavaScript class that will allow us to easily autogenerate template
+ * The class that will allow us to easily autogenerate template
  * lists for our Agile Development Board.
  *
  * @author Ellery De Jesus
@@ -1392,6 +1509,12 @@ var BacklogStatus_1 = require("../enums/BacklogStatus");
 var UnassignedMoscowList_1 = require("../lists/moscow_lists/UnassignedMoscowList");
 var UnassignedSprintBacklogList_1 = require("../lists/sprint_backlog_lists/UnassignedSprintBacklogList");
 var ListFactory = /** @class */ (function () {
+    /****************
+     * Constructors *
+     ****************/
+    /**
+     * Generates a ListFactory
+     */
     function ListFactory() {
         this.mustList = new MustList_1.MustList();
         this.shouldList = new ShouldList_1.ShouldList();
@@ -1404,36 +1527,69 @@ var ListFactory = /** @class */ (function () {
         this.unassignedMoscowList = new UnassignedMoscowList_1.UnassignedMoscowList();
         this.unassignedSprintBacklogList = new UnassignedSprintBacklogList_1.UnassignedSprintBacklogList();
     } // end constructor
+    /***********
+     * Getters *
+     ***********/
+    /**
+     * Getter for MustList
+     * @return the MustList
+     */
     ListFactory.prototype.getMustList = function () {
         return this.mustList;
     }; // end getMustList
+    /**
+     * Getter for the ShouldList
+     * @return the ShouldList
+     */
     ListFactory.prototype.getShouldList = function () {
         return this.shouldList;
     }; // end getShouldList
+    /**
+     * Getter for the CouldList
+     * @return the CouldList
+     */
     ListFactory.prototype.getCouldList = function () {
         return this.couldList;
     }; // end getCouldList
+    /**
+     * Getter for the WontList
+     * @return the WontList
+     */
     ListFactory.prototype.getWontList = function () {
         return this.wontList;
     }; // end getWontList
+    /**
+     * Getter for the BacklogList
+     * @return the BacklogList
+     */
     ListFactory.prototype.getBacklogList = function () {
         return this.backlogList;
     }; // end getBacklogList
+    /**
+     * Getter for the InProgressList
+     * @return the InProgressList
+     */
     ListFactory.prototype.getInProgressList = function () {
         return this.inProgressList;
     }; // end getInProgressList
+    /**
+     * Getter for the InReviewList
+     * @return the InReviewList
+     */
     ListFactory.prototype.getInReviewList = function () {
         return this.inReviewList;
     }; // end getInReviewList
+    /**
+     * Getter for the CompleteList
+     * @return the CompleteList
+     */
     ListFactory.prototype.getCompleteList = function () {
         return this.completeList;
     }; // end getCompleteList
     /**
      * generates a list based on the parameter passed in
-     *
-     * @param {ListOptions} option the type of list the user wants generated
-     *
-     * @return {List} a list set up based on user preference
+     * @param option the type of list the user wants generated
+     * @return a list set up based on user preference
      */
     ListFactory.prototype.generateList = function (option) {
         switch (option) {
@@ -1468,10 +1624,13 @@ exports.ListFactory = ListFactory;
 },{"../enums/BacklogStatus":10,"../enums/ListOptions":12,"../enums/MoscowStatus":13,"../lists/List":19,"../lists/moscow_lists/CouldList":20,"../lists/moscow_lists/MustList":21,"../lists/moscow_lists/ShouldList":22,"../lists/moscow_lists/UnassignedMoscowList":23,"../lists/moscow_lists/WontList":24,"../lists/sprint_backlog_lists/BacklogList":25,"../lists/sprint_backlog_lists/CompleteList":26,"../lists/sprint_backlog_lists/InProgressList":27,"../lists/sprint_backlog_lists/InReviewList":28,"../lists/sprint_backlog_lists/UnassignedSprintBacklogList":29}],16:[function(require,module,exports){
 "use strict";
 /**
- * moscow_list_factory.js
+ * MoscowListFactory.ts
  *
- * The JavaScript class that will allows us to easily autogenerate template
+ * The class that will allows us to easily autogenerate template
  * lists for a MoSCoW board
+ *
+ * NOTE: This file currently is not used.  It is still here in case
+ *       any future capstone students may find it useful
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
@@ -1494,6 +1653,9 @@ exports.__esModule = true;
 var ListFactory_1 = require("./ListFactory");
 var MoscowListFactory = /** @class */ (function (_super) {
     __extends(MoscowListFactory, _super);
+    /**
+     * Generates a MoscowListFactory
+     */
     function MoscowListFactory() {
         return _super.call(this) || this;
     } // end constructor
@@ -1506,38 +1668,45 @@ exports.MoscowListFactory = MoscowListFactory;
 /**
  * ProjectFactory.ts
  *
- * Generates Projects
+ * A class responsible for generating projects
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
  *
- * @version 0.0.0
+ * @version 1.0.0 (April 1, 2020)
  */
 exports.__esModule = true;
 var Project_1 = require("../Project");
 var ProjectFactory = /** @class */ (function () {
+    /**
+     * Generates a ProjectFactory
+     */
     function ProjectFactory() {
-    }
+        // Constructor delibrately left blank
+    } // end constructor
     /**
      * Generates a Project for model.
      *
-     * @param title: Name of the Project
-     * @returns A Project
+     * @param name of the project
+     * @returns a project
      */
     ProjectFactory.prototype.generateProject = function (title) {
         return new Project_1.Project(title);
-    }; //end of generateProject
+    }; //end generateProject
     return ProjectFactory;
-}()); //end of ProjectFactory
+}()); //end ProjectFactory
 exports.ProjectFactory = ProjectFactory;
 
 },{"../Project":5}],18:[function(require,module,exports){
 "use strict";
 /**
- * sprint_backlog_list_factory.js
+ * SprintBacklogListFactory.ts
  *
- * The JavaScript class that will allow us to easily autogenerate template
+ * The class that will allow us to easily autogenerate template
  * lists for a Sprint Backlog Board
+ *
+ * NOTE: This file currently is not used.  It is still here in case
+ *       any future capstone students may find it useful
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
@@ -1560,6 +1729,7 @@ exports.__esModule = true;
 var ListFactory_1 = require("./ListFactory");
 var SprintBacklogListFactory = /** @class */ (function (_super) {
     __extends(SprintBacklogListFactory, _super);
+    // Generates a SprintBacklogListFactory
     function SprintBacklogListFactory() {
         return _super.call(this) || this;
     } // end constructor
@@ -1570,9 +1740,9 @@ exports.SprintBacklogListFactory = SprintBacklogListFactory;
 },{"./ListFactory":15}],19:[function(require,module,exports){
 "use strict";
 /**
- * list.js
+ * List.ts
  *
- * The JavaScript class that behaves as a List on our Agile Development
+ * The class that behaves as a List on our Agile Development
  * Board.
  *
  * @author Ellery De Jesus
@@ -1582,13 +1752,14 @@ exports.SprintBacklogListFactory = SprintBacklogListFactory;
 exports.__esModule = true;
 var TaskCard_1 = require("../TaskCard");
 var List = /** @class */ (function () {
+    /****************
+     * Constructors *
+     ****************/
     /**
      * Generates the List object
-     *
-     * @param {string} label the label for the this list
-     * @param {Colors} color the background color of this list
-     * @param {MoscowStatus} moscowStatus the Moscow status of this list
-     * @param {BacklogStatus} backlogStatus the Backlog status of this list
+     * @param label the label for the this list
+     * @param moscowStatus the Moscow status of this list
+     * @param backlogStatus the Backlog status of this list
      */
     function List(label, moscowStatus, backlogStatus) {
         this.label = label;
@@ -1596,48 +1767,82 @@ var List = /** @class */ (function () {
         this.moscowStatus = moscowStatus;
         this.backlogStatus = backlogStatus;
     } // end constructor
+    /***********
+     * Getters *
+     ***********/
+    /**
+     * Getter for the label
+     * @return the label of this list
+     */
     List.prototype.getLabel = function () {
         return this.label;
     }; // end getLabel
-    List.prototype.setLabel = function (label) {
-        this.label = label;
-    }; // end setLabel
+    /**
+     * Getter for the task cards
+     * @return task cards for this list
+     */
     List.prototype.getTasks = function () {
         return this.tasks;
     }; // end getTasks
+    /**
+     * Getter for the MoscowStatus
+     * @return the Moscow status of this list
+     */
     List.prototype.getMoscowStatus = function () {
         return this.moscowStatus;
     }; // end getMoscowStatus
-    List.prototype.setMoscowStatus = function (moscowStatus) {
-        this.moscowStatus = moscowStatus;
-    }; // end setMoscowStatus
+    /**
+     * Getter for the BacklogStatus
+     * @return the Backlog status of this list
+     */
     List.prototype.getBacklogStatus = function () {
         return this.backlogStatus;
     }; // end getBacklogStatus
+    /***********
+     * Setters *
+     ***********/
+    /**
+     * Sets the label
+     * @param label the new label for this list
+     */
+    List.prototype.setLabel = function (label) {
+        this.label = label;
+    }; // end setLabel
+    /**
+     * Sets the Moscow status
+     * @param moscowStatus the new Moscow status for this list
+     */
+    List.prototype.setMoscowStatus = function (moscowStatus) {
+        this.moscowStatus = moscowStatus;
+    }; // end setMoscowStatus
+    /**
+     * Sets the Backlog status
+     * @param backlogStatus the new Backlog status for this list
+     */
     List.prototype.setBacklogStatus = function (backlogStatus) {
         this.backlogStatus = backlogStatus;
     }; // end setBacklogStatus
+    /**********************
+     * Additional methods *
+     **********************/
     /**
      * adds a new task card to the tasks field
-     *
-     * @param {string} label the label for the new task card
-     * @param {string} text the text for the new task card
+     * @param label the label for the new task card
+     * @param text the text for the new task card
      */
     List.prototype.addTask = function (label, text) {
         this.tasks.push(new TaskCard_1.TaskCard(label, text, this.moscowStatus, this.backlogStatus));
     }; // end addTask
     /**
      * Removes a task card from the tasks field
-     *
-     * @param {number} cardID the ID of the being removed.
+     * @param cardID the ID of the being removed.
      */
     List.prototype.removeTaskCard = function (cardID) {
         this.tasks.splice(cardID, 1);
     }; // end removeTaskCard
     /**
      * loads the list into the board
-     *
-     * @param {List} list -- the list to be loaded into the board
+     * @param list the list to be loaded into the board
      */
     List.prototype.loadList = function (list) {
         this.label = list.label;
@@ -1659,7 +1864,7 @@ exports.List = List;
 },{"../TaskCard":6}],20:[function(require,module,exports){
 "use strict";
 /**
- * could_list.js
+ * CouldList.ts
  *
  * A class that will generate a Should Have list for a MoSCoW board
  *
@@ -1678,7 +1883,7 @@ var CouldList = /** @class */ (function () {
     /**
      * generates a Could Have List for MoSCoW board
      *
-     * @return {List} a Could Have List
+     * @return a CouldHave list
      */
     CouldList.prototype.generateList = function () {
         return new List_1.List('Could', MoscowStatus_1.MoscowStatus.COULD, BacklogStatus_1.BacklogStatus.NONE);
@@ -1690,7 +1895,7 @@ exports.CouldList = CouldList;
 },{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],21:[function(require,module,exports){
 "use strict";
 /**
- * must_list.js
+ * MustList.ts
  *
  * A class that will generate a Must Have List for a MoSCoW board
  *
@@ -1708,8 +1913,7 @@ var MustList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates a Must Have List for MoSCoW board
-     *
-     * @return {List} a Must Have List
+     * @return a MustHave list
      */
     MustList.prototype.generateList = function () {
         return new List_1.List('Must', MoscowStatus_1.MoscowStatus.MUST, BacklogStatus_1.BacklogStatus.NONE);
@@ -1721,7 +1925,7 @@ exports.MustList = MustList;
 },{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],22:[function(require,module,exports){
 "use strict";
 /**
- * should_list.js
+ * ShouldList.ts
  *
  * A class that will generate a Should Have list for a MoSCoW board
  *
@@ -1739,8 +1943,7 @@ var ShouldList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates a Should Have List for MoSCoW board
-     *
-     * @return {List} a Should Have List
+     * @return a ShouldHave list
      */
     ShouldList.prototype.generateList = function () {
         return new List_1.List('Should', MoscowStatus_1.MoscowStatus.SHOULD, BacklogStatus_1.BacklogStatus.NONE);
@@ -1770,8 +1973,7 @@ var UnassignedMoscowList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates an Unassigned List for MoSCoW board
-     *
-     * @return {List} a Must Have List
+     * @return an UnassignedMoscow list
      */
     UnassignedMoscowList.prototype.generateList = function () {
         return new List_1.List('Unassigned', MoscowStatus_1.MoscowStatus.UNASSIGNED, BacklogStatus_1.BacklogStatus.NONE);
@@ -1783,7 +1985,7 @@ exports.UnassignedMoscowList = UnassignedMoscowList;
 },{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],24:[function(require,module,exports){
 "use strict";
 /**
- * wont_list.js
+ * WontList.ts
  *
  * A class that will generate a Wont Have list for a MoSCoW board
  *
@@ -1801,8 +2003,7 @@ var WontList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates a Wont Have List for MoSCoW board
-     *
-     * @return {List} a Wont Have List
+     * @return a WontHave list
      */
     WontList.prototype.generateList = function () {
         return new List_1.List('Wont', MoscowStatus_1.MoscowStatus.WONT, BacklogStatus_1.BacklogStatus.NONE);
@@ -1814,7 +2015,7 @@ exports.WontList = WontList;
 },{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],25:[function(require,module,exports){
 "use strict";
 /**
- * backlog_list.js
+ * BacklogList.ts
  *
  * A class that will generate a Backlog list for a Sprint Backlog board
  *
@@ -1832,8 +2033,7 @@ var BacklogList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates a Backlog LIst for Sprint Backlog board
-     *
-     * @return {List} a Backlog List
+     * @return a Backlog List
      */
     BacklogList.prototype.generateList = function () {
         return new List_1.List('Backlog', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.BACKLOG);
@@ -1845,7 +2045,7 @@ exports.BacklogList = BacklogList;
 },{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],26:[function(require,module,exports){
 "use strict";
 /**
- * complete_list.js
+ * CompleteList.ts
  *
  * A class that will generate a Complete List for a Sprint Backlog board
  *
@@ -1863,8 +2063,7 @@ var CompleteList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates a Complete List for Sprint Backlog board
-     *
-     * @return {List} a Complete List
+     * @return a Complete List
      */
     CompleteList.prototype.generateList = function () {
         return new List_1.List('Complete', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.COMPLETE);
@@ -1876,7 +2075,7 @@ exports.CompleteList = CompleteList;
 },{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],27:[function(require,module,exports){
 "use strict";
 /**
- * in_progress_list.js
+ * InProgressList.ts
  *
  * A class that will generate an In Progress list for a Sprint Backlog board
  *
@@ -1894,8 +2093,7 @@ var InProgressList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates an In Progress List for Sprint Backlog board
-     *
-     * @return {List} an In Progress List
+     * @return an In Progress List
      */
     InProgressList.prototype.generateList = function () {
         return new List_1.List('In Progress', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.IN_PROGRESS);
@@ -1907,7 +2105,7 @@ exports.InProgressList = InProgressList;
 },{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],28:[function(require,module,exports){
 "use strict";
 /**
- * in_review_list.js
+ * InReviewList.ts
  *
  * A class that will generate an In Review list for a Sprint Backlog board
  *
@@ -1925,8 +2123,7 @@ var InReviewList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates an In Review List for Sprint Backlog board
-     *
-     * @return {List} an InReviewList
+     * @return an InReview list
      */
     InReviewList.prototype.generateList = function () {
         return new List_1.List('In Review', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.IN_REVIEW);
@@ -1957,7 +2154,7 @@ var UnassignedSprintBacklogList = /** @class */ (function () {
     /**
      * generates a Backlog LIst for Sprint Backlog board
      *
-     * @return {List} a Backlog List
+     * @return a Unassigned SprintBacklog List
      */
     UnassignedSprintBacklogList.prototype.generateList = function () {
         return new List_1.List('Unassigned', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.UNASSIGNED);
@@ -1969,7 +2166,7 @@ exports.UnassignedSprintBacklogList = UnassignedSprintBacklogList;
 },{"../../enums/BacklogStatus":10,"../../enums/MoscowStatus":13,"../List":19}],30:[function(require,module,exports){
 "use strict";
 /**
- * view.js
+ * View.ts
  *
  * The class responsible for generating the HTML based off our current model
  *
@@ -1978,10 +2175,43 @@ exports.UnassignedSprintBacklogList = UnassignedSprintBacklogList;
  */
 exports.__esModule = true;
 var View = /** @class */ (function () {
+    /****************
+     * Constructors *
+     ****************/
     function View() {
         this.isBoardMenuVisible = true;
         this.editableTaskCard = null;
     } // end constructor
+    /***********
+     * Getters *
+     ***********/
+    /**
+     * returns whether or not the board is currently visible
+     * @return true if the board is visible, false otherwise
+     */
+    View.prototype.getIsBoardMenuVisible = function () {
+        return this.isBoardMenuVisible;
+    }; // end getIsBoardMenuVisible
+    /**
+     * Gets the task card currently being editted
+     * @return the task card currently being editted
+     */
+    View.prototype.getEditableTaskCard = function () {
+        return this.editableTaskCard;
+    }; // end getEditableTaskCard
+    /***********
+     * Setters *
+     ***********/
+    /**
+     * Sets the current task card being editted
+     * @param task the current task card to be editted
+     */
+    View.prototype.setEditableTaskCard = function (task) {
+        this.editableTaskCard = task;
+    }; // end setEditableTaskCard
+    /**********************
+     * Additional methods *
+     **********************/
     /**
      * if the board menu is visible, hide it and vice-versa
      */
@@ -1989,25 +2219,9 @@ var View = /** @class */ (function () {
         this.isBoardMenuVisible = !this.isBoardMenuVisible;
     }; // end toggleBoardMenuVisibility
     /**
-     * returns whether or not the board is currently visible
-     *
-     * @return {boolean} -- true if the board is visible, false otherwise
-     */
-    View.prototype.getIsBoardMenuVisibile = function () {
-        return this.isBoardMenuVisible;
-    }; // end getIsBoardMenuVisibile
-    View.prototype.setEditableTaskCard = function (task) {
-        this.editableTaskCard = task;
-    }; // end setEditableTaskCard
-    View.prototype.getEditableTaskCard = function () {
-        return this.editableTaskCard;
-    }; // end getEditableTaskCard
-    /**
      * generates HTML based on the current model
-     *
-     * @param {Model} model the model we are generating HTML for
-     *
-     * @return {string} the HTML for model
+     * @param model the model we are generating HTML for
+     * @return the HTML for model
      */
     View.prototype.generateHTML = function (model) {
         var html = '<div>';
@@ -2019,7 +2233,6 @@ var View = /** @class */ (function () {
     }; // end generateHTML
     /**
      * generates the html for the edit screen for editting a task card
-     *
      * @return the HTML for the edit screen
      */
     View.prototype.generateEditableTaskCardHTML = function () {
@@ -2047,7 +2260,6 @@ var View = /** @class */ (function () {
     }; // end generateEditableTaskCard
     /**
      * Generates the HTML for the conditions of satisfaction
-     *
      * @return the HTML for the conditions of satisfaction
      */
     View.prototype.getConditionsOfSatisfactionHTML = function () {
@@ -2072,11 +2284,10 @@ var View = /** @class */ (function () {
         } // end if
         html += '<input id=new-condition type=text></input>';
         return html;
-    };
+    }; // end getConditionsOfSatisfactionHTML
     /**
      * generates the toolbar HTML
-     *
-     * @return {HTML} the html for the toolbar
+     * @return the html for the toolbar
      */
     View.prototype.generateToolbar = function (model) {
         var html = '<div id=toolbar>';
@@ -2087,8 +2298,7 @@ var View = /** @class */ (function () {
     }; // end generateToolbar
     /**
      * generates the save and load button HTML
-     *
-     * @return {HTML} the html for the save and load buttons
+     * @return the html for the save and load buttons
      */
     View.prototype.generateSaveLoadButtons = function () {
         var html = '<div id=save-load-buttons>';
@@ -2100,10 +2310,8 @@ var View = /** @class */ (function () {
     }; // end generateSaveLoadButtons
     /**
      * generates the header based on the current model
-     *
-     * @param {Model} model the model we are generating the header HTML for
-     *
-     * @return {string} the HTML for the header of the model
+     * @param model the model we are generating the header HTML for
+     * @return the HTML for the header of the model
      */
     View.prototype.generateHeaderHTML = function (model) {
         var html = '<h1 id=header>';
@@ -2114,11 +2322,9 @@ var View = /** @class */ (function () {
     }; // end generateHeaderHTML
     /**
      * Generates the body of the application
-     *
-     * @param {Model} model -- the data structure of the application to be
-     * displayed
-     *
-     * @return {string} -- the HTML for the body of the application
+     * @param model the data structure of the application to be
+     *              displayed
+     * @return the HTML for the body of the application
      */
     View.prototype.generateBodyHTML = function (model) {
         var html = '<div id=appBody>';
@@ -2129,10 +2335,8 @@ var View = /** @class */ (function () {
     }; // end generateBodyHTML
     /**
      * Generates the Board Menu for the application
-     *
-     * @param {Model} model -- the data structure of the application
-     *
-     * @return {string} -- the HTML for the Board Menu
+     * @param model the data structure of the application
+     * @return the HTML for the Board Menu
      */
     View.prototype.generateBoardButtons = function (model) {
         var html = '<div id=boardButtons>';
@@ -2157,10 +2361,8 @@ var View = /** @class */ (function () {
     }; // end generateBoardButtons
     /**
      * Generates the current board the user is interacting with
-     *
-     * @param {Model} model -- the data structure of the application
-     *
-     * @return {string} -- the HTML for the current board
+     * @param model the data structure of the application
+     * @return the HTML for the current board
      */
     View.prototype.generateCurrentBoard = function (model) {
         var html = '<div id=currentBoard>';
@@ -2171,10 +2373,8 @@ var View = /** @class */ (function () {
     }; // end generateCurrentBoard
     /**
      * generates all of the lists inside of the model
-     *
-     * @param {Model} model the model we are displaying the lists for
-     *
-     * @return {string} the HTML for the lists
+     * @param model the model we are displaying the lists for
+     * @return the HTML for the lists
      */
     View.prototype.generateListsHTML = function (model) {
         var html = '<div class=lists>';
@@ -2196,10 +2396,8 @@ var View = /** @class */ (function () {
     }; // end generateListsHTML
     /**
      * generates the list passed in
-     *
-     * @param {List} list the list whose HTML is being generated
-     *
-     * @return {string} the HTML representation of the given list
+     * @param list the list whose HTML is being generated
+     * @return the HTML representation of the given list
      */
     View.prototype.generateIndividualListHTML = function (list, model) {
         var html = '<div>';
@@ -2209,11 +2407,9 @@ var View = /** @class */ (function () {
     }; // end generateIndividualListHTML
     /**
      * generates the HTML for all of the task cards in a list
-     *
-     * @param {List} list the list whose task cards we are generating
-     *
-     * @return {string} the HTML representation of all of the task cards in the
-     *                  list
+     * @param list the list whose task cards we are generating
+     * @return the HTML representation of all of the task cards in the
+     *         list
      */
     View.prototype.generateTaskCardsHTML = function (list, model) {
         var _this = this;
@@ -2222,17 +2418,15 @@ var View = /** @class */ (function () {
             if (task.getMoscowStatus() == list.getMoscowStatus() ||
                 task.getBacklogStatus() == list.getBacklogStatus()) {
                 html += _this.generateIndividualTaskCardHTML(task);
-            }
-        });
+            } // end if
+        }); // end for-each
         html += '</div>';
         return html;
     }; // end generateTaskCardsHTML
     /**
      * generates the HTML for an individual task card
-     *
-     * @param {TaskCard} task the task card we are generating HTML for
-     *
-     * @return {string} the HTML representation of the task card
+     * @param task the task card we are generating HTML for
+     * @return the HTML representation of the task card
      */
     View.prototype.generateIndividualTaskCardHTML = function (task) {
         var html = '<div id=\'' + task.getLabel() + '\' class=\'task-card draggable\'>';
@@ -2253,10 +2447,8 @@ var View = /** @class */ (function () {
     }; // end generateIndividualTaskCardHTML
     /**
      * Generates a remove button for a task card
-     *
-     * @param {TaskCard} task -- the task card this button should remove when clicked
-     *
-     * @return {string} -- the HTML for the remove button
+     * @param task the task card this button should remove when clicked
+     * @return the HTML for the remove button
      */
     View.prototype.generateRemoveButtonHTML = function (task) {
         var buttonID = task.getLabel() + 'RemoveButton';
@@ -2265,23 +2457,23 @@ var View = /** @class */ (function () {
     }; // end generateRemoveButtonHTML
     /**
      * Generates an add task card button for a list
-     *
-     * @param {number} parentID -- the index for the list
-     *
-     * @return {string} -- the HTML for the add button
+     * @param parentID the index for the list
+     * @return the HTML for the add button
      */
     View.prototype.generateAddButtonHTML = function (parentID) {
         var thisID = parentID + 'AddButton';
         return '<button id=\'' + thisID + '\' class=add-button>+</button>';
     }; // end generateAddButtonHTML
+    /**
+     * Generates the button for displaying the board menu
+     * @return the HTML for the button hiding the board menu
+     */
     View.generateBoardMenuToggleButtonShow = function () {
         return '<button id=boardMenuToggleButtonShow>\></button>';
-    };
+    }; // end generateBoardMenuToggleButtonShow
     /**
-     * Generates the button that will allow us to toggle the visibility of the
-     * Board Menu
-     *
-     * @return {string} -- the HTML for the Board Menu Toggle button
+     * Generates the button for hiding the board menu
+     * @return the HTML for the button displaying the board menu
      */
     View.generateBoardMenuToggleButtonHide = function () {
         return '<button id=boardMenuToggleButtonHide>\<</button>';

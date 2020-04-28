@@ -1,7 +1,7 @@
 /**
- * board.js
+ * Board.ts
  *
- * A JavaScript class to represent a board in our Agile Development Board.
+ * A class to represent a board in our Agile Development Board.
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
@@ -15,14 +15,25 @@ import { MoscowStatus } from '../enums/MoscowStatus';
 import { BacklogStatus } from '../enums/BacklogStatus';
 
 export class Board {
+
+  /**********
+   * Fields *
+   **********/
+
+  /** The title of the board */
   private title: string;
+  /** The lists inside this board */
   private lists: List[];
+  /** A factory class to conveniently generate lists */
   private listFactory: ListFactory;
+
+  /****************
+   * Constructors *
+   ****************/
 
   /**
    * Generates the board object
-   *
-   * @param {string} title the title of the board
+   * @param title the title of the board
    */
   constructor(title: string) {
     this.title = title;
@@ -30,20 +41,46 @@ export class Board {
     this.listFactory = new ListFactory();
   } // end constructor
 
+  /***********
+   * Getters *
+   ***********/
+
+  /**
+   * Getter for the board's title
+   * @return the title of this board
+   */
+  getTitle(): string {
+    return this.title;
+  } // end getTitle
+
+  /**
+   * Getter for the board's lists
+   * @return this board's lists
+   */
+  getLists(): List[] {
+    return this.lists;
+  } // end getLists
+
+  /***********
+   * Setters *
+   ***********/
+
   /**
    * sets listFactory to something more specific
-   *
-   * @param {ListFactory} factory the new factory
+   * @param factory the new factory
    */
   setListFactory(factory: ListFactory) {
     this.listFactory = factory;
   } // end setListFactory
 
+  /**********************
+   * Additional methods *
+   **********************/
+
   /**
    * adds a new list to our board
-   *
-   * @param {string} label the label for our new list
-   * @param {Colors} color the optional color value for our list
+   * @param label the label for our new list
+   * @param color the optional color value for our list
    */
   addList(label: string) {
     this.lists.push(new List(label, MoscowStatus.UNASSIGNED, BacklogStatus.NONE));
@@ -51,10 +88,9 @@ export class Board {
 
   /**
    * Creates a task card within the specified list.
-   *
-   * @param {number} listID the list of we are trying to add a card to
-   * @param {string} label the label of the new task card
-   * @param {string} text the text in the new task card
+   * @param listID the list of we are trying to add a card to
+   * @param label the label of the new task card
+   * @param text the text in the new task card
    */
   generateTaskCard(listID: number, label: string, text: string) {
     this.lists[listID].addTask(label, text);
@@ -62,8 +98,8 @@ export class Board {
 
   /**
    * Removes a task card from a specified list.
-   * @param {number} listID the ID we are removing a card from.
-   * @param {number} cardID the ID of the card we are removing.
+   * @param listID the ID we are removing a card from.
+   * @param cardID the ID of the card we are removing.
    */
   removeTaskCard(listID: number, cardID: number) {
     this.lists[listID].removeTaskCard(cardID);
@@ -71,8 +107,7 @@ export class Board {
 
   /**
    * Removes the specified list.
-   *
-   * @param {number} listID the ID of a list we are trying to remove
+   * @param listID the ID of a list we are trying to remove
    */
   removeList(listID: number) {
     this.lists.splice(listID, 1);
@@ -89,7 +124,7 @@ export class Board {
 
   /**
    * Loads in a list of lists into the 'lists' attribute in board.
-   * @param {lists[]} lists an array of lists to load into board.
+   * @param board the board to be loaded into the screen
    */
   loadBoard(board: Board) {
     let nlist: List;
@@ -103,12 +138,5 @@ export class Board {
     } // end for
   } // end loadLists
 
-  getTitle(): string {
-    return this.title;
-  } // end getTitle
-
-  getLists(): List[] {
-    return this.lists;
-  } // end getLists
 } // end Board
 

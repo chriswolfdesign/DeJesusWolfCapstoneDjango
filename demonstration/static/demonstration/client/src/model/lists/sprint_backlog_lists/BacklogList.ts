@@ -1,5 +1,5 @@
 /**
- * backlog_list.js
+ * BacklogList.ts
  *
  * A class that will generate a Backlog list for a Sprint Backlog board
  *
@@ -17,8 +17,7 @@ export class BacklogList {
 
   /**
    * generates a Backlog LIst for Sprint Backlog board
-   *
-   * @return {List} a Backlog List
+   * @return a Backlog List
    */
   generateList(): List {
     return new List('Backlog', MoscowStatus.NONE, BacklogStatus.BACKLOG);

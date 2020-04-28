@@ -10,10 +10,37 @@
  */
 exports.__esModule = true;
 var ConditionOfSatisfaction = /** @class */ (function () {
+    /****************
+     * Constructors *
+     ****************/
+    /**
+     * Generates a new Condition of Satisfaction
+     * @param text the text for this COS
+     */
     function ConditionOfSatisfaction(text) {
         this.text = text;
         this.complete = false;
     } // end constructor
+    /***********
+     * Getters *
+     ***********/
+    /**
+     * Gets the text for this COS
+     * @return the text for this COS
+     */
+    ConditionOfSatisfaction.prototype.getText = function () {
+        return this.text;
+    }; // end getText
+    /**
+     * Getter for this COS
+     * @return true if COS is completed, false otherwise
+     */
+    ConditionOfSatisfaction.prototype.isComplete = function () {
+        return this.complete;
+    }; // end isComplete
+    /***********
+     * Setters *
+     ***********/
     /**
      * Sets this condition of satisfaction to complete
      */
@@ -26,17 +53,13 @@ var ConditionOfSatisfaction = /** @class */ (function () {
     ConditionOfSatisfaction.prototype.setIncomplete = function () {
         this.complete = false;
     }; // setIncomplete
-    ConditionOfSatisfaction.prototype.getText = function () {
-        return this.text;
-    }; // end getText
+    /**********************
+     * Additional methods *
+     **********************/
     /**
-     * Returns whether or not this condition of satisfaction is complete
-     *
-     * @return true if completed, false otherwise
+     * loads this condition of satisfaction to the board
+     * @param condition the COS to be loaded into the board
      */
-    ConditionOfSatisfaction.prototype.isComplete = function () {
-        return this.complete;
-    }; // end isComplete
     ConditionOfSatisfaction.prototype.load = function (condition) {
         this.text = condition.text;
         this.complete = condition.complete;

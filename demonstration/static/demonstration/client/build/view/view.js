@@ -1,6 +1,6 @@
 "use strict";
 /**
- * view.js
+ * View.ts
  *
  * The class responsible for generating the HTML based off our current model
  *
@@ -9,10 +9,43 @@
  */
 exports.__esModule = true;
 var View = /** @class */ (function () {
+    /****************
+     * Constructors *
+     ****************/
     function View() {
         this.isBoardMenuVisible = true;
         this.editableTaskCard = null;
     } // end constructor
+    /***********
+     * Getters *
+     ***********/
+    /**
+     * returns whether or not the board is currently visible
+     * @return true if the board is visible, false otherwise
+     */
+    View.prototype.getIsBoardMenuVisible = function () {
+        return this.isBoardMenuVisible;
+    }; // end getIsBoardMenuVisible
+    /**
+     * Gets the task card currently being editted
+     * @return the task card currently being editted
+     */
+    View.prototype.getEditableTaskCard = function () {
+        return this.editableTaskCard;
+    }; // end getEditableTaskCard
+    /***********
+     * Setters *
+     ***********/
+    /**
+     * Sets the current task card being editted
+     * @param task the current task card to be editted
+     */
+    View.prototype.setEditableTaskCard = function (task) {
+        this.editableTaskCard = task;
+    }; // end setEditableTaskCard
+    /**********************
+     * Additional methods *
+     **********************/
     /**
      * if the board menu is visible, hide it and vice-versa
      */
@@ -20,25 +53,9 @@ var View = /** @class */ (function () {
         this.isBoardMenuVisible = !this.isBoardMenuVisible;
     }; // end toggleBoardMenuVisibility
     /**
-     * returns whether or not the board is currently visible
-     *
-     * @return {boolean} -- true if the board is visible, false otherwise
-     */
-    View.prototype.getIsBoardMenuVisibile = function () {
-        return this.isBoardMenuVisible;
-    }; // end getIsBoardMenuVisibile
-    View.prototype.setEditableTaskCard = function (task) {
-        this.editableTaskCard = task;
-    }; // end setEditableTaskCard
-    View.prototype.getEditableTaskCard = function () {
-        return this.editableTaskCard;
-    }; // end getEditableTaskCard
-    /**
      * generates HTML based on the current model
-     *
-     * @param {Model} model the model we are generating HTML for
-     *
-     * @return {string} the HTML for model
+     * @param model the model we are generating HTML for
+     * @return the HTML for model
      */
     View.prototype.generateHTML = function (model) {
         var html = '<div>';
@@ -50,7 +67,6 @@ var View = /** @class */ (function () {
     }; // end generateHTML
     /**
      * generates the html for the edit screen for editting a task card
-     *
      * @return the HTML for the edit screen
      */
     View.prototype.generateEditableTaskCardHTML = function () {
@@ -78,7 +94,6 @@ var View = /** @class */ (function () {
     }; // end generateEditableTaskCard
     /**
      * Generates the HTML for the conditions of satisfaction
-     *
      * @return the HTML for the conditions of satisfaction
      */
     View.prototype.getConditionsOfSatisfactionHTML = function () {
@@ -103,11 +118,10 @@ var View = /** @class */ (function () {
         } // end if
         html += '<input id=new-condition type=text></input>';
         return html;
-    };
+    }; // end getConditionsOfSatisfactionHTML
     /**
      * generates the toolbar HTML
-     *
-     * @return {HTML} the html for the toolbar
+     * @return the html for the toolbar
      */
     View.prototype.generateToolbar = function (model) {
         var html = '<div id=toolbar>';
@@ -118,8 +132,7 @@ var View = /** @class */ (function () {
     }; // end generateToolbar
     /**
      * generates the save and load button HTML
-     *
-     * @return {HTML} the html for the save and load buttons
+     * @return the html for the save and load buttons
      */
     View.prototype.generateSaveLoadButtons = function () {
         var html = '<div id=save-load-buttons>';
@@ -131,10 +144,8 @@ var View = /** @class */ (function () {
     }; // end generateSaveLoadButtons
     /**
      * generates the header based on the current model
-     *
-     * @param {Model} model the model we are generating the header HTML for
-     *
-     * @return {string} the HTML for the header of the model
+     * @param model the model we are generating the header HTML for
+     * @return the HTML for the header of the model
      */
     View.prototype.generateHeaderHTML = function (model) {
         var html = '<h1 id=header>';
@@ -145,11 +156,9 @@ var View = /** @class */ (function () {
     }; // end generateHeaderHTML
     /**
      * Generates the body of the application
-     *
-     * @param {Model} model -- the data structure of the application to be
-     * displayed
-     *
-     * @return {string} -- the HTML for the body of the application
+     * @param model the data structure of the application to be
+     *              displayed
+     * @return the HTML for the body of the application
      */
     View.prototype.generateBodyHTML = function (model) {
         var html = '<div id=appBody>';
@@ -160,10 +169,8 @@ var View = /** @class */ (function () {
     }; // end generateBodyHTML
     /**
      * Generates the Board Menu for the application
-     *
-     * @param {Model} model -- the data structure of the application
-     *
-     * @return {string} -- the HTML for the Board Menu
+     * @param model the data structure of the application
+     * @return the HTML for the Board Menu
      */
     View.prototype.generateBoardButtons = function (model) {
         var html = '<div id=boardButtons>';
@@ -188,10 +195,8 @@ var View = /** @class */ (function () {
     }; // end generateBoardButtons
     /**
      * Generates the current board the user is interacting with
-     *
-     * @param {Model} model -- the data structure of the application
-     *
-     * @return {string} -- the HTML for the current board
+     * @param model the data structure of the application
+     * @return the HTML for the current board
      */
     View.prototype.generateCurrentBoard = function (model) {
         var html = '<div id=currentBoard>';
@@ -202,10 +207,8 @@ var View = /** @class */ (function () {
     }; // end generateCurrentBoard
     /**
      * generates all of the lists inside of the model
-     *
-     * @param {Model} model the model we are displaying the lists for
-     *
-     * @return {string} the HTML for the lists
+     * @param model the model we are displaying the lists for
+     * @return the HTML for the lists
      */
     View.prototype.generateListsHTML = function (model) {
         var html = '<div class=lists>';
@@ -227,10 +230,8 @@ var View = /** @class */ (function () {
     }; // end generateListsHTML
     /**
      * generates the list passed in
-     *
-     * @param {List} list the list whose HTML is being generated
-     *
-     * @return {string} the HTML representation of the given list
+     * @param list the list whose HTML is being generated
+     * @return the HTML representation of the given list
      */
     View.prototype.generateIndividualListHTML = function (list, model) {
         var html = '<div>';
@@ -240,11 +241,9 @@ var View = /** @class */ (function () {
     }; // end generateIndividualListHTML
     /**
      * generates the HTML for all of the task cards in a list
-     *
-     * @param {List} list the list whose task cards we are generating
-     *
-     * @return {string} the HTML representation of all of the task cards in the
-     *                  list
+     * @param list the list whose task cards we are generating
+     * @return the HTML representation of all of the task cards in the
+     *         list
      */
     View.prototype.generateTaskCardsHTML = function (list, model) {
         var _this = this;
@@ -253,17 +252,15 @@ var View = /** @class */ (function () {
             if (task.getMoscowStatus() == list.getMoscowStatus() ||
                 task.getBacklogStatus() == list.getBacklogStatus()) {
                 html += _this.generateIndividualTaskCardHTML(task);
-            }
-        });
+            } // end if
+        }); // end for-each
         html += '</div>';
         return html;
     }; // end generateTaskCardsHTML
     /**
      * generates the HTML for an individual task card
-     *
-     * @param {TaskCard} task the task card we are generating HTML for
-     *
-     * @return {string} the HTML representation of the task card
+     * @param task the task card we are generating HTML for
+     * @return the HTML representation of the task card
      */
     View.prototype.generateIndividualTaskCardHTML = function (task) {
         var html = '<div id=\'' + task.getLabel() + '\' class=\'task-card draggable\'>';
@@ -284,10 +281,8 @@ var View = /** @class */ (function () {
     }; // end generateIndividualTaskCardHTML
     /**
      * Generates a remove button for a task card
-     *
-     * @param {TaskCard} task -- the task card this button should remove when clicked
-     *
-     * @return {string} -- the HTML for the remove button
+     * @param task the task card this button should remove when clicked
+     * @return the HTML for the remove button
      */
     View.prototype.generateRemoveButtonHTML = function (task) {
         var buttonID = task.getLabel() + 'RemoveButton';
@@ -296,23 +291,23 @@ var View = /** @class */ (function () {
     }; // end generateRemoveButtonHTML
     /**
      * Generates an add task card button for a list
-     *
-     * @param {number} parentID -- the index for the list
-     *
-     * @return {string} -- the HTML for the add button
+     * @param parentID the index for the list
+     * @return the HTML for the add button
      */
     View.prototype.generateAddButtonHTML = function (parentID) {
         var thisID = parentID + 'AddButton';
         return '<button id=\'' + thisID + '\' class=add-button>+</button>';
     }; // end generateAddButtonHTML
+    /**
+     * Generates the button for displaying the board menu
+     * @return the HTML for the button hiding the board menu
+     */
     View.generateBoardMenuToggleButtonShow = function () {
         return '<button id=boardMenuToggleButtonShow>\></button>';
-    };
+    }; // end generateBoardMenuToggleButtonShow
     /**
-     * Generates the button that will allow us to toggle the visibility of the
-     * Board Menu
-     *
-     * @return {string} -- the HTML for the Board Menu Toggle button
+     * Generates the button for hiding the board menu
+     * @return the HTML for the button displaying the board menu
      */
     View.generateBoardMenuToggleButtonHide = function () {
         return '<button id=boardMenuToggleButtonHide>\<</button>';

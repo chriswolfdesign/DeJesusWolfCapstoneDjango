@@ -1,6 +1,6 @@
 "use strict";
 /**
- * wont_list.js
+ * WontList.ts
  *
  * A class that will generate a Wont Have list for a MoSCoW board
  *
@@ -18,8 +18,7 @@ var WontList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates a Wont Have List for MoSCoW board
-     *
-     * @return {List} a Wont Have List
+     * @return a WontHave list
      */
     WontList.prototype.generateList = function () {
         return new List_1.List('Wont', MoscowStatus_1.MoscowStatus.WONT, BacklogStatus_1.BacklogStatus.NONE);

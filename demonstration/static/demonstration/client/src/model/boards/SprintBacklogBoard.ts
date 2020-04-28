@@ -1,5 +1,5 @@
 /**
- * sprint_backlog_board.js
+ * SprintBacklogBoard.ts
  *
  * Allows us to easily generate a board that manages a Sprint Backlog
  *
@@ -9,15 +9,13 @@
  */
 
 import {Board} from './Board';
-import {SprintBacklogListOptions} from '../enums/SprintBacklogListOptions';
 import {SprintBacklogListFactory} from '../factories/SprintBacklogListFactory';
 import {ListOptions} from '../enums/ListOptions';
 
 export class SprintBacklogBoard {
   /**
    * generates a Sprint Backlog Board
-   *
-   * @return {Board} a SprintBacklogBoard
+   * @return a SprintBacklogBoard
    */
   generateBoard(): Board {
     let board: Board = new Board('Project Backlog');

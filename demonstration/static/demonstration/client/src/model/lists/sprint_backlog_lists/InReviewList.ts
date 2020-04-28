@@ -1,5 +1,5 @@
 /**
- * in_review_list.js
+ * InReviewList.ts
  *
  * A class that will generate an In Review list for a Sprint Backlog board
  *
@@ -17,8 +17,7 @@ export class InReviewList {
 
   /**
    * generates an In Review List for Sprint Backlog board
-   *
-   * @return {List} an InReviewList
+   * @return an InReview list
    */
   generateList(): List {
     return new List('In Review', MoscowStatus.NONE, BacklogStatus.IN_REVIEW);

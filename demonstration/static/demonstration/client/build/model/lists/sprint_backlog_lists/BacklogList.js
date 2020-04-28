@@ -1,6 +1,6 @@
 "use strict";
 /**
- * backlog_list.js
+ * BacklogList.ts
  *
  * A class that will generate a Backlog list for a Sprint Backlog board
  *
@@ -18,8 +18,7 @@ var BacklogList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates a Backlog LIst for Sprint Backlog board
-     *
-     * @return {List} a Backlog List
+     * @return a Backlog List
      */
     BacklogList.prototype.generateList = function () {
         return new List_1.List('Backlog', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.BACKLOG);

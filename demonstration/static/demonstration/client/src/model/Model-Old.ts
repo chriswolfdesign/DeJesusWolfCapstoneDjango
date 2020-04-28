@@ -4,6 +4,9 @@
  * The JavaScript class that will wrap the entirity of our Agile Development
  * Board
  *
+ * NOTE: This version of Model is no longer used.  It is only here
+ *       in case future capstone students find it helpful
+ *
  * @author Ellery De Jesus
  * @author Chris Wolf
  * @version 2.0.0 (October 7, 2019)

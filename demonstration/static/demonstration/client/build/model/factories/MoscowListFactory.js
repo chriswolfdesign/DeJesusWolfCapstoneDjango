@@ -1,9 +1,12 @@
 "use strict";
 /**
- * moscow_list_factory.js
+ * MoscowListFactory.ts
  *
- * The JavaScript class that will allows us to easily autogenerate template
+ * The class that will allows us to easily autogenerate template
  * lists for a MoSCoW board
+ *
+ * NOTE: This file currently is not used.  It is still here in case
+ *       any future capstone students may find it useful
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
@@ -26,6 +29,9 @@ exports.__esModule = true;
 var ListFactory_1 = require("./ListFactory");
 var MoscowListFactory = /** @class */ (function (_super) {
     __extends(MoscowListFactory, _super);
+    /**
+     * Generates a MoscowListFactory
+     */
     function MoscowListFactory() {
         return _super.call(this) || this;
     } // end constructor

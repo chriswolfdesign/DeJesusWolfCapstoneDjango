@@ -1,5 +1,5 @@
 /**
- * should_list.js
+ * ShouldList.ts
  *
  * A class that will generate a Should Have list for a MoSCoW board
  *
@@ -17,8 +17,7 @@ export class ShouldList {
 
   /**
    * generates a Should Have List for MoSCoW board
-   *
-   * @return {List} a Should Have List
+   * @return a ShouldHave list
    */
   generateList(): List {
     return new List('Should', MoscowStatus.SHOULD, BacklogStatus.NONE);

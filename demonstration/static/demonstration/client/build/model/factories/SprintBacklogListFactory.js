@@ -1,9 +1,12 @@
 "use strict";
 /**
- * sprint_backlog_list_factory.js
+ * SprintBacklogListFactory.ts
  *
- * The JavaScript class that will allow us to easily autogenerate template
+ * The class that will allow us to easily autogenerate template
  * lists for a Sprint Backlog Board
+ *
+ * NOTE: This file currently is not used.  It is still here in case
+ *       any future capstone students may find it useful
  *
  * @author Ellery De Jesus
  * @author Chris Wolf
@@ -26,6 +29,7 @@ exports.__esModule = true;
 var ListFactory_1 = require("./ListFactory");
 var SprintBacklogListFactory = /** @class */ (function (_super) {
     __extends(SprintBacklogListFactory, _super);
+    // Generates a SprintBacklogListFactory
     function SprintBacklogListFactory() {
         return _super.call(this) || this;
     } // end constructor

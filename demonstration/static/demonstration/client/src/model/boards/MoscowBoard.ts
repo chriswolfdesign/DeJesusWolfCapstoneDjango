@@ -1,5 +1,5 @@
 /**
- * moscow_board.js
+ * MoscowBoard.ts
  *
  * A class that will generate a MoSCoW board
  *
@@ -9,15 +9,13 @@
  */
 
 import {Board} from './Board';
-import {MoscowListOptions} from '../enums/MoscowListOptions';
 import {MoscowListFactory} from '../factories/MoscowListFactory';
 import {ListOptions} from '../enums/ListOptions';
 
 export class MoscowBoard {
   /**
    * generates a MoSCoW Board
-   *
-   * @return {Board} a MoSCoW Board
+   * @return a MoSCoW Board
    */
   generateBoard() {
     let board: Board = new Board('MoSCoW Board');

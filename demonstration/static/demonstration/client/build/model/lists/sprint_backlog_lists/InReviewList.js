@@ -1,6 +1,6 @@
 "use strict";
 /**
- * in_review_list.js
+ * InReviewList.ts
  *
  * A class that will generate an In Review list for a Sprint Backlog board
  *
@@ -18,8 +18,7 @@ var InReviewList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates an In Review List for Sprint Backlog board
-     *
-     * @return {List} an InReviewList
+     * @return an InReview list
      */
     InReviewList.prototype.generateList = function () {
         return new List_1.List('In Review', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.IN_REVIEW);

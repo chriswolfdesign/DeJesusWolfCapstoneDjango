@@ -137,7 +137,7 @@ function addClickListeners(controller) {
  * @param {Controller} controller -- controller for the application
  */
 function changeBoardMenuVisibility(controller) {
-    if (controller.getView().getIsBoardMenuVisibile()) {
+    if (controller.getView().getIsBoardMenuVisible()) {
         document.getElementById('boardButtons').style.visibility = 'visible';
     } // end if
     else {
@@ -146,7 +146,7 @@ function changeBoardMenuVisibility(controller) {
 } // end changeBoardMenuVisibility
 function setCurrentBoardSize(controller) {
     // Update styles
-    if (controller.getView().getIsBoardMenuVisibile()) {
+    if (controller.getView().getIsBoardMenuVisible()) {
         document.getElementById('currentBoard').style.width = '75%';
         document.getElementById('currentBoard').style.marginLeft = '45vh';
     } // end if

@@ -28,8 +28,7 @@ window.onload = function () {
 }; // end window.onload
 /**
  * Highlights the button for the board that is current open
- *
- * @param {Controller} controller -- the controller of the application
+ * @param controller the controller of the application
  */
 function highlightCurrentBoard(controller) {
     var boardID = 'board' + controller.getModel().getProjects().getActiveBoardIndex().toString();
@@ -39,8 +38,7 @@ function highlightCurrentBoard(controller) {
 } // end highlightCurrentBoard
 /**
  * Adds the event listener to each of the buttons as they are rendered
- *
- * @param {Controller} controller -- the controller holding each of the buttons
+ * @param controller the controller holding each of the buttons
  */
 function addClickListeners(controller) {
     var tasks = controller.getModel().getProjects().getTasks();
@@ -141,6 +139,10 @@ function addClickListeners(controller) {
     document.getElementById("go-back").addEventListener('click', function (event) {
         versionControl('b');
     });
+    /**
+     * Controls which version is current being displayed to the user
+     * @param option name of the "version" the user would like displayed
+     */
     function versionControl(option) {
         var username = document.getElementById('username').value;
         var version = document.getElementById('version').value;
@@ -220,35 +222,37 @@ function addClickListeners(controller) {
 } // end addClickListeners
 /**
  * Allows us to toggle the visibility of the Board Menu
- *
- * @param {Controller} controller -- controller for the application
+ * @param controller controller for the application
  */
 function changeBoardMenuVisibility(controller) {
-    if (controller.getView().getIsBoardMenuVisibile()) {
+    if (controller.getView().getIsBoardMenuVisible()) {
         document.getElementById('boardButtons').style.visibility = 'visible';
     } // end if
     else {
         document.getElementById('boardButtons').style.visibility = 'hidden';
     } // end else
 } // end changeBoardMenuVisibility
+/**
+ * Toggles whether or not the edittable task card is displayed to the user
+ * @param controller the controller responsible for the project
+ */
 function changeEditableTaskCardVisibility(controller) {
     if (controller.getEditableTaskCard() !== null) {
         document.getElementById('editable-task-card').style.visibility = 'visible';
         document.getElementById('editable-task-card-description').focus();
         setConditionsChecked(controller);
-    }
+    } // end if
     else {
         document.getElementById('editable-task-card').style.visibility = 'hidden';
-    }
+    } // end if-else
 } // end changeEditableTaskCardVisibility
 /**
  * Updates the size based on whether or not the board menu is visible
- *
- * @param {Controller} controller -- the controller holding the current board
+ * @param controller the controller holding the current board
  */
 function setCurrentBoardSize(controller) {
     // Update styles
-    if (controller.getView().getIsBoardMenuVisibile()) {
+    if (controller.getView().getIsBoardMenuVisible()) {
         document.getElementById('boardButtons').style.width = '20%';
         document.getElementById('currentBoard').style.width = '79%';
         document.getElementById('currentBoard').style.marginLeft = '21%';
@@ -259,8 +263,8 @@ function setCurrentBoardSize(controller) {
     } // end else
 } // end setCurrentBoardSize
 /**
- *
- *
+ * sets all of the conditions of satisfaction be able to be toggled between comple
+ * and incomplete
  * @param controller the controller in charge of editting the model
  */
 function setConditionsChecked(controller) {
@@ -270,17 +274,16 @@ function setConditionsChecked(controller) {
         if (conditions[i].isComplete()) {
             document.getElementById('condition' + i).checked =
                 true;
-        }
+        } // end if
         else {
             document.getElementById('condition' + i).checked =
                 false;
-        }
-    }
-}
+        } // end else
+    } // end for
+} // end setConditionsChecked
 /**
  * Causes the HTML to be drawn, or redrawn, to the screen
- *
- * @param {Controller} controller responsible for generating the HTML
+ * @param controller responsible for generating the HTML
  */
 function render(controller) {
     document.getElementById('main').innerHTML = controller.generateHTML();
@@ -290,13 +293,14 @@ function render(controller) {
     changeEditableTaskCardVisibility(controller);
     setCurrentBoardSize(controller);
 } // end render
-// Set up interact
+// Set up interact draggables (task cards)
 interactjs_1["default"]('.draggable').draggable({
     inertia: true,
     autoscroll: true,
     onmove: dragMoveListener,
     onend: dropped
 }); // end interact-draggable
+// set up interact dropzones (lists)
 interactjs_1["default"]('.dropzone').dropzone({
     accept: '.draggable',
     overlap: 0.5,
@@ -313,8 +317,7 @@ interactjs_1["default"]('.dropzone').dropzone({
 }); // end interact-dropzone
 /**
  * Describes what to do when a task card is being dragged
- *
- * @param {event} event -- the drag motion we are using to define movement
+ * @param event the drag motion we are using to define movement
  */
 function dragMoveListener(event) {
     var target = event.target;

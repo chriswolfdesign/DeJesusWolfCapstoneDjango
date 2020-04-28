@@ -1,7 +1,7 @@
 /**
- * board_factory.js
+ * BoardFactory.ts
  *
- * The JavaScript class that will allow us to easily autogenerate template
+ * The class that will allow us to easily autogenerate template
  * boards for our Agile Development Board.
  *
  * @author Ellery De Jesus
@@ -15,9 +15,14 @@ import {MoscowBoard} from '../boards/MoscowBoard';
 import {SprintBacklogBoard} from '../boards/SprintBacklogBoard';
 
 export class BoardFactory {
+  /** Assists in creating a MoscowBoard */
   private moscowBoard: MoscowBoard;
+  /** Assists in created a SprintBacklogBoard */
   private sprintBoard: SprintBacklogBoard;
 
+  /**
+   * Generates a BoardFactory
+   */
   constructor() {
     this.moscowBoard = new MoscowBoard();
     this.sprintBoard = new SprintBacklogBoard();
@@ -25,10 +30,8 @@ export class BoardFactory {
 
   /**
    * generates a board based on the parameter passed in
-   *
-   * @param {BoardOptions} option the type of the board the user wants generated
-   *
-   * @return {Board} a board based on user preference
+   * @param option the type of the board the user wants generated
+   * @return a board based on user preference
    */
   generateBoard(option: BoardOptions): Board {
     switch (option) {

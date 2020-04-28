@@ -212,7 +212,7 @@ window.onload = function () {
  * @param {Controller} controller -- the controller of the application
  */
 function highlightCurrentBoard(controller) {
-    if (controller.getView().getIsBoardMenuVisibile()) {
+    if (controller.getView().getIsBoardMenuVisible()) {
         var boardID = 'board' + controller.getModel().getProjects().getActiveBoardIndex().toString();
         document.getElementById(boardID).style.color = 'white';
         document.getElementById(boardID).style.backgroundColor = 'black';
@@ -273,7 +273,7 @@ function addClickListeners(controller) {
         _loop_3(i);
     } // end outer for loop
     // allows us to change the active board based on user preference via click
-    if (controller.getView().getIsBoardMenuVisibile()) {
+    if (controller.getView().getIsBoardMenuVisible()) {
         var _loop_4 = function (i) {
             var boardID = 'board' + i.toString();
             document.getElementById(boardID).addEventListener('click', function (event) {
@@ -326,7 +326,7 @@ function addClickListeners(controller) {
  * @param {Controller} controller -- controller for the application
  */
 function changeBoardMenuVisibility(controller) {
-    if (controller.getView().getIsBoardMenuVisibile()) {
+    if (controller.getView().getIsBoardMenuVisible()) {
         document.getElementById('boardButtons').style.visibility = 'visible';
     } // end if
     else {
@@ -335,7 +335,7 @@ function changeBoardMenuVisibility(controller) {
 } // end changeBoardMenuVisibility
 function setCurrentBoardSize(controller) {
     // Update styles
-    if (controller.getView().getIsBoardMenuVisibile()) {
+    if (controller.getView().getIsBoardMenuVisible()) {
         document.getElementById('currentBoard').style.width = '75%';
     } // end if
     else {
@@ -1501,7 +1501,7 @@ var View = /** @class */ (function () {
      *
      * @return {boolean} -- true if the board is visible, false otherwise
      */
-    View.prototype.getIsBoardMenuVisibile = function () {
+    View.prototype.getIsBoardMenuVisible = function () {
         return this.isBoardMenuVisible;
     }; // end getIsBoardMenuVisibile
     /**

@@ -1,5 +1,5 @@
 /**
- * view.js
+ * View.ts
  *
  * The class responsible for generating the HTML based off our current model
  *
@@ -12,13 +12,60 @@ import { TaskCard } from '../model/TaskCard';
 import { Model } from '../model/Model';
 
 export class View {
+
+  /**********
+   * Fields *
+   **********/
+
+  /** True if the board menu should be visible to the user, false otherwise */
   private isBoardMenuVisible: boolean;
+  /** The current task card being editted */
   private editableTaskCard: TaskCard;
+
+  /****************
+   * Constructors *
+   ****************/
 
   constructor() {
     this.isBoardMenuVisible = true;
     this.editableTaskCard = null;
   } // end constructor
+
+  /***********
+   * Getters *
+   ***********/
+
+  /**
+   * returns whether or not the board is currently visible
+   * @return true if the board is visible, false otherwise
+   */
+  getIsBoardMenuVisible(): boolean {
+    return this.isBoardMenuVisible;
+  } // end getIsBoardMenuVisible
+
+  /**
+   * Gets the task card currently being editted
+   * @return the task card currently being editted
+   */
+  getEditableTaskCard(): TaskCard {
+    return this.editableTaskCard;
+  } // end getEditableTaskCard
+
+  /***********
+   * Setters *
+   ***********/
+
+  /**
+   * Sets the current task card being editted
+   * @param task the current task card to be editted
+   */
+  setEditableTaskCard(task: TaskCard) {
+    this.editableTaskCard = task;
+  } // end setEditableTaskCard
+
+  /**********************
+   * Additional methods *
+   **********************/
 
   /**
    * if the board menu is visible, hide it and vice-versa
@@ -28,28 +75,9 @@ export class View {
   } // end toggleBoardMenuVisibility
 
   /**
-   * returns whether or not the board is currently visible
-   *
-   * @return {boolean} -- true if the board is visible, false otherwise
-   */
-  getIsBoardMenuVisibile(): boolean {
-    return this.isBoardMenuVisible;
-  } // end getIsBoardMenuVisibile
-
-  setEditableTaskCard(task: TaskCard) {
-    this.editableTaskCard = task;
-  } // end setEditableTaskCard
-
-  getEditableTaskCard(): TaskCard {
-    return this.editableTaskCard;
-  } // end getEditableTaskCard
-
-  /**
    * generates HTML based on the current model
-   *
-   * @param {Model} model the model we are generating HTML for
-   *
-   * @return {string} the HTML for model
+   * @param model the model we are generating HTML for
+   * @return the HTML for model
    */
   generateHTML(model): string {
     let html = '<div>';
@@ -62,7 +90,6 @@ export class View {
 
   /**
    * generates the html for the edit screen for editting a task card
-   * 
    * @return the HTML for the edit screen
    */
   generateEditableTaskCardHTML(): string {
@@ -99,7 +126,6 @@ export class View {
 
   /**
    * Generates the HTML for the conditions of satisfaction
-   * 
    * @return the HTML for the conditions of satisfaction
    */
   getConditionsOfSatisfactionHTML(): string {
@@ -129,12 +155,11 @@ export class View {
     html += '<input id=new-condition type=text></input>';
 
     return html;
-  }
+  } // end getConditionsOfSatisfactionHTML
 
   /**
    * generates the toolbar HTML
-   * 
-   * @return {HTML} the html for the toolbar
+   * @return the html for the toolbar
    */
   generateToolbar(model: Model): string {
     let html = '<div id=toolbar>';
@@ -147,8 +172,7 @@ export class View {
 
   /**
    * generates the save and load button HTML
-   * 
-   * @return {HTML} the html for the save and load buttons
+   * @return the html for the save and load buttons
    */
   generateSaveLoadButtons(): string {
     let html = '<div id=save-load-buttons>';
@@ -161,10 +185,8 @@ export class View {
 
   /**
    * generates the header based on the current model
-   *
-   * @param {Model} model the model we are generating the header HTML for
-   *
-   * @return {string} the HTML for the header of the model
+   * @param model the model we are generating the header HTML for
+   * @return the HTML for the header of the model
    */
   generateHeaderHTML(model): string {
     let html = '<h1 id=header>';
@@ -176,11 +198,9 @@ export class View {
 
   /**
    * Generates the body of the application
-   *
-   * @param {Model} model -- the data structure of the application to be 
-   * displayed
-   *
-   * @return {string} -- the HTML for the body of the application
+   * @param model the data structure of the application to be
+   *              displayed
+   * @return the HTML for the body of the application
    */
   generateBodyHTML(model: Model): string {
     let html: string = '<div id=appBody>';
@@ -192,16 +212,13 @@ export class View {
 
   /**
    * Generates the Board Menu for the application
-   *
-   * @param {Model} model -- the data structure of the application
-   *
-   * @return {string} -- the HTML for the Board Menu
+   * @param model the data structure of the application
+   * @return the HTML for the Board Menu
    */
   generateBoardButtons(model): string {
     let html: string = '<div id=boardButtons>';
 
     html += View.generateBoardMenuToggleButtonHide();
-
 
     html += '<div id=boardMenuTitle>' + model.getProjects().getTitle() + '</div>';
 
@@ -230,10 +247,8 @@ export class View {
 
   /**
    * Generates the current board the user is interacting with
-   *
-   * @param {Model} model -- the data structure of the application
-   *
-   * @return {string} -- the HTML for the current board
+   * @param model the data structure of the application
+   * @return the HTML for the current board
    */
   generateCurrentBoard(model): string {
     let html = '<div id=currentBoard>';
@@ -245,10 +260,8 @@ export class View {
 
   /**
    * generates all of the lists inside of the model
-   *
-   * @param {Model} model the model we are displaying the lists for
-   *
-   * @return {string} the HTML for the lists
+   * @param model the model we are displaying the lists for
+   * @return the HTML for the lists
    */
   generateListsHTML(model): string {
     let html = '<div class=lists>';
@@ -274,10 +287,8 @@ export class View {
 
   /**
    * generates the list passed in
-   *
-   * @param {List} list the list whose HTML is being generated
-   *
-   * @return {string} the HTML representation of the given list
+   * @param list the list whose HTML is being generated
+   * @return the HTML representation of the given list
    */
   generateIndividualListHTML(list: List, model: Model): string {
     let html = '<div>';
@@ -288,11 +299,9 @@ export class View {
 
   /**
    * generates the HTML for all of the task cards in a list
-   *
-   * @param {List} list the list whose task cards we are generating
-   *
-   * @return {string} the HTML representation of all of the task cards in the
-   *                  list
+   * @param list the list whose task cards we are generating
+   * @return the HTML representation of all of the task cards in the
+   *         list
    */
   generateTaskCardsHTML(list: List, model: Model): string {
     let html = '<div>';
@@ -301,8 +310,8 @@ export class View {
       if (task.getMoscowStatus() == list.getMoscowStatus() ||
         task.getBacklogStatus() == list.getBacklogStatus()) {
         html += this.generateIndividualTaskCardHTML(task);
-      }
-    });
+      } // end if
+    }); // end for-each
 
     html += '</div>';
 
@@ -311,10 +320,8 @@ export class View {
 
   /**
    * generates the HTML for an individual task card
-   *
-   * @param {TaskCard} task the task card we are generating HTML for
-   *
-   * @return {string} the HTML representation of the task card
+   * @param task the task card we are generating HTML for
+   * @return the HTML representation of the task card
    */
   generateIndividualTaskCardHTML(task: TaskCard): string {
     let html = '<div id=\'' + task.getLabel() + '\' class=\'task-card draggable\'>';
@@ -341,10 +348,8 @@ export class View {
 
   /**
    * Generates a remove button for a task card
-   *
-   * @param {TaskCard} task -- the task card this button should remove when clicked
-   *
-   * @return {string} -- the HTML for the remove button
+   * @param task the task card this button should remove when clicked
+   * @return the HTML for the remove button
    */
   generateRemoveButtonHTML(task: TaskCard) {
     let buttonID = task.getLabel() + 'RemoveButton';
@@ -354,25 +359,25 @@ export class View {
 
   /**
    * Generates an add task card button for a list
-   *
-   * @param {number} parentID -- the index for the list
-   *
-   * @return {string} -- the HTML for the add button
+   * @param parentID the index for the list
+   * @return the HTML for the add button
    */
   generateAddButtonHTML(parentID: number) {
     let thisID = parentID + 'AddButton';
     return '<button id=\'' + thisID + '\' class=add-button>+</button>';
   } // end generateAddButtonHTML
 
-  private static generateBoardMenuToggleButtonShow() {
+  /**
+   * Generates the button for displaying the board menu
+   * @return the HTML for the button hiding the board menu
+   */
+  private static generateBoardMenuToggleButtonShow(): string {
     return '<button id=boardMenuToggleButtonShow>\></button>';
-  }
+  } // end generateBoardMenuToggleButtonShow
 
   /**
-   * Generates the button that will allow us to toggle the visibility of the
-   * Board Menu
-   *
-   * @return {string} -- the HTML for the Board Menu Toggle button
+   * Generates the button for hiding the board menu
+   * @return the HTML for the button displaying the board menu
    */
   private static generateBoardMenuToggleButtonHide(): string {
     return '<button id=boardMenuToggleButtonHide>\<</button>';

@@ -17,5 +17,4 @@ var MoscowStatus;
     MoscowStatus["WONT"] = "WONT";
     MoscowStatus["UNASSIGNED"] = "UNASSIGNED";
     MoscowStatus["NONE"] = "NONE";
-})(MoscowStatus = exports.MoscowStatus || (exports.MoscowStatus = {}));
-;
+})(MoscowStatus = exports.MoscowStatus || (exports.MoscowStatus = {})); // end MoscowStatus

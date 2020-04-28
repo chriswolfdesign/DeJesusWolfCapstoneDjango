@@ -1,5 +1,5 @@
 /**
- * wont_list.js
+ * WontList.ts
  *
  * A class that will generate a Wont Have list for a MoSCoW board
  *
@@ -17,8 +17,7 @@ export class WontList {
 
   /**
    * generates a Wont Have List for MoSCoW board
-   *
-   * @return {List} a Wont Have List
+   * @return a WontHave list
    */
   generateList(): List {
     return new List('Wont', MoscowStatus.WONT, BacklogStatus.NONE);

@@ -18,7 +18,7 @@ export class UnassignedSprintBacklogList {
   /**
    * generates a Backlog LIst for Sprint Backlog board
    *
-   * @return {List} a Backlog List
+   * @return a Unassigned SprintBacklog List
    */
   generateList(): List {
     return new List('Unassigned', MoscowStatus.NONE, BacklogStatus.UNASSIGNED);

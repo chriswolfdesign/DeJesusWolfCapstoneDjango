@@ -1,5 +1,5 @@
 /**
- * could_list.js
+ * CouldList.ts
  *
  * A class that will generate a Should Have list for a MoSCoW board
  *
@@ -18,7 +18,7 @@ export class CouldList {
   /**
    * generates a Could Have List for MoSCoW board
    *
-   * @return {List} a Could Have List
+   * @return a CouldHave list
    */
   generateList(): List {
     return new List('Could', MoscowStatus.COULD, BacklogStatus.NONE);

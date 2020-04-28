@@ -1,6 +1,6 @@
 "use strict";
 /**
- * sprint_backlog_board.js
+ * SprintBacklogBoard.ts
  *
  * Allows us to easily generate a board that manages a Sprint Backlog
  *
@@ -17,8 +17,7 @@ var SprintBacklogBoard = /** @class */ (function () {
     }
     /**
      * generates a Sprint Backlog Board
-     *
-     * @return {Board} a SprintBacklogBoard
+     * @return a SprintBacklogBoard
      */
     SprintBacklogBoard.prototype.generateBoard = function () {
         var board = new Board_1.Board('Project Backlog');

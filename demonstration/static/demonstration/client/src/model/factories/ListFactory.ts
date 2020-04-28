@@ -1,7 +1,7 @@
 /**
- * list_factory.js
+ * ListFactory.ts
  *
- * The JavaScript class that will allow us to easily autogenerate template
+ * The class that will allow us to easily autogenerate template
  * lists for our Agile Development Board.
  *
  * @author Ellery De Jesus
@@ -25,17 +25,39 @@ import {UnassignedMoscowList} from "../lists/moscow_lists/UnassignedMoscowList";
 import {UnassignedSprintBacklogList} from "../lists/sprint_backlog_lists/UnassignedSprintBacklogList";
 
 export class ListFactory {
+
+  /**********
+   * Fields *
+   **********/
+
+  /** Assists in generating a MustList */
   private mustList: MustList;
+  /** Assists in generating a ShouldList */
   private shouldList: ShouldList;
+  /** Assists in generating a CouldList */
   private couldList: CouldList;
+  /** Assists in generating a WontList */
   private wontList: WontList;
+  /** Assists in generating a BacklogList */
   private backlogList: BacklogList;
+  /** Assists in generating an InProgressList */
   private inProgressList: InProgressList;
+  /** Assists in generating an InReviewList */
   private inReviewList: InReviewList;
+  /** Assists in generating a CompleteList */
   private completeList: CompleteList;
+  /** Assists in generating an UnassignedMoscowList */
   private unassignedMoscowList: UnassignedMoscowList;
+  /** Assists in generating an UnassignedSprintBacklogList */
   private unassignedSprintBacklogList: UnassignedSprintBacklogList;
 
+  /****************
+   * Constructors *
+   ****************/
+
+  /**
+   * Generates a ListFactory
+   */
   constructor() {
     this.mustList = new MustList();
     this.shouldList = new ShouldList();
@@ -49,44 +71,78 @@ export class ListFactory {
     this.unassignedSprintBacklogList = new UnassignedSprintBacklogList();
   } // end constructor
 
+  /***********
+   * Getters *
+   ***********/
+
+  /**
+   * Getter for MustList
+   * @return the MustList
+   */
   getMustList(): MustList {
     return this.mustList;
   } // end getMustList
 
+  /**
+   * Getter for the ShouldList
+   * @return the ShouldList
+   */
   getShouldList(): ShouldList {
     return this.shouldList;
   } // end getShouldList
 
+  /**
+   * Getter for the CouldList
+   * @return the CouldList
+   */
   getCouldList(): CouldList {
     return this.couldList;
   } // end getCouldList
 
+  /**
+   * Getter for the WontList
+   * @return the WontList
+   */
   getWontList(): WontList {
     return this.wontList;
   } // end getWontList
 
+  /**
+   * Getter for the BacklogList
+   * @return the BacklogList
+   */
   getBacklogList(): BacklogList {
     return this.backlogList;
   } // end getBacklogList
 
+  /**
+   * Getter for the InProgressList
+   * @return the InProgressList
+   */
   getInProgressList(): InProgressList {
     return this.inProgressList;
   } // end getInProgressList
 
+  /**
+   * Getter for the InReviewList
+   * @return the InReviewList
+   */
   getInReviewList(): InReviewList {
     return this.inReviewList;
   } // end getInReviewList
 
+  /**
+   * Getter for the CompleteList
+   * @return the CompleteList
+   */
   getCompleteList(): CompleteList {
     return this.completeList;
   } // end getCompleteList
 
   /**
    * generates a list based on the parameter passed in
-   *
-   * @param {ListOptions} option the type of list the user wants generated
-   *
-   * @return {List} a list set up based on user preference
+   * @param option the type of list the user wants generated
+   * @return a list set up based on user preference
    */
   generateList(option: ListOptions): List {
     switch (option) {

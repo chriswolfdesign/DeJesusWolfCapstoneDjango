@@ -19,7 +19,7 @@ var UnassignedSprintBacklogList = /** @class */ (function () {
     /**
      * generates a Backlog LIst for Sprint Backlog board
      *
-     * @return {List} a Backlog List
+     * @return a Unassigned SprintBacklog List
      */
     UnassignedSprintBacklogList.prototype.generateList = function () {
         return new List_1.List('Unassigned', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.UNASSIGNED);

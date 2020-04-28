@@ -1,5 +1,5 @@
 /**
- * in_progress_list.js
+ * InProgressList.ts
  *
  * A class that will generate an In Progress list for a Sprint Backlog board
  *
@@ -17,8 +17,7 @@ export class InProgressList {
 
   /**
    * generates an In Progress List for Sprint Backlog board
-   *
-   * @return {List} an In Progress List
+   * @return an In Progress List
    */
   generateList(): List {
     return new List('In Progress', MoscowStatus.NONE, BacklogStatus.IN_PROGRESS);

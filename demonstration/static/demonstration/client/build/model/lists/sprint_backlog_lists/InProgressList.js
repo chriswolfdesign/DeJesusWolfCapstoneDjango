@@ -1,6 +1,6 @@
 "use strict";
 /**
- * in_progress_list.js
+ * InProgressList.ts
  *
  * A class that will generate an In Progress list for a Sprint Backlog board
  *
@@ -18,8 +18,7 @@ var InProgressList = /** @class */ (function () {
     // Constructor deliberately left out
     /**
      * generates an In Progress List for Sprint Backlog board
-     *
-     * @return {List} an In Progress List
+     * @return an In Progress List
      */
     InProgressList.prototype.generateList = function () {
         return new List_1.List('In Progress', MoscowStatus_1.MoscowStatus.NONE, BacklogStatus_1.BacklogStatus.IN_PROGRESS);
